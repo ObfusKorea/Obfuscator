@@ -32,7 +32,6 @@ public class Translator {
 	
 	public static void main(String[] args) throws Exception
 	{
-		//주석을 달았다.
 		CharStream codeCharStream = CharStreams.fromFileName("test.c");
 		MiniCLexer lexer = new MiniCLexer(codeCharStream);
 		CommonTokenStream tokens = new CommonTokenStream( lexer );
