@@ -28,7 +28,8 @@ while_stmt	: WHILE '(' expr ')' stmt	;
 compound_stmt: '{' local_decl* stmt* '}'	;
 local_decl	: type_spec IDENT ';'
 		| type_spec IDENT '=' LITERAL ';'	
-		| type_spec IDENT '[' LITERAL ']' ';'	;
+		| type_spec IDENT '[' LITERAL ']' ';'
+		| type_spec IDENT '[' LITERAL ']' '=' '{' LITERAL (',' LITERAL)* '}' ;
 if_stmt		: IF '(' expr ')' stmt		
 		| IF '(' expr ')' stmt ELSE stmt 		;
 return_stmt	: RETURN ';'			

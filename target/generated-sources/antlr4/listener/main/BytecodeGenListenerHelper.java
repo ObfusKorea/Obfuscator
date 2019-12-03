@@ -51,6 +51,10 @@ public class BytecodeGenListenerHelper {
 	static boolean isArrayDecl(Local_declContext ctx) {
 		return ctx.getChildCount() == 6;
 	}
+	
+	static boolean isArrayDeclWithInit(Local_declContext ctx) {
+		return ctx.getChildCount() > 6;
+	}
 
 	static boolean isDeclWithInit(Local_declContext ctx) {
 		return ctx.getChildCount() == 5;
