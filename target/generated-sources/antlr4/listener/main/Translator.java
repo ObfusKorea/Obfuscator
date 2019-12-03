@@ -9,6 +9,7 @@ import generated.*;
 public class Translator {
 	enum OPTIONS {
 		PRETTYPRINT, BYTECODEGEN, UCODEGEN, ERROR
+		//여기에 옵션 여러개 추가할수있음
 	}
 	private static OPTIONS getOption(String[] args){
 		if (args.length < 1)
