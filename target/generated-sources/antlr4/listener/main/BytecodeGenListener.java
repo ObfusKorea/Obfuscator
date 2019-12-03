@@ -1,5 +1,7 @@
 package listener.main;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Hashtable;
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -89,6 +91,13 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 		newTexts.put(ctx, classProlog + var_decl + fun_decl);
 
 		System.out.println(newTexts.get(ctx));
+		
+		try (FileWriter fw = new FileWriter("Test.j");) {
+			fw.write(newTexts.get(ctx));
+			fw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	// decl : var_decl | fun_decl
@@ -401,5 +410,4 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 		}
 		newTexts.put(ctx, argsStr);
 	}
-
 }
