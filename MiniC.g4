@@ -9,9 +9,11 @@ decl		: var_decl
 		| fun_decl		;
 var_decl	:  type_spec IDENT ';' 
 		| type_spec IDENT '=' LITERAL ';'	
-		| type_spec IDENT '[' LITERAL ']' ';'	;
+		| type_spec IDENT '[' LITERAL ']' ';'	
+		| type_spec IDENT '=' '\''CHARACTER'\'' ';' ;
 type_spec	: VOID				
-		| INT				;
+		| INT
+		| CHAR ;
 fun_decl	: type_spec IDENT '(' params ')' compound_stmt ;
 params		: param (',' param)*		
 		| VOID				
@@ -63,6 +65,7 @@ args	: expr (',' expr)*
 
 VOID: 'void';
 INT: 'int';
+CHAR: 'char';
 
 WHILE: 'while';
 IF: 'if';
@@ -83,6 +86,7 @@ IDENT  : [a-zA-Z_]
 
 LITERAL:   DecimalConstant     |   OctalConstant     |   HexadecimalConstant     ;
 
+CHARACTER: [a-zA-Z0-9_ ];
 
 DecimalConstant
     :   '0'
