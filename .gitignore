@@ -5,3 +5,4 @@
 Test.j
 .classpath
 test.c
+*.class
