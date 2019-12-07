@@ -8,3 +8,8 @@ test.c
 *.class
 test.c
 .classpath
+*.interp
+*.interp
+*.interp
+*.class
+*.class

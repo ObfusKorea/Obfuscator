@@ -67,11 +67,14 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 	@Override
 	public void enterLocal_decl(MiniCParser.Local_declContext ctx) {
 		if (isArrayDecl(ctx)) {
-			symbolTable.putLocalVar(getLocalVarName(ctx), Type.INTARRAY);
-		} else if (isArrayDeclWithInit(ctx)) {
-			//초기화  해주는데 크기를 지정해준경우와 아닌경우 나누기
-			//symbolTable.putLocalVarWithInitVal(getLocalVarName(ctx), Type.INT, initVal(ctx));
-		}else if (isDeclWithInit(ctx)) {
+			symbolTable.putLocalVar(getLocalVarName(ctx), getArrayType((MiniCParser.Type_specContext) ctx.getChild(0)));
+			symbolTable.putArray(getLocalVarName(ctx), ctx.getChild(3).getText());
+		} /*
+			 * else if (isArrayDeclWithInit(ctx)) {
+			 * symbolTable.putLocalVar(getLocalVarName(ctx),
+			 * getArrayType((MiniCParser.Type_specContext) ctx.getChild(0))); //
+			 * symbolTable.putArrayInit(); // ???초기화 해주는데 크기를 지정해준경우와 아닌경우 나누기 }
+			 */ else if (isDeclWithInit(ctx)) {
 			symbolTable.putLocalVarWithInitVal(getLocalVarName(ctx), Type.INT, initVal(ctx));
 		} else { // simple decl
 			symbolTable.putLocalVar(getLocalVarName(ctx), Type.INT);
@@ -94,7 +97,7 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 		newTexts.put(ctx, classProlog + var_decl + fun_decl);
 
 		System.out.println(newTexts.get(ctx));
-		
+
 		try (FileWriter fw = new FileWriter("Test.j");) {
 			fw.write(newTexts.get(ctx));
 			fw.close();
@@ -156,8 +159,8 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 		String loop = symbolTable.newLabel();
 		String lend = symbolTable.newLabel();
 
-		String stmt = loop + ": " + "\n" + condExpr + "ifeq " + lend + "\n" + doStmt + "goto " + loop + "\n" + lend + ": "
-				+ "\n";
+		String stmt = loop + ": " + "\n" + condExpr + "ifeq " + lend + "\n" + doStmt + "goto " + loop + "\n" + lend
+				+ ": " + "\n";
 		newTexts.put(ctx, stmt);
 	}
 
@@ -194,7 +197,11 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 	public void exitLocal_decl(MiniCParser.Local_declContext ctx) {
 		String varDecl = "";
 
-		if (isDeclWithInit(ctx)) {
+		if (isArrayDecl(ctx)) {
+			String vId = symbolTable.getVarId(ctx);
+			varDecl += "ldc " + ctx.LITERAL().getText() + "\n" + "newarray " + getArrayElementType() + "\nastore_" + vId
+					+ "\n";
+		} else if (isDeclWithInit(ctx)) {
 			String vId = symbolTable.getVarId(ctx);
 			varDecl += "ldc " + ctx.LITERAL().getText() + "\n" + "istore_" + vId + "\n";
 		}

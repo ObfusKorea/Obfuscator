@@ -22,6 +22,7 @@ public class SymbolTable {
 		Type type;
 		int id;
 		int initVal;
+		Object arrayVal;
 
 		public VarInfo(Type type, int id, int initVal) {
 			this.type = type;
@@ -33,6 +34,30 @@ public class SymbolTable {
 			this.type = type;
 			this.id = id;
 			this.initVal = 0;
+		}
+
+		public void addArrayVal(Object arrayVal) {
+			this.arrayVal = arrayVal;
+		}
+	}
+
+	// ???(int)배열은 생성하면서 배열의 정보를 가지는 클래스를 하나 더 생성
+	static public class IntArrayVal {
+		int id;
+		int length;
+		int[] val;
+
+		public IntArrayVal(int id, int length) {
+			this.id = id;
+			this.length = length;
+			this.val = new int[length];
+		}
+
+		// ???일단 아래거는 이따가
+		public IntArrayVal(int id, int length, int[] val) {
+			this.id = id;
+			this.length = length;
+			this.val = new int[length];
 		}
 	}
 
@@ -65,6 +90,23 @@ public class SymbolTable {
 		// <Fill here>
 		_lsymtable.put(varname, new VarInfo(type, _localVarID++));
 	}
+
+	void putArray(String varname, String arrayLength) {
+		VarInfo currentVar = _lsymtable.get(varname);
+		if (currentVar.type == Type.INTARRAY) {
+			currentVar.addArrayVal(new IntArrayVal(currentVar.id, Integer.parseInt(arrayLength)));
+		}
+		// ???타입이 무엇인지 판단하고 (지금은)intArray로 이동
+	}// int intArray[5];
+
+	void putArrayInit(String varname, String arrayLength) {
+		VarInfo currentVar = _lsymtable.get(varname);
+		if (currentVar.type == Type.INTARRAY) {
+			currentVar.addArrayVal(new IntArrayVal(currentVar.id, Integer.parseInt(arrayLength)));
+		}
+		// ???타입이 무엇인지 판단하고 intArray로 이동
+	}// int intArray[]={0,1,2,3};, int intArray[4]={0,1,2,3};, int
+		// intArray[10]={0,1,2,3};
 
 	void putGlobalVar(String varname, Type type) {
 		// <Fill here>
