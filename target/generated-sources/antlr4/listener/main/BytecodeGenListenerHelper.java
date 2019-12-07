@@ -46,7 +46,7 @@ public class BytecodeGenListenerHelper {
 	// <local vars>
 	// local_decl : type_spec IDENT '[' LITERAL ']' ';'
 	static int initVal(Local_declContext ctx) {
-		return Integer.parseInt(ctx.LITERAL().getText());
+		return Integer.parseInt(ctx.LITERAL().get(0).getText());
 	}
 
 	static boolean isArrayDecl(Local_declContext ctx) {
