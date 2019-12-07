@@ -7,3 +7,4 @@ Test.j
 test.c
 *.class
 test.c
+.classpath

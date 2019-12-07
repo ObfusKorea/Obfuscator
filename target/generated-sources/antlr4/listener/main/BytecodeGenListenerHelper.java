@@ -50,12 +50,12 @@ public class BytecodeGenListenerHelper {
 
 	static boolean isArrayDecl(Local_declContext ctx) {
 		//6이면서 3번째가 [인것
-		return ctx.getChildCount() == 6;
+		return (ctx.getChildCount() == 6)&&(ctx.getChild(2).equals("["));
 	}
 	
 	static boolean isArrayDeclWithInit(Local_declContext ctx) {
 		//6이상이면서 3번째가 [인것
-		return ctx.getChildCount() > 6;
+		return (ctx.getChildCount() > 6)&&(ctx.getChild(2).equals("["));
 	}
 
 	static boolean isDeclWithInit(Local_declContext ctx) {
