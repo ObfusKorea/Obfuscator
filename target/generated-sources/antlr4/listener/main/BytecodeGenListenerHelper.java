@@ -45,14 +45,16 @@ public class BytecodeGenListenerHelper {
 	// <local vars>
 	// local_decl : type_spec IDENT '[' LITERAL ']' ';'
 	static int initVal(Local_declContext ctx) {
-		return Integer.parseInt(ctx.LITERAL().getText());
+		return Integer.parseInt(ctx.LITERAL().get(0).getText());
 	}
 
 	static boolean isArrayDecl(Local_declContext ctx) {
+		//6이면서 3번째가 [인것
 		return ctx.getChildCount() == 6;
 	}
 	
 	static boolean isArrayDeclWithInit(Local_declContext ctx) {
+		//6이상이면서 3번째가 [인것
 		return ctx.getChildCount() > 6;
 	}
 

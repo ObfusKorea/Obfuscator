@@ -1,19 +1,5 @@
 int max(int a, int b, int c){
-	int ret = 0;
-	if(a >= b){
-		if(a >= c){
-			ret = a;
-		}else{
-			ret = c;
-		}
-	}else{
-		if(b >= c){
-			ret = b;
-		}else{
-			ret = c;
-		}
-	}
-	return ret;
+	int intArray[5];
 }
 
 void main () {

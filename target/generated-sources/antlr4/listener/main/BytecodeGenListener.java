@@ -68,7 +68,10 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 	public void enterLocal_decl(MiniCParser.Local_declContext ctx) {
 		if (isArrayDecl(ctx)) {
 			symbolTable.putLocalVar(getLocalVarName(ctx), Type.INTARRAY);
-		} else if (isDeclWithInit(ctx)) {
+		} else if (isArrayDeclWithInit(ctx)) {
+			//초기화  해주는데 크기를 지정해준경우와 아닌경우 나누기
+			//symbolTable.putLocalVarWithInitVal(getLocalVarName(ctx), Type.INT, initVal(ctx));
+		}else if (isDeclWithInit(ctx)) {
 			symbolTable.putLocalVarWithInitVal(getLocalVarName(ctx), Type.INT, initVal(ctx));
 		} else { // simple decl
 			symbolTable.putLocalVar(getLocalVarName(ctx), Type.INT);
@@ -193,7 +196,7 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 
 		if (isDeclWithInit(ctx)) {
 			String vId = symbolTable.getVarId(ctx);
-			varDecl += "ldc " + ctx.LITERAL().getText() + "\n" + "istore_" + vId + "\n";
+			varDecl += "ldc " + ctx.LITERAL().get(0).getText() + "\n" + "istore_" + vId + "\n";
 		}
 
 		newTexts.put(ctx, varDecl);

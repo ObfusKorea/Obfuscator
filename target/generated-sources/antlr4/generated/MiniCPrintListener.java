@@ -381,7 +381,7 @@ public class MiniCPrintListener extends MiniCBaseListener {
 		int i = 0;
 		String dots = "";
 		while (i < n) {
-			dots = dots + "....";
+			dots = dots + "****";
 			i++;
 		}
 		return dots;
