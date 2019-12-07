@@ -196,7 +196,7 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 
 		if (isDeclWithInit(ctx)) {
 			String vId = symbolTable.getVarId(ctx);
-			varDecl += "ldc " + ctx.LITERAL().get(0).getText() + "\n" + "istore_" + vId + "\n";
+			varDecl += "ldc " + ctx.LITERAL().getText() + "\n" + "istore_" + vId + "\n";
 		}
 
 		newTexts.put(ctx, varDecl);
