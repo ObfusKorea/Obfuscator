@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
+import org.antlr.v4.runtime.tree.ParseTree;
+
 import generated.MiniCParser;
 import generated.MiniCParser.Fun_declContext;
 import generated.MiniCParser.Local_declContext;
@@ -57,7 +59,7 @@ public class SymbolTable {
 		public IntArrayVal(int id, int length, int[] val) {
 			this.id = id;
 			this.length = length;
-			this.val = new int[length];
+			this.val = val;
 		}
 	}
 
@@ -96,15 +98,22 @@ public class SymbolTable {
 		if (currentVar.type == Type.INTARRAY) {
 			currentVar.addArrayVal(new IntArrayVal(currentVar.id, Integer.parseInt(arrayLength)));
 		}
-		// ???타입이 무엇인지 판단하고 (지금은)intArray로 이동
+		// 타입이 무엇인지 판단하고 (지금은)intArray로 이동
 	}// int intArray[5];
 
-	void putArrayInit(String varname, String arrayLength) {
+	void putArrayInit(String varname, String arrayLength, ParseTree arrayInitVal) {
 		VarInfo currentVar = _lsymtable.get(varname);
-		if (currentVar.type == Type.INTARRAY) {
-			currentVar.addArrayVal(new IntArrayVal(currentVar.id, Integer.parseInt(arrayLength)));
+		if (arrayInitVal instanceof MiniCParser.Array_init_valContext) {
+			if (currentVar.type == Type.INTARRAY) {
+				int thisArrayLength = Integer.parseInt(arrayLength);
+				int[] thisInitValArray = new int[thisArrayLength];
+				for (int i = 0; i < arrayInitVal.getChildCount(); i = i + 2) {
+					thisInitValArray[i / 2] = Integer.parseInt(arrayInitVal.getChild(i).getText());
+				}
+				currentVar.addArrayVal(new IntArrayVal(currentVar.id, thisArrayLength, thisInitValArray));
+			}
 		}
-		// ???타입이 무엇인지 판단하고 intArray로 이동
+		// 타입이 무엇인지 판단하고 intArray로 이동
 	}// int intArray[]={0,1,2,3};, int intArray[4]={0,1,2,3};, int
 		// intArray[10]={0,1,2,3};
 
@@ -116,6 +125,18 @@ public class SymbolTable {
 	void putLocalVarWithInitVal(String varname, Type type, int initVar) {
 		// <Fill here>
 		_lsymtable.put(varname, new VarInfo(type, _localVarID++, initVar));
+	}
+
+	Object getArrayInitVal(String varname) {
+		VarInfo arrayVarInfo = _lsymtable.get(varname);
+		if (arrayVarInfo.type == Type.INTARRAY) {
+			if (arrayVarInfo.arrayVal instanceof IntArrayVal) {
+				IntArrayVal iav = ((IntArrayVal) arrayVarInfo.arrayVal);
+				return iav.val;
+			}
+		}
+		return null;
+
 	}
 
 	void putGlobalVarWithInitVal(String varname, Type type, int initVar) {

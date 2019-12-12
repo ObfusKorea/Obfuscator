@@ -69,12 +69,11 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 		if (isArrayDecl(ctx)) {
 			symbolTable.putLocalVar(getLocalVarName(ctx), getArrayType((MiniCParser.Type_specContext) ctx.getChild(0)));
 			symbolTable.putArray(getLocalVarName(ctx), ctx.getChild(3).getText());
-		} /*
-			 * else if (isArrayDeclWithInit(ctx)) {
-			 * symbolTable.putLocalVar(getLocalVarName(ctx),
-			 * getArrayType((MiniCParser.Type_specContext) ctx.getChild(0))); //
-			 * symbolTable.putArrayInit(); // ???초기화 해주는데 크기를 지정해준경우와 아닌경우 나누기 }
-			 */ else if (isDeclWithInit(ctx)) {
+		} else if (isArrayDeclWithInit(ctx)) {
+			symbolTable.putLocalVar(getLocalVarName(ctx), getArrayType((MiniCParser.Type_specContext) ctx.getChild(0)));
+			symbolTable.putArrayInit(getLocalVarName(ctx), ctx.getChild(3).getText(), ctx.getChild(7));
+			// ???초기화 해주는데 크기를 지정해준경우와 아닌경우 나누기
+		} else if (isDeclWithInit(ctx)) {
 			symbolTable.putLocalVarWithInitVal(getLocalVarName(ctx), Type.INT, initVal(ctx));
 		} else { // simple decl
 			symbolTable.putLocalVar(getLocalVarName(ctx), Type.INT);
@@ -199,11 +198,21 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 
 		if (isArrayDecl(ctx)) {
 			String vId = symbolTable.getVarId(ctx);
-			varDecl += "ldc " + ctx.LITERAL().get(0).getText() + "\n" + "newarray " + getArrayElementType() + "\nastore " + vId
+			varDecl += "ldc " + ctx.LITERAL().getText() + "\n" + "newarray " + getArrayElementType() + "\nastore " + vId
 					+ "\n";
+		} else if (isArrayDeclWithInit(ctx)) {
+			String vId = symbolTable.getVarId(ctx);
+			varDecl += "ldc " + ctx.LITERAL().getText() + "\n" + "newarray " + getArrayElementType() + "\n" + "astore "
+					+ vId + "\n";
+			if (getArrayElementType() == "int") {
+				int[] arrayVal = (int[]) symbolTable.getArrayInitVal(ctx.getChild(1).getText());
+				for (int i = 0; i < arrayVal.length; i++) {
+					varDecl += "aload " + vId + "\n" + "ldc " + i + "\n" + "ldc " + arrayVal[i] + "\n" + "iastore\n";
+				}
+			}
 		} else if (isDeclWithInit(ctx)) {
 			String vId = symbolTable.getVarId(ctx);
-			varDecl += "ldc " + ctx.LITERAL().get(0).getText() + "\n" + "istore_" + vId + "\n";
+			varDecl += "ldc " + ctx.LITERAL().getText() + "\n" + "istore_" + vId + "\n";
 		}
 
 		newTexts.put(ctx, varDecl);
