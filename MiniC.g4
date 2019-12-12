@@ -11,7 +11,9 @@ var_decl	:  type_spec IDENT ';'
 		| type_spec IDENT '=' LITERAL ';'	
 		| type_spec IDENT '[' LITERAL ']' ';'	;
 type_spec	: VOID				
-		| INT				;
+		| INT	
+		| CHAR
+		| FLOAT			;
 fun_decl	: type_spec IDENT '(' params ')' compound_stmt ;
 params		: param (',' param)*		
 		| VOID				
@@ -21,21 +23,24 @@ param		: type_spec IDENT
 stmt		: expr_stmt			
 		| compound_stmt			
 		| if_stmt			
-		| while_stmt			
+		| while_stmt
+		| for_stmt			
 		| return_stmt			;
 expr_stmt	: expr ';'			;
 while_stmt	: WHILE '(' expr ')' stmt	;
+for_stmt 	: FOR '(' local_decl expr ';' expr ')' stmt;
 compound_stmt: '{' local_decl* stmt* '}'	;
 local_decl	: type_spec IDENT ';'
 		| type_spec IDENT '=' LITERAL ';'	
-		| type_spec IDENT '[' LITERAL ']' ';'	;
+		| type_spec IDENT '[' LITERAL ']' ';'	
+		| type_spec IDENT '=' '\'' CHARACTER '\'' ';' ;
 if_stmt		: IF '(' expr ')' stmt		
 		| IF '(' expr ')' stmt ELSE stmt 		;
 return_stmt	: RETURN ';'			
 		| RETURN expr ';'				;
 expr	:  LITERAL				
 	| '(' expr ')'				 
-	| IDENT				 
+	| IDENT		  
 	| IDENT '[' expr ']'			 
 	| IDENT '(' args ')'			
 	| '-' expr				 
@@ -63,8 +68,11 @@ args	: expr (',' expr)*
 
 VOID: 'void';
 INT: 'int';
+CHAR: 'char';
+FLOAT: 'float';
 
 WHILE: 'while';
+FOR: 'for';
 IF: 'if';
 ELSE: 'else';
 RETURN: 'return';
@@ -80,9 +88,12 @@ IDENT  : [a-zA-Z_]
         |  [0-9]
         )*;
 
-
+CHARACTER  : [a-zA-Z_]
+        (   [a-zA-Z_]
+        |  [0-9]
+        )*;
+        
 LITERAL:   DecimalConstant     |   OctalConstant     |   HexadecimalConstant     ;
-
 
 DecimalConstant
     :   '0'
