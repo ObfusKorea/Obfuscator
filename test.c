@@ -1,4 +1,5 @@
 int max(int a, int b, int c){
+	int d = 5;
 	int intArray[5];
 }
 

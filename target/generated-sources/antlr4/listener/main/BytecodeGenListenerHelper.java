@@ -12,6 +12,7 @@ import generated.MiniCParser.ParamsContext;
 import generated.MiniCParser.Type_specContext;
 import generated.MiniCParser.Var_declContext;
 import listener.main.SymbolTable;
+import listener.main.SymbolTable.Type;
 import listener.main.SymbolTable.VarInfo;
 
 public class BytecodeGenListenerHelper {
@@ -49,13 +50,13 @@ public class BytecodeGenListenerHelper {
 	}
 
 	static boolean isArrayDecl(Local_declContext ctx) {
-		//6이면서 3번째가 [인것
-		return ctx.getChildCount() == 6;
+		// 6이면서 3번째가 [인것
+		return (ctx.getChildCount() == 6) && (ctx.getChild(2).getText().equals("["));
 	}
-	
+
 	static boolean isArrayDeclWithInit(Local_declContext ctx) {
-		//6이상이면서 3번째가 [인것
-		return ctx.getChildCount() > 6;
+		// 6이상이면서 3번째가 [인것
+		return (ctx.getChildCount() > 6) && (ctx.getChild(2).getText().equals("["));
 	}
 
 	static boolean isDeclWithInit(Local_declContext ctx) {
@@ -87,9 +88,9 @@ public class BytecodeGenListenerHelper {
 
 	static String getTypeText(Type_specContext typespec) {
 		// <Fill in>
-		if(typespec.getChild(0).getText().equals("int")) {
+		if (typespec.getChild(0).getText().equals("int")) {
 			return "I";
-		}else {
+		} else {
 			return "V";
 		}
 	}
@@ -124,6 +125,10 @@ public class BytecodeGenListenerHelper {
 		// <Fill in>
 		return ctx.IDENT().getText();
 	}
+	
+	static String getArrayName(ExprContext ctx) {
+		return ctx.getChild(0).getText();
+	}
 
 	static boolean noElse(If_stmtContext ctx) {
 		return ctx.getChildCount() <= 5;
@@ -137,5 +142,20 @@ public class BytecodeGenListenerHelper {
 
 	static String getCurrentClassName() {
 		return "Test";
+	}
+
+	// 배열의 타입을 알아내는 메소드
+	static SymbolTable.Type getArrayType(Type_specContext typespec) {
+		if (typespec.getChild(0).getText().equals("int")) {
+			return Type.INTARRAY;
+		} else {
+			// 임시로 int가 아닌 값이 들어올 경우 void타입을 반환
+			return Type.VOID;
+		}
+	}
+
+	// 배열의 타입(INTARRAY말고 int)알아내는 메소드
+	static String getArrayElementType() {
+		return "int";
 	}
 }
