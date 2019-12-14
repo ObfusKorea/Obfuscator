@@ -116,8 +116,22 @@ public class SymbolTable {
 		// 타입이 무엇인지 판단하고 intArray로 이동
 	}// int intArray[]={0,1,2,3};, int intArray[4]={0,1,2,3};, int
 		// intArray[10]={0,1,2,3};
-	
-//	void 어레이의 해당 값을 수정하는 코드
+
+	void editArrayValIn(String varname, ParseTree index, String inputVal) {
+		VarInfo currentVar = _lsymtable.get(varname);
+//		int indexVal = Integer.parseInt(index);
+		if (currentVar.type == Type.INTARRAY) {
+			int inputIntVal = Integer.parseInt(inputVal);
+			
+			int[] oldArray = ((IntArrayVal)currentVar.arrayVal).val;
+			oldArray[0] = inputIntVal;
+			
+			//수정된 IntArrayVal을 넣기
+			currentVar.addArrayVal(new IntArrayVal(currentVar.id, oldArray.length, oldArray));
+		}
+
+	}
+	// 어레이의 해당 값을 수정하는 코드
 
 	void putGlobalVar(String varname, Type type) {
 		// <Fill here>
