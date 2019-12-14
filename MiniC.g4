@@ -28,7 +28,9 @@ stmt		: expr_stmt
 		| return_stmt			;
 expr_stmt	: expr ';'			;
 while_stmt	: WHILE '(' expr ')' stmt	;
-for_stmt 	: FOR '(' local_decl expr ';' expr ')' stmt;
+for_stmt 	: FOR '(' local_decl expr ';' expr ')' stmt
+		|FOR '(' local_decl expr ';' ')' stmt
+		|FOR '(' ';' expr ';' expr ')' stmt;
 compound_stmt: '{' local_decl* stmt* '}'	;
 local_decl	: type_spec IDENT ';'
 		| type_spec IDENT '=' LITERAL ';'	

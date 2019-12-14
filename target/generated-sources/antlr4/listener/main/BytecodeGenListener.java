@@ -69,9 +69,10 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 		if (isArrayDecl(ctx)) {
 			symbolTable.putLocalVar(getLocalVarName(ctx), Type.INTARRAY);
 		} else if (isArrayDeclWithInit(ctx)) {
-			//초기화  해주는데 크기를 지정해준경우와 아닌경우 나누기
-			//symbolTable.putLocalVarWithInitVal(getLocalVarName(ctx), Type.INT, initVal(ctx));
-		}else if (isDeclWithInit(ctx)) {
+			// 초기화 해주는데 크기를 지정해준경우와 아닌경우 나누기
+			// symbolTable.putLocalVarWithInitVal(getLocalVarName(ctx), Type.INT,
+			// initVal(ctx));
+		} else if (isDeclWithInit(ctx)) {
 			symbolTable.putLocalVarWithInitVal(getLocalVarName(ctx), Type.INT, initVal(ctx));
 		} else { // simple decl
 			symbolTable.putLocalVar(getLocalVarName(ctx), Type.INT);
@@ -94,7 +95,7 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 		newTexts.put(ctx, classProlog + var_decl + fun_decl);
 
 		System.out.println(newTexts.get(ctx));
-		
+
 		try (FileWriter fw = new FileWriter("Test.j");) {
 			fw.write(newTexts.get(ctx));
 			fw.close();
@@ -130,7 +131,9 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 				stmt += newTexts.get(ctx.if_stmt());
 			else if (ctx.while_stmt() != null) // while_stmt
 				stmt += newTexts.get(ctx.while_stmt());
-			else // return_stmt
+			else if (ctx.for_stmt() != null) { // for_stmt
+				stmt += newTexts.get(ctx.for_stmt());
+			} else // return_stmt
 				stmt += newTexts.get(ctx.return_stmt());
 		}
 		newTexts.put(ctx, stmt);
@@ -156,9 +159,53 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 		String loop = symbolTable.newLabel();
 		String lend = symbolTable.newLabel();
 
-		String stmt = loop + ": " + "\n" + condExpr + "ifeq " + lend + "\n" + doStmt + "goto " + loop + "\n" + lend + ": "
-				+ "\n";
+		String stmt = loop + ": " + "\n" + condExpr + "ifeq " + lend + "\n" + doStmt + "goto " + loop + "\n" + lend
+				+ ": " + "\n";
 		newTexts.put(ctx, stmt);
+	}
+
+	@Override
+	public void exitFor_stmt(MiniCParser.For_stmtContext ctx) {
+		String stmt = "";
+
+		String l_decl = null, condExpr = null, incremental = null;
+		String loop = symbolTable.newLabel();
+		String lend = symbolTable.newLabel();
+		String doStmt = newTexts.get(ctx.stmt());
+
+		switch (ctx.getChildCount()) {
+		case 7:
+			if (ctx.getChild(3) instanceof MiniCParser.ExprContext) {
+				// FOR '(' local_decl expr ';' ')' stmt; 증감식 생략된 for문
+				l_decl = newTexts.get(ctx.local_decl());
+				condExpr = newTexts.get(ctx.expr(0));
+				stmt = l_decl + loop + ": " + "\n" + condExpr + "ifeq " + lend + "\n" + doStmt + "goto " + loop + "\n"
+						+ lend + ": " + "\n";
+				newTexts.put(ctx, stmt);
+				break;
+			}
+		case 8:
+			if (ctx.getChild(2) instanceof MiniCParser.Local_declContext) {
+				// FOR '(' local_decl expr ';' expr ')' stmt;
+				l_decl = newTexts.get(ctx.local_decl());
+				condExpr = newTexts.get(ctx.expr(0));
+				incremental = newTexts.get(ctx.expr(1));
+
+				stmt = l_decl + loop + ": " + "\n" + condExpr + "ifeq " + lend + "\n" + doStmt + incremental
+						+ "goto " + loop + "\n" + lend + ": " + "\n";
+				newTexts.put(ctx, stmt);
+			} else {
+				// FOR '(' ';' expr ';' expr ')' stmt; 초기화식 생략된 for문
+				condExpr = newTexts.get(ctx.expr(0));
+				incremental = newTexts.get(ctx.expr(1));
+
+				stmt = loop + ": " + "\n" + condExpr + "ifeq " + lend + "\n" + doStmt + incremental + "goto " + loop
+						+ "\n" + lend + ": " + "\n";
+				newTexts.put(ctx, stmt);
+			}
+			break;
+		}
+
 	}
 
 	@Override
@@ -274,7 +321,8 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 				expr += "ldc " + literalStr + " \n";
 			}
 		} else if (ctx.getChildCount() == 2) { // UnaryOperation
-			expr = handleUnaryExpr(ctx, newTexts.get(ctx) + expr);
+			//add store instruction
+			expr = handleUnaryExpr(ctx, expr) + "istore_" + symbolTable.getVarId(ctx.expr(0).IDENT().getText())+"\n";
 		} else if (ctx.getChildCount() == 3) {
 			if (ctx.getChild(0).getText().equals("(")) { // '(' expr ')'
 				expr = newTexts.get(ctx.expr(0));

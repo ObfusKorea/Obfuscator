@@ -205,13 +205,33 @@ public class MiniCPrintListener extends MiniCBaseListener {
 		String s1 = null, s2 = null, s3 = null, s4 = null, s5 = null;
 
 		s1 = ctx.getChild(0).getText();
-		if (ctx.getChildCount() == 8) {
-			s2 = newTexts.get(ctx.local_decl());
-			s3 = newTexts.get(ctx.expr(0));
-			s4 = newTexts.get(ctx.expr(1));
-			s5 = newTexts.get(ctx.stmt());
+		switch (ctx.getChildCount()) {
+		case 7:
+			if (ctx.getChild(3) instanceof MiniCParser.ExprContext) {
+				// FOR '(' local_decl expr ';' ')' stmt; 증감식 생략된 for문
+				s2 = newTexts.get(ctx.local_decl());
+				s3 = newTexts.get(ctx.expr(0));
+				s4 = newTexts.get(ctx.stmt());
+				newTexts.put(ctx, s1 + " (" + s2 + " " + s3 + "; ) " + "\n" + s4);
+				break;
+			}
+		case 8:
+			if (ctx.getChild(2) instanceof MiniCParser.Local_declContext) {
+				// FOR '(' local_decl expr ';' expr ')' stmt;
+				s2 = newTexts.get(ctx.local_decl());
+				s3 = newTexts.get(ctx.expr(0));
+				s4 = newTexts.get(ctx.expr(1));
+				s5 = newTexts.get(ctx.stmt());
+				newTexts.put(ctx, s1 + " (" + s2 + " " + s3 + "; " + s4 + ") " + "\n" + s5);
+			} else {
+				// FOR '(' ';' expr ';' expr ')' stmt; //초기화식 생략된 for문
+				s2 = newTexts.get(ctx.expr(0));
+				s3 = newTexts.get(ctx.expr(1));
+				s4 = newTexts.get(ctx.stmt());
+				newTexts.put(ctx, s1 + " (;" + s2 + "; " + s3 + ") " + "\n" + s4);
+			}
+			break;
 		}
-		newTexts.put(ctx, s1 + " (" + s2 + " " + s3 + "; " + s4 + ") " + "\n" + s5);
 		for_count--;
 	}
 
@@ -295,14 +315,15 @@ public class MiniCPrintListener extends MiniCBaseListener {
 			newTexts.put(ctx, indentation + s1 + " " + s2 + s3 + s4 + s5 + s6 + nl);
 			break;
 
-		case 7: // case : type_spec IDENT '=' '\'' CHARACTER '\'' ';'
-			s3 = ctx.getChild(2).getText(); // '='
-			s4 = ctx.getChild(3).getText(); // '\''
-			s5 = ctx.getChild(4).getText(); // CHARACTER
-			s6 = ctx.getChild(5).getText(); // '\''
-			s7 = ctx.getChild(6).getText(); // ';'
-			newTexts.put(ctx, indentation + s1 + " " + s2 + " " + s3 + " " + s4 + s5 + s6 + s7 + nl);
-			break;
+		// case 7: // case : type_spec IDENT '=' '\'' CHARACTER '\'' ';'
+		// s3 = ctx.getChild(2).getText(); // '='
+		// s4 = ctx.getChild(3).getText(); // '\''
+		// s5 = ctx.getChild(4).getText(); // CHARACTER
+		// s6 = ctx.getChild(5).getText(); // '\''
+		// s7 = ctx.getChild(6).getText(); // ';'
+		// newTexts.put(ctx, indentation + s1 + " " + s2 + " " + s3 + " " + s4 + s5 + s6
+		// + s7 + nl);
+		// break;
 		}
 	}
 
