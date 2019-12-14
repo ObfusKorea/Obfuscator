@@ -1,9 +1,9 @@
-int max(int a, int b, int c){
-	int d = 5;
-	int intArray[5];
+int arrayValIn(int a){
+   int qwer[2] = {100,200};
+   qwer[a] = 300;
+   return qwer[a];
 }
 
-void main () {
-	_print(max(3, 4, 5));
+void main() {
+   _print(arrayValIn(1));
 }
-
