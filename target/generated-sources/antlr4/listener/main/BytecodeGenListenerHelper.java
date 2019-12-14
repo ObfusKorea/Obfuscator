@@ -125,6 +125,10 @@ public class BytecodeGenListenerHelper {
 		// <Fill in>
 		return ctx.IDENT().getText();
 	}
+	
+	static String getArrayName(ExprContext ctx) {
+		return ctx.getChild(0).getText();
+	}
 
 	static boolean noElse(If_stmtContext ctx) {
 		return ctx.getChildCount() <= 5;

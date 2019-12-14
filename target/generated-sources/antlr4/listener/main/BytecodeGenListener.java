@@ -305,16 +305,32 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 		else if (ctx.getChildCount() == 4) {
 			if (ctx.args() != null) { // function calls
 				expr = handleFunCall(ctx, expr);
-			} else { // expr
-				// Arrays: TODO
+			} else if (ctx.getChild(1).getText().equals("[")) { // array call
+				String arrayName = getArrayName(ctx);
+				expr += "aload " + symbolTable.getVarId(arrayName) + "\n";
+				expr += newTexts.get(ctx.getChild(2));
+				expr += "iaload\n";
+			} else {
 			}
 		}
 		// IDENT '[' expr ']' '=' expr
-		else { // Arrays: TODO */
+		else if (ctx.getChild(1).getText() == "[") {
+			String arrayName = getArrayName(ctx);
+			expr += "aload " + symbolTable.getVarId(arrayName) + "\n";
+			expr += newTexts.get(ctx.getChild(6));
+			expr += newTexts.get(ctx.getChild(2));
+			expr += "iastore\n";
+			
+			expr += "aload " + symbolTable.getVarId(arrayName) + "\n";
+			expr += newTexts.get(ctx.getChild(2));
+			expr += "iaload\n";
+			
+			//진짜 값도 바꿔주기
+		} else {
 		}
 		newTexts.put(ctx, expr);
 	}
-
+	
 	private String handleUnaryExpr(MiniCParser.ExprContext ctx, String expr) {
 		String l1 = symbolTable.newLabel();
 		String l2 = symbolTable.newLabel();
@@ -415,7 +431,6 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 		}
 
 		return expr;
-
 	}
 
 	// args : expr (',' expr)* | ;
