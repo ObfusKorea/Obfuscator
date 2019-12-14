@@ -382,17 +382,18 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 			}
 		}
 		// IDENT '[' expr ']' '=' expr
-		else if (ctx.getChild(1).getText() == "[") {
+		else if (ctx.getChild(1).getText().equals("[")) {
 			String arrayName = getArrayName(ctx);
 			expr += "aload " + symbolTable.getVarId(arrayName) + "\n";
-			expr += newTexts.get(ctx.getChild(6));
 			expr += newTexts.get(ctx.getChild(2));
+			expr += newTexts.get(ctx.getChild(5));
 			expr += "iastore\n";
 
 			expr += "aload " + symbolTable.getVarId(arrayName) + "\n";
 			expr += newTexts.get(ctx.getChild(2));
 			expr += "iaload\n";
 
+			symbolTable.editArrayValIn(arrayName, ctx.getChild(2), ctx.getChild(5).getText());
 			// 진짜 값도 바꿔주기
 		} else {
 		}
