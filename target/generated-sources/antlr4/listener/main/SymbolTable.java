@@ -17,13 +17,14 @@ import static listener.main.BytecodeGenListenerHelper.*;
 
 public class SymbolTable {
 	enum Type {
-		INT, INTARRAY, VOID, ERROR
+		INT, INTARRAY, VOID, ERROR, CHAR, DOUBLE
 	}
 
 	static public class VarInfo {
 		Type type;
 		int id;
 		int initVal;
+		double d_initVal; //double형 변수를 위함
 		Object arrayVal;
 
 		public VarInfo(Type type, int id, int initVal) {
@@ -31,12 +32,24 @@ public class SymbolTable {
 			this.id = id;
 			this.initVal = initVal;
 		}
+		
+		public VarInfo(Type type, int id, double initVal) {
+			this.type = type;
+			this.id = id;
+			this.d_initVal = initVal;
+		}
 
 		public VarInfo(Type type, int id) {
 			this.type = type;
 			this.id = id;
-			this.initVal = 0;
+			if(type == Type.INT) {
+				this.initVal = 0;
+			}
+			if(type == Type.DOUBLE) {
+				this.d_initVal = 0.0;
+			}
 		}
+		
 
 		public void addArrayVal(Object arrayVal) {
 			this.arrayVal = arrayVal;
@@ -128,6 +141,13 @@ public class SymbolTable {
 		// <Fill here>
 		_lsymtable.put(varname, new VarInfo(type, _localVarID++, initVar));
 	}
+	
+	//double type 로컬 변수를 초기 값과 함께 생성, 로컬 심벌 테이블에 삽입
+	void putLocalVarWithInitVal(String varname, Type type, double initVar) {
+		// <Fill here>
+		_lsymtable.put(varname, new VarInfo(type, _localVarID++, initVar));
+	}
+	
 
 	Object getArrayInitVal(String varname) {
 		VarInfo arrayVarInfo = _lsymtable.get(varname);
@@ -145,23 +165,35 @@ public class SymbolTable {
 		// <Fill here>
 		_gsymtable.put(varname, new VarInfo(type, _globalVarID++, initVar));
 	}
+	
+	//double type 전역 변수를 초기 값과 함께 생성, 글로벌 심벌 테이블에 삽입
+	void putGlobalVarWithInitVal(String varname, Type type, double initVar) {
+		// <Fill here>
+		_gsymtable.put(varname, new VarInfo(type, _globalVarID++, initVar));
+	}
 
 	void putParams(MiniCParser.ParamsContext params) {
 		for (int i = 0; i < params.param().size(); i++) {
 			// <Fill here>
 			MiniCParser.ParamContext param = params.param(i);
 			String pname = getParamName(param);
-			putLocalVar(pname, Type.INT);
+			putLocalVar(pname, getType(param.type_spec()));
 		}
 	}
 
 	private void initFunTable() {
 		FInfo printlninfo = new FInfo();
 		printlninfo.sigStr = "java/io/PrintStream/println(I)V";
+		
+		FInfo printDoubleInfo = new FInfo();
+		printDoubleInfo.sigStr = "java/io/PrintStream/println(D)V";
 
 		FInfo maininfo = new FInfo();
 		maininfo.sigStr = "main([Ljava/lang/String;)V";
-		_fsymtable.put("_print", printlninfo);
+		
+		// println 함수가 정수 / 실수 출력하는것을 구분하기 위해서 기존의 _print 를 _printI와 _printD로 나누었음 !!!
+		_fsymtable.put("_printI", printlninfo);
+		_fsymtable.put("_printD", printDoubleInfo);
 		_fsymtable.put("main", maininfo);
 	}
 

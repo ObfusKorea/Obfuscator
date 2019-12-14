@@ -45,8 +45,14 @@ public class BytecodeGenListenerHelper {
 
 	// <local vars>
 	// local_decl : type_spec IDENT '[' LITERAL ']' ';'
-	static int initVal(Local_declContext ctx) {
-		return Integer.parseInt(ctx.LITERAL().getText());
+	static Object initVal(Local_declContext ctx) {
+		if (getType(ctx.type_spec()) == Type.INT) {
+			return Integer.parseInt(ctx.LITERAL().getText());
+		}
+		if (getType(ctx.type_spec()) == Type.DOUBLE) {
+			return Double.parseDouble(ctx.DOUBLE_Lit().getText());
+		}
+		return null;
 	}
 
 	static boolean isArrayDecl(Local_declContext ctx) {
@@ -88,11 +94,37 @@ public class BytecodeGenListenerHelper {
 
 	static String getTypeText(Type_specContext typespec) {
 		// <Fill in>
-		if (typespec.getChild(0).getText().equals("int")) {
+		if (getType(typespec) == Type.INT) {
 			return "I";
+		} else if (getType(typespec) == Type.DOUBLE) {
+			return "D";
 		} else {
 			return "V";
 		}
+	}
+
+	static String getTypeLowerCase(Type_specContext typespec) {
+		if (getType(typespec) == Type.INT) {
+			return "i";
+		} else if (getType(typespec) == Type.DOUBLE) {
+			return "d";
+		} else {
+			return "타입로워케이스";
+		}
+	}
+
+	// type_spec과 일치하는 Type을 반환
+	static Type getType(Type_specContext typespec) {
+		if (typespec.getText().equals("int")) {
+			return Type.INT;
+		}
+		if (typespec.getText().equals("char")) {
+			return Type.CHAR;
+		}
+		if (typespec.getText().equals("double")) {
+			return Type.DOUBLE;
+		}
+		return Type.ERROR;
 	}
 
 	// params
@@ -125,7 +157,7 @@ public class BytecodeGenListenerHelper {
 		// <Fill in>
 		return ctx.IDENT().getText();
 	}
-	
+
 	static String getArrayName(ExprContext ctx) {
 		return ctx.getChild(0).getText();
 	}

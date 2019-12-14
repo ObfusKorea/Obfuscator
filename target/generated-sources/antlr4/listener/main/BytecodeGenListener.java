@@ -74,7 +74,14 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 			symbolTable.putArrayInit(getLocalVarName(ctx), ctx.getChild(3).getText(), ctx.getChild(7));
 			// ???초기화 해주는데 크기를 지정해준경우와 아닌경우 나누기
 		} else if (isDeclWithInit(ctx)) {
-			symbolTable.putLocalVarWithInitVal(getLocalVarName(ctx), Type.INT, initVal(ctx));
+			if (initVal(ctx) instanceof Integer) {
+				symbolTable.putLocalVarWithInitVal(getLocalVarName(ctx), getType(ctx.type_spec()), (int) initVal(ctx));
+			}
+			if (initVal(ctx) instanceof Double) {
+				symbolTable.putLocalVarWithInitVal(getLocalVarName(ctx), getType(ctx.type_spec()),
+						(double) initVal(ctx));
+			}
+
 		} else { // simple decl
 			symbolTable.putLocalVar(getLocalVarName(ctx), Type.INT);
 		}
@@ -192,8 +199,8 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 				condExpr = newTexts.get(ctx.expr(0));
 				incremental = newTexts.get(ctx.expr(1));
 
-				stmt = l_decl + loop + ": " + "\n" + condExpr + "ifeq " + lend + "\n" + doStmt + incremental
-						+ "goto " + loop + "\n" + lend + ": " + "\n";
+				stmt = l_decl + loop + ": " + "\n" + condExpr + "ifeq " + lend + "\n" + doStmt + incremental + "goto "
+						+ loop + "\n" + lend + ": " + "\n";
 				newTexts.put(ctx, stmt);
 			} else {
 				// FOR '(' ';' expr ';' expr ')' stmt; 초기화식 생략된 for문
@@ -257,8 +264,17 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 				}
 			}
 		} else if (isDeclWithInit(ctx)) {
+			String num = "";
+			String ldc = "";
 			String vId = symbolTable.getVarId(ctx);
-			varDecl += "ldc " + ctx.LITERAL().getText() + "\n" + "istore_" + vId + "\n";
+			String vType = getTypeLowerCase(ctx.type_spec());
+			if(vType.equals("i"))
+				num = ctx.LITERAL().getText();
+				ldc = "ldc ";
+			if(vType.equals("d"))
+				num = ctx.DOUBLE_Lit().getText();
+				ldc = "ldc2_w ";
+			varDecl += ldc + num + "\n" + vType + "store_" + vId + "\n";
 		}
 
 		newTexts.put(ctx, varDecl);
@@ -323,21 +339,26 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 			return;
 		}
 
-		if (ctx.getChildCount() == 1) { // IDENT | LITERAL
+		if (ctx.getChildCount() == 1) { // IDENT | LITERAL | DOUBLE_Lit
 			if (ctx.IDENT() != null) {
 				String idName = ctx.IDENT().getText();
 				if (symbolTable.getVarType(idName) == Type.INT) {
 					expr += "iload_" + symbolTable.getVarId(idName) + " \n";
+				}else if(symbolTable.getVarType(idName) == Type.DOUBLE) {
+					expr += "dload_" + symbolTable.getVarId(idName) + " \n";
 				}
 				// else // Type int array => Later! skip now..
 				// expr += " lda " + symbolTable.get(ctx.IDENT().getText()).value + " \n";
 			} else if (ctx.LITERAL() != null) {
 				String literalStr = ctx.LITERAL().getText();
 				expr += "ldc " + literalStr + " \n";
+			}else if(ctx.DOUBLE_Lit() != null){
+				String d_litStr = ctx.DOUBLE_Lit().getText();
+				expr += "ldc2_w " + d_litStr + "\n";
 			}
 		} else if (ctx.getChildCount() == 2) { // UnaryOperation
-			//add store instruction
-			expr = handleUnaryExpr(ctx, expr) + "istore_" + symbolTable.getVarId(ctx.expr(0).IDENT().getText())+"\n";
+			// add store instruction
+			expr = handleUnaryExpr(ctx, expr) + "istore_" + symbolTable.getVarId(ctx.expr(0).IDENT().getText()) + "\n";
 		} else if (ctx.getChildCount() == 3) {
 			if (ctx.getChild(0).getText().equals("(")) { // '(' expr ')'
 				expr = newTexts.get(ctx.expr(0));
@@ -372,7 +393,7 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 			expr += newTexts.get(ctx.getChild(2));
 			expr += "iaload\n";
 
-			//진짜 값도 바꿔주기
+			// 진짜 값도 바꿔주기
 		} else {
 		}
 		newTexts.put(ctx, expr);
@@ -469,9 +490,9 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 	private String handleFunCall(MiniCParser.ExprContext ctx, String expr) {
 		String fname = getFunName(ctx);
 
-		if (fname.equals("_print")) { // System.out.println
+		if (fname.equals("_printI") || fname.equals("_printD")) { // System.out.println
 			expr = "getstatic java/lang/System/out Ljava/io/PrintStream; " + newTexts.get(ctx.args()) + "invokevirtual "
-					+ symbolTable.getFunSpecStr("_print") + "\n";
+					+ symbolTable.getFunSpecStr(fname) + "\n";
 		} else {
 			expr = newTexts.get(ctx.args()) + "invokestatic " + getCurrentClassName() + "/"
 					+ symbolTable.getFunSpecStr(fname) + "\n";
