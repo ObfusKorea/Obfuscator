@@ -393,8 +393,8 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 			expr += newTexts.get(ctx.getChild(2));
 			expr += "iaload\n";
 
-			symbolTable.editArrayValIn(arrayName, ctx.getChild(2), ctx.getChild(5).getText());
-			// 진짜 값도 바꿔주기
+//			symbolTable.editArrayValIn(arrayName, ctx.getChild(2), ctx.getChild(5).getText());
+			// 진짜 값도 바꿔주기 <--필요없을것같음 근데 안지우고있어쥬
 		} else {
 		}
 		newTexts.put(ctx, expr);
