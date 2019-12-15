@@ -1,5 +1,5 @@
 // Generated from MiniC.g4 by ANTLR 4.7.2
- 
+
 package generated;
 
 import org.antlr.v4.runtime.tree.ParseTreeListener;
@@ -110,6 +110,16 @@ public interface MiniCListener extends ParseTreeListener {
 	 */
 	void exitWhile_stmt(MiniCParser.While_stmtContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link MiniCParser#for_stmt}.
+	 * @param ctx the parse tree
+	 */
+	void enterFor_stmt(MiniCParser.For_stmtContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link MiniCParser#for_stmt}.
+	 * @param ctx the parse tree
+	 */
+	void exitFor_stmt(MiniCParser.For_stmtContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link MiniCParser#compound_stmt}.
 	 * @param ctx the parse tree
 	 */
@@ -129,6 +139,16 @@ public interface MiniCListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitLocal_decl(MiniCParser.Local_declContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link MiniCParser#array_init_val}.
+	 * @param ctx the parse tree
+	 */
+	void enterArray_init_val(MiniCParser.Array_init_valContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link MiniCParser#array_init_val}.
+	 * @param ctx the parse tree
+	 */
+	void exitArray_init_val(MiniCParser.Array_init_valContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link MiniCParser#if_stmt}.
 	 * @param ctx the parse tree

@@ -1,5 +1,5 @@
 // Generated from MiniC.g4 by ANTLR 4.7.2
- 
+
 package generated;
 
 
@@ -138,6 +138,18 @@ public class MiniCBaseListener implements MiniCListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterFor_stmt(MiniCParser.For_stmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitFor_stmt(MiniCParser.For_stmtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterCompound_stmt(MiniCParser.Compound_stmtContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -157,6 +169,18 @@ public class MiniCBaseListener implements MiniCListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitLocal_decl(MiniCParser.Local_declContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterArray_init_val(MiniCParser.Array_init_valContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitArray_init_val(MiniCParser.Array_init_valContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
