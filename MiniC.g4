@@ -8,9 +8,8 @@ program	: decl+			;
 decl		: var_decl
 		| fun_decl		;
 var_decl	:  type_spec IDENT ';'
-		| type_spec IDENT '=' (LITERAL|DOUBLE_Lit) ';'
-		| type_spec IDENT '[' LITERAL ']' ';'
-		| type_spec IDENT '=' '\'' CHARACTER '\'' ';' ;
+		| type_spec IDENT '=' (LITERAL|DOUBLE_Lit|CHARACTER) ';'
+		| type_spec IDENT '[' LITERAL ']' ';' ;
 type_spec	: VOID
 		| INT
 		| CHAR
@@ -34,11 +33,10 @@ for_stmt 	: FOR '(' local_decl expr ';' expr ')' stmt
 		|FOR '(' ';' expr ';' expr ')' stmt;
 compound_stmt: '{' local_decl* stmt* '}'	;
 local_decl	: type_spec IDENT ';'
-		| type_spec IDENT '=' (LITERAL|DOUBLE_Lit) ';'
+		| type_spec IDENT '=' (LITERAL|DOUBLE_Lit|CHARACTER) ';'
 		| type_spec IDENT '[' LITERAL ']' ';'
 		| type_spec IDENT '[' ']' '=' '{' array_init_val '}' ';'
-		| type_spec IDENT '[' LITERAL ']' '=' '{' array_init_val '}' ';' 
-		| type_spec IDENT '=' '\'' CHARACTER '\'' ';' ;
+		| type_spec IDENT '[' LITERAL ']' '=' '{' array_init_val '}' ';' ;
 array_init_val: LITERAL (',' LITERAL)*;
 if_stmt		: IF '(' expr ')' stmt
 		| IF '(' expr ')' stmt ELSE stmt 		;
@@ -95,10 +93,7 @@ IDENT  : [a-zA-Z_]
         |  [0-9]
         )*;
 
-CHARACTER  : [a-zA-Z_]
-        (   [a-zA-Z_]
-        |  [0-9]
-        )*;
+CHARACTER  : '\'' + [a-zA-Z] + '\'';
         
 DOUBLE_Lit : [0-9]+ '.' [0-9]*;
 
