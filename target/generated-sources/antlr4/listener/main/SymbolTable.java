@@ -43,7 +43,7 @@ public class SymbolTable {
 		}
 	}
 
-	// ???(int)배열은 생성하면서 배열의 정보를 가지는 클래스를 하나 더 생성
+	// (int)배열은 생성하면서 배열의 정보를 가지는 클래스를 하나 더 생성
 	static public class IntArrayVal {
 		int id;
 		int length;
@@ -55,7 +55,6 @@ public class SymbolTable {
 			this.val = new int[length];
 		}
 
-		// ???일단 아래거는 이따가
 		public IntArrayVal(int id, int length, int[] val) {
 			this.id = id;
 			this.length = length;
@@ -117,20 +116,20 @@ public class SymbolTable {
 	}// int intArray[]={0,1,2,3};, int intArray[4]={0,1,2,3};, int
 		// intArray[10]={0,1,2,3};
 
-	void editArrayValIn(String varname, ParseTree index, String inputVal) {
-		VarInfo currentVar = _lsymtable.get(varname);
-//		int indexVal = Integer.parseInt(index);
-		if (currentVar.type == Type.INTARRAY) {
-			int inputIntVal = Integer.parseInt(inputVal);
-			
-			int[] oldArray = ((IntArrayVal)currentVar.arrayVal).val;
-			oldArray[0] = inputIntVal;
-			
-			//수정된 IntArrayVal을 넣기
-			currentVar.addArrayVal(new IntArrayVal(currentVar.id, oldArray.length, oldArray));
-		}
-
-	}
+//	void editArrayValIn(String varname, ParseTree indexTree, String inputVal) {
+//		VarInfo currentVar = _lsymtable.get(varname);
+////		int indexVal = Integer.parseInt(indexTree);
+//		if (currentVar.type == Type.INTARRAY) {
+//			int inputIntVal = Integer.parseInt(inputVal);
+//			
+//			int[] oldArray = ((IntArrayVal)currentVar.arrayVal).val;
+//			oldArray[0] = inputIntVal;
+//			
+//			//수정된 IntArrayVal을 넣기
+//			currentVar.addArrayVal(new IntArrayVal(currentVar.id, oldArray.length, oldArray));
+//		}
+//
+//	}
 	// 어레이의 해당 값을 수정하는 코드
 
 	void putGlobalVar(String varname, Type type) {
