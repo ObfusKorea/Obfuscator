@@ -40,29 +40,28 @@ public class MiniCPrintListener extends MiniCBaseListener {
 
 	@Override
 	public void exitVar_decl(MiniCParser.Var_declContext ctx) {
-		String s1 = null, s2 = null, s3 = null, s4 = null, s5 = null, s6 = null;
+		String typeStr = null, identStr = null, valStr = null, nl = "\n";
 		int count = ctx.getChildCount();
 
-		s1 = newTexts.get(ctx.type_spec()); // type_spec
-		s2 = ctx.getChild(1).getText(); // IDENT
-
+		typeStr = newTexts.get(ctx.type_spec()); // type_spec
+		identStr = ctx.getChild(1).getText(); // IDENT
 		switch (count) {
 		case 3: // case : type_spec IDENT ';'
-			s3 = ctx.getChild(2).getText(); // ';'
-			newTexts.put(ctx, s1 + " " + s2 + s3 + "\n");
+			newTexts.put(ctx, typeStr + " " + identStr + ";" + nl);
 			break;
-		case 5: // case : type_spec IDENT '=' LITERAL ';'
-			s3 = ctx.getChild(2).getText(); // '='
-			s4 = ctx.getChild(3).getText(); // LITERAL
-			s5 = ctx.getChild(4).getText(); // ';'
-			newTexts.put(ctx, s1 + " " + s2 + " " + s3 + " " + s4 + s5 + "\n");
-			break;
+		case 5:
+			if (ctx.CHARACTER() != null) {// case : type_spec IDENT '=' CHARACTER ';'
+				valStr = Character.toString(ctx.getChild(3).getText().charAt(1)); // 'x'형태에서 x만 가져옴
+				newTexts.put(ctx, typeStr + " " + identStr + " = \'" + valStr + "\';" + nl);
+				break;
+			} else {// case : type_spec IDENT '=' (LITERAL|Double_Lit) ';'
+				valStr = ctx.getChild(3).getText(); // LITERAL|Double_Lit
+				newTexts.put(ctx, typeStr + " " + identStr + " = " + valStr + ";" + nl);
+				break;
+			}
 		case 6: // case : type_spec IDENT '[' LITERAL ']' ';'
-			s3 = ctx.getChild(2).getText(); // '['
-			s4 = ctx.getChild(3).getText(); // LITERAL
-			s5 = ctx.getChild(4).getText(); // ']'
-			s6 = ctx.getChild(5).getText(); // ';'
-			newTexts.put(ctx, s1 + " " + s2 + s3 + s4 + s5 + s6 + "\n");
+			valStr = ctx.getChild(3).getText(); // LITERAL
+			newTexts.put(ctx, typeStr + " " + identStr + "[" + valStr + "];" + nl);
 			break;
 		}
 	}
@@ -275,55 +274,34 @@ public class MiniCPrintListener extends MiniCBaseListener {
 
 	@Override
 	public void exitLocal_decl(MiniCParser.Local_declContext ctx) {
-		String indentation = null, s1 = null, s2 = null, s3 = null, s4 = null, s5 = null, s6 = null, s7 = null,
-				nl = "\n";
+		String indentation = null, typeStr = null, identStr = null, valStr = null, nl = "\n";
 		int count = ctx.getChildCount();
-		// System.out.println(ctx.getChildCount() + " " + ctx.type_spec().getText());
-		// if (ctx.type_spec().getText().equals("char")) {
-		// System.out.print(ctx.getChild(0).getText());
-		// System.out.print(ctx.getChild(1).getText());
-		// System.out.print(ctx.getChild(2).getText());
-		// System.out.print(ctx.getChild(3).getText());
-		// System.out.print(ctx.getChild(4).getText());
-		// System.out.print(ctx.getChild(5).getText());
-		// System.out.println(ctx.getChild(6).getText());
-		// }
 
 		indentation = dots(if_count + while_count + fun_decl_count + for_count); // Local_decl의 indentation
 		if (ctx.parent instanceof MiniCParser.For_stmtContext) {
 			indentation = dots(0);
 			nl = "";
 		}
-		s1 = newTexts.get(ctx.type_spec()); // type_spec
-		s2 = ctx.getChild(1).getText(); // IDENT
+		typeStr = newTexts.get(ctx.type_spec()); // type_spec
+		identStr = ctx.getChild(1).getText(); // IDENT
 		switch (count) {
 		case 3: // case : type_spec IDENT ';'
-			s3 = ctx.getChild(2).getText(); // ';'
-			newTexts.put(ctx, indentation + s1 + " " + s2 + s3 + nl);
+			newTexts.put(ctx, indentation + typeStr + " " + identStr + ";" + nl);
 			break;
-		case 5: // case : type_spec IDENT '=' LITERAL ';'
-			s3 = ctx.getChild(2).getText(); // '='
-			s4 = ctx.getChild(3).getText(); // LITERAL
-			s5 = ctx.getChild(4).getText(); // ';'
-			newTexts.put(ctx, indentation + s1 + " " + s2 + " " + s3 + " " + s4 + s5 + nl);
-			break;
+		case 5:
+			if (ctx.CHARACTER() != null) {// case : type_spec IDENT '=' CHARACTER ';'
+				valStr = Character.toString(ctx.getChild(3).getText().charAt(1)); // 'x'형태에서 x만 가져옴
+				newTexts.put(ctx, indentation + typeStr + " " + identStr + " = \'" + valStr + "\';" + nl);
+				break;
+			} else {// case : type_spec IDENT '=' (LITERAL|Double_Lit) ';'
+				valStr = ctx.getChild(3).getText(); // LITERAL|Double_Lit
+				newTexts.put(ctx, indentation + typeStr + " " + identStr + " = " + valStr + ";" + nl);
+				break;
+			}
 		case 6: // case : type_spec IDENT '[' LITERAL ']' ';'
-			s3 = ctx.getChild(2).getText(); // '['
-			s4 = ctx.getChild(3).getText(); // LITERAL
-			s5 = ctx.getChild(4).getText(); // ']'
-			s6 = ctx.getChild(5).getText(); // ';'
-			newTexts.put(ctx, indentation + s1 + " " + s2 + s3 + s4 + s5 + s6 + nl);
+			valStr = ctx.getChild(3).getText(); // LITERAL
+			newTexts.put(ctx, indentation + typeStr + " " + identStr + "[" + valStr + "];" + nl);
 			break;
-
-		// case 7: // case : type_spec IDENT '=' '\'' CHARACTER '\'' ';'
-		// s3 = ctx.getChild(2).getText(); // '='
-		// s4 = ctx.getChild(3).getText(); // '\''
-		// s5 = ctx.getChild(4).getText(); // CHARACTER
-		// s6 = ctx.getChild(5).getText(); // '\''
-		// s7 = ctx.getChild(6).getText(); // ';'
-		// newTexts.put(ctx, indentation + s1 + " " + s2 + " " + s3 + " " + s4 + s5 + s6
-		// + s7 + nl);
-		// break;
 		}
 	}
 

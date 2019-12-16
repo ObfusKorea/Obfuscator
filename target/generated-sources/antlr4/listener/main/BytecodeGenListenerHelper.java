@@ -51,6 +51,9 @@ public class BytecodeGenListenerHelper {
 		if (getType(ctx.type_spec()) == Type.DOUBLE) {
 			return Double.parseDouble(ctx.DOUBLE_Lit().getText());
 		}
+		if (getType(ctx.type_spec()) == Type.CHAR) {
+			return ctx.CHARACTER().getText().charAt(1);
+		}
 		return null;
 	}
 
@@ -108,11 +111,14 @@ public class BytecodeGenListenerHelper {
 	static String getTypeLowerCase(Type_specContext typespec) {
 		if (getType(typespec) == Type.INT) {
 			return "i";
-		} else if (getType(typespec) == Type.DOUBLE) {
-			return "d";
-		} else {
-			return "타입로워케이스";
 		}
+		if (getType(typespec) == Type.DOUBLE) {
+			return "d";
+		}
+		if (getType(typespec) == Type.CHAR) {
+			return "c";
+		}
+		return null;
 	}
 
 	// type_spec과 일치하는 Type을 반환
