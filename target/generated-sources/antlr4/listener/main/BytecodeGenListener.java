@@ -274,7 +274,7 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 				arrayLength = (ctx.getChild(6).getChildCount()) / 2 + 1 + "";
 			} else {
 				arrayLength = ctx.LITERAL().getText();
-			}// 어레이 길이를 가져오는것
+			} // 어레이 길이를 가져오는것
 			varDecl += "ldc " + arrayLength + "\n" + "newarray " + ctx.type_spec().getText() + "\n" + "astore " + vId
 					+ "\n";
 			if (ctx.type_spec().getText().equals("int")) {
@@ -282,7 +282,7 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 				for (int i = 0; i < arrayVal.length; i++) {
 					varDecl += "aload " + vId + "\n" + "ldc " + i + "\n" + "ldc " + arrayVal[i] + "\n" + "iastore\n";
 				}
-			}else if(ctx.type_spec().getText().equals("double")){
+			} else if (ctx.type_spec().getText().equals("double")) {
 				double[] arrayVal = (double[]) symbolTable.getArrayInitVal(ctx.getChild(1).getText());
 				for (int i = 0; i < arrayVal.length; i++) {
 					varDecl += "aload " + vId + "\n" + "ldc " + i + "\n" + "ldc " + arrayVal[i] + "\n" + "dastore\n";
@@ -293,6 +293,10 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 			String ldc = "";
 			String vId = symbolTable.getVarId(ctx);
 			String vType = getTypeLowerCase(ctx.type_spec());
+			String store = "store_";
+			if (Integer.parseInt(vId) > 3) {
+				store = "store ";
+			}
 			if (vType.equals("i")) { // int 일 경우
 				num = ctx.LITERAL().getText();
 				ldc = "ldc ";
@@ -308,7 +312,7 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 				num = ctx.DOUBLE_Lit().getText();
 				ldc = "ldc2_w ";
 			}
-			varDecl += indentation + ldc + num + "\n" + indentation + vType + "store_" + vId + "\n";
+			varDecl += indentation + ldc + num + "\n" + indentation + vType + store + vId + "\n";
 		}
 
 		newTexts.put(ctx, varDecl);
@@ -381,12 +385,16 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 		if (ctx.getChildCount() == 1) { // IDENT | LITERAL | DOUBLE_Lit | CHARACTER
 			if (ctx.IDENT() != null) {
 				String idName = ctx.IDENT().getText();
+				String load = "load_";
+				if (Integer.parseInt(symbolTable.getVarId(idName)) > 3) {
+					load = "load ";
+				}
 				if (symbolTable.getVarType(idName) == Type.INT) {
-					expr += indentation + "iload_" + symbolTable.getVarId(idName) + " \n";
+					expr += indentation + "i" + load + symbolTable.getVarId(idName) + " \n";
 				} else if (symbolTable.getVarType(idName) == Type.DOUBLE) {
-					expr += indentation + "dload_" + symbolTable.getVarId(idName) + " \n";
+					expr += indentation + "d" + load + symbolTable.getVarId(idName) + " \n";
 				} else if (symbolTable.getVarType(idName) == Type.CHAR) {
-					expr += indentation + "iload_" + symbolTable.getVarId(idName) + " \n" + indentation + "i2c\n";
+					expr += indentation + "i" + load + symbolTable.getVarId(idName) + " \n" + indentation + "i2c\n";
 				}
 				// else // Type int array => Later! skip now..
 				// expr += " lda " + symbolTable.get(ctx.IDENT().getText()).value + " \n";
@@ -424,10 +432,10 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 				String arrayName = getArrayName(ctx);
 				expr += indentation + "aload " + symbolTable.getVarId(arrayName) + "\n";
 				expr += newTexts.get(ctx.getChild(2));
-				if(symbolTable.getArrayInitType(ctx.getChild(0).getText()).equals("int")) {
-					expr += indentation +"iaload\n";
-				}else if(symbolTable.getArrayInitType(ctx.getChild(0).getText()).equals("double")) {
-					expr += indentation +"daload\n";
+				if (symbolTable.getArrayInitType(ctx.getChild(0).getText()).equals("int")) {
+					expr += indentation + "iaload\n";
+				} else if (symbolTable.getArrayInitType(ctx.getChild(0).getText()).equals("double")) {
+					expr += indentation + "daload\n";
 				}
 			} else {
 			}
@@ -436,17 +444,17 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 			expr += indentation + "aload " + symbolTable.getVarId(arrayName) + "\n";
 			expr += newTexts.get(ctx.getChild(2));
 			expr += newTexts.get(ctx.getChild(5));
-			if(symbolTable.getArrayInitType(ctx.getChild(0).getText()).equals("int")) {
+			if (symbolTable.getArrayInitType(ctx.getChild(0).getText()).equals("int")) {
 				expr += indentation + "iastore\n";
-			}else if(symbolTable.getArrayInitType(ctx.getChild(0).getText()).equals("double")) {
+			} else if (symbolTable.getArrayInitType(ctx.getChild(0).getText()).equals("double")) {
 				expr += indentation + "dastore\n";
 			}
 
 			expr += indentation + "aload " + symbolTable.getVarId(arrayName) + "\n";
 			expr += newTexts.get(ctx.getChild(2));
-			if(symbolTable.getArrayInitType(ctx.getChild(0).getText()).equals("int")) {
+			if (symbolTable.getArrayInitType(ctx.getChild(0).getText()).equals("int")) {
 				expr += indentation + "iaload\n";
-			}else if(symbolTable.getArrayInitType(ctx.getChild(0).getText()).equals("double")) {
+			} else if (symbolTable.getArrayInitType(ctx.getChild(0).getText()).equals("double")) {
 				expr += indentation + "daload\n";
 			}
 
@@ -562,8 +570,9 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 		String fname = getFunName(ctx);
 
 		if (fname.equals("_printI") || fname.equals("_printD") || fname.equals("_printC")) { // System.out.println
-			expr = indentation + "getstatic java/lang/System/out Ljava/io/PrintStream; " + newTexts.get(ctx.args())
-					+ indentation + "invokevirtual " + symbolTable.getFunSpecStr(fname) + "\n";
+			expr = indentation + "getstatic java/lang/System/out Ljava/io/PrintStream; " + "\n"
+					+ newTexts.get(ctx.args()) + indentation + "invokevirtual " + symbolTable.getFunSpecStr(fname)
+					+ "\n";
 		} else {
 			expr = newTexts.get(ctx.args()) + indentation + "invokestatic " + getCurrentClassName() + "/"
 					+ symbolTable.getFunSpecStr(fname) + "\n";
