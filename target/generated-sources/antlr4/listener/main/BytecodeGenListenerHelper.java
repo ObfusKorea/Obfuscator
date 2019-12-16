@@ -55,16 +55,19 @@ public class BytecodeGenListenerHelper {
 		return null;
 	}
 
+	// type_spec IDENT '[' LITERAL ']' ';'
 	static boolean isArrayDecl(Local_declContext ctx) {
 		// 6이면서 3번째가 [인것
 		return (ctx.getChildCount() == 6) && (ctx.getChild(2).getText().equals("["));
 	}
 
+	// type_spec IDENT '[' ']' '=' '{' array_init_val '}' ';' | type_spec IDENT '[' LITERAL ']' '=' '{' array_init_val '}' ';' 
 	static boolean isArrayDeclWithInit(Local_declContext ctx) {
 		// 6이상이면서 3번째가 [인것
 		return (ctx.getChildCount() > 6) && (ctx.getChild(2).getText().equals("["));
 	}
 
+	// type_spec IDENT '=' (LITERAL|DOUBLE_Lit) ';'
 	static boolean isDeclWithInit(Local_declContext ctx) {
 		return ctx.getChildCount() == 5;
 	}

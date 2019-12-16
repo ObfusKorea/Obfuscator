@@ -10,7 +10,10 @@ decl		: var_decl
 var_decl	:  type_spec IDENT ';'
 		| type_spec IDENT '=' (LITERAL|DOUBLE_Lit) ';'
 		| type_spec IDENT '[' LITERAL ']' ';'
-		| type_spec IDENT '=' '\'' CHARACTER '\'' ';' ;
+		| type_spec IDENT '[' ']' '=' '{' array_init_val '}' ';'
+		| type_spec IDENT '[' LITERAL ']' '{' array_init_val '}' ';'
+		| type_spec IDENT '=' '\'' CHARACTER '\'' ';';
+		
 type_spec	: VOID
 		| INT
 		| CHAR
