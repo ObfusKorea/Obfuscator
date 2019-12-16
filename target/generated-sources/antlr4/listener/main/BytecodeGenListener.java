@@ -81,9 +81,13 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 				symbolTable.putLocalVarWithInitVal(getLocalVarName(ctx), getType(ctx.type_spec()),
 						(double) initVal(ctx));
 			}
+			if (initVal(ctx) instanceof Character) { //값이 문자인 경우 int로 cast해서 table에 저장하도록 함
+				int ascii = (int) ((char) initVal(ctx));
+				symbolTable.putLocalVarWithInitVal(getLocalVarName(ctx), getType(ctx.type_spec()), ascii);
+			}
 
 		} else { // simple decl
-			symbolTable.putLocalVar(getLocalVarName(ctx), Type.INT);
+			symbolTable.putLocalVar(getLocalVarName(ctx), getType(ctx.type_spec()));
 		}
 	}
 
@@ -268,12 +272,21 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 			String ldc = "";
 			String vId = symbolTable.getVarId(ctx);
 			String vType = getTypeLowerCase(ctx.type_spec());
-			if(vType.equals("i"))
+			if (vType.equals("i")) { // int 일 경우
 				num = ctx.LITERAL().getText();
 				ldc = "ldc ";
-			if(vType.equals("d"))
+			}
+			if (vType.equals("c")) { // char 일 경우
+				vType = "i";
+				ldc = "ldc ";
+				num = ctx.CHARACTER().getText(); // 'x'형태
+				int a = (int) num.charAt(1); //x부분의 문자를 int로 cast
+				num = Integer.toString(a);
+			}
+			if (vType.equals("d")) { // double 일 경우
 				num = ctx.DOUBLE_Lit().getText();
 				ldc = "ldc2_w ";
+			}
 			varDecl += ldc + num + "\n" + vType + "store_" + vId + "\n";
 		}
 
@@ -339,22 +352,28 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 			return;
 		}
 
-		if (ctx.getChildCount() == 1) { // IDENT | LITERAL | DOUBLE_Lit
+		if (ctx.getChildCount() == 1) { // IDENT | LITERAL | DOUBLE_Lit | CHARACTER
 			if (ctx.IDENT() != null) {
 				String idName = ctx.IDENT().getText();
 				if (symbolTable.getVarType(idName) == Type.INT) {
 					expr += "iload_" + symbolTable.getVarId(idName) + " \n";
-				}else if(symbolTable.getVarType(idName) == Type.DOUBLE) {
+				} else if (symbolTable.getVarType(idName) == Type.DOUBLE) {
 					expr += "dload_" + symbolTable.getVarId(idName) + " \n";
+				} else if (symbolTable.getVarType(idName) == Type.CHAR) {
+					expr += "iload_" + symbolTable.getVarId(idName) + " \n" + "i2c\n";
 				}
 				// else // Type int array => Later! skip now..
 				// expr += " lda " + symbolTable.get(ctx.IDENT().getText()).value + " \n";
 			} else if (ctx.LITERAL() != null) {
 				String literalStr = ctx.LITERAL().getText();
 				expr += "ldc " + literalStr + " \n";
-			}else if(ctx.DOUBLE_Lit() != null){
+			} else if (ctx.DOUBLE_Lit() != null) {
 				String d_litStr = ctx.DOUBLE_Lit().getText();
 				expr += "ldc2_w " + d_litStr + "\n";
+			} else if (ctx.CHARACTER() != null) { //char일 경우
+				char charC = ctx.CHARACTER().getText().charAt(1);
+				String charStr = Integer.toString(charC);
+				expr += "ldc " + charStr + "\ni2c\n";
 			}
 		} else if (ctx.getChildCount() == 2) { // UnaryOperation
 			// add store instruction
@@ -393,7 +412,8 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 			expr += newTexts.get(ctx.getChild(2));
 			expr += "iaload\n";
 
-//			symbolTable.editArrayValIn(arrayName, ctx.getChild(2), ctx.getChild(5).getText());
+			// symbolTable.editArrayValIn(arrayName, ctx.getChild(2),
+			// ctx.getChild(5).getText());
 			// 진짜 값도 바꿔주기 <--필요없을것같음 근데 안지우고있어쥬
 		} else {
 		}
@@ -491,14 +511,13 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 	private String handleFunCall(MiniCParser.ExprContext ctx, String expr) {
 		String fname = getFunName(ctx);
 
-		if (fname.equals("_printI") || fname.equals("_printD")) { // System.out.println
+		if (fname.equals("_printI") || fname.equals("_printD") || fname.equals("_printC")) { // System.out.println
 			expr = "getstatic java/lang/System/out Ljava/io/PrintStream; " + newTexts.get(ctx.args()) + "invokevirtual "
 					+ symbolTable.getFunSpecStr(fname) + "\n";
 		} else {
 			expr = newTexts.get(ctx.args()) + "invokestatic " + getCurrentClassName() + "/"
 					+ symbolTable.getFunSpecStr(fname) + "\n";
 		}
-
 		return expr;
 	}
 

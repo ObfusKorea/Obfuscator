@@ -44,6 +44,7 @@ return_stmt	: RETURN ';'
 		| RETURN expr ';'				;
 expr	:  LITERAL
 	| DOUBLE_Lit
+	| CHARACTER
 	| '(' expr ')'
 	| IDENT
 	| IDENT '[' expr ']'

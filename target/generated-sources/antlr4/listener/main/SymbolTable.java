@@ -200,13 +200,17 @@ public class SymbolTable {
 		
 		FInfo printDoubleInfo = new FInfo();
 		printDoubleInfo.sigStr = "java/io/PrintStream/println(D)V";
+		
+		FInfo printCharInfo = new FInfo();
+		printCharInfo.sigStr = "java/io/PrintStream/println(C)V";
 
 		FInfo maininfo = new FInfo();
 		maininfo.sigStr = "main([Ljava/lang/String;)V";
 		
-		// println 함수가 정수 / 실수 출력하는것을 구분하기 위해서 기존의 _print 를 _printI와 _printD로 나누었음 !!!
+		// println 함수가 출력하는것을 구분하기 위해서 기존의 _print를 I,D,C로 나누었음 !!!
 		_fsymtable.put("_printI", printlninfo);
 		_fsymtable.put("_printD", printDoubleInfo);
+		_fsymtable.put("_printC", printCharInfo);
 		_fsymtable.put("main", maininfo);
 	}
 
