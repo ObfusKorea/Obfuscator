@@ -68,7 +68,6 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 
 	@Override
 	public void enterLocal_decl(MiniCParser.Local_declContext ctx) {
-		// YAM
 		if (isArrayDecl(ctx)) { // type_spec IDENT '[' LITERAL ']' ';'
 			symbolTable.putLocalVar(getLocalVarName(ctx), getArrayType((MiniCParser.Type_specContext) ctx.type_spec()));
 			symbolTable.putArray(getLocalVarName(ctx), ctx.getChild(3).getText());
@@ -263,7 +262,6 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 	public void exitLocal_decl(MiniCParser.Local_declContext ctx) {
 		String indentation = tab(func_count);
 		String varDecl = "";
-		// YAM
 		if (isArrayDecl(ctx)) { // type_spec IDENT '[' LITERAL ']' ';'
 			String vId = symbolTable.getVarId(ctx);
 			varDecl += "ldc " + ctx.LITERAL().getText() + "\n" + "newarray " + ctx.type_spec().getText() + "\nastore "
@@ -430,7 +428,7 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 					expr += indentation +"iaload\n";
 				}else if(symbolTable.getArrayInitType(ctx.getChild(0).getText()).equals("double")) {
 					expr += indentation +"daload\n";
-				}// YAM
+				}
 			} else {
 			}
 		} else if (ctx.getChild(1).getText().equals("[")) {// IDENT '[' expr ']' '=' expr
@@ -442,7 +440,7 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 				expr += indentation + "iastore\n";
 			}else if(symbolTable.getArrayInitType(ctx.getChild(0).getText()).equals("double")) {
 				expr += indentation + "dastore\n";
-			}// YAM
+			}
 
 			expr += indentation + "aload " + symbolTable.getVarId(arrayName) + "\n";
 			expr += newTexts.get(ctx.getChild(2));
@@ -450,11 +448,11 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 				expr += indentation + "iaload\n";
 			}else if(symbolTable.getArrayInitType(ctx.getChild(0).getText()).equals("double")) {
 				expr += indentation + "daload\n";
-			}// YAM
+			}
 
 			// symbolTable.editArrayValIn(arrayName, ctx.getChild(2),
 			// ctx.getChild(5).getText());
-			// 진짜 값도 바꿔주기 <--필요없을것같음// YAM
+			// 진짜 값도 바꿔주기 <--필요없을것같음
 		} else {
 		}
 		newTexts.put(ctx, expr);

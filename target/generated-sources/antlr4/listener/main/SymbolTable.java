@@ -25,7 +25,7 @@ public class SymbolTable {
 		int id;
 		int initVal;
 		double d_initVal; // double형 변수를 위함
-		Object arrayVal;// YAM
+		Object arrayVal;
 
 		public VarInfo(Type type, int id, int initVal) {
 			this.type = type;
@@ -53,7 +53,7 @@ public class SymbolTable {
 		// VarInfo에 어레이를 할당해주는 메소드
 		public void addArrayVal(Object arrayVal) {
 			this.arrayVal = arrayVal;
-		}// YAM
+		}
 	}
 
 	// (int)배열은 생성하면서 배열의 정보를 가지는 클래스를 하나 더 생성하고 arrayVal에 해당 클래스를 가지게 됨
@@ -73,7 +73,7 @@ public class SymbolTable {
 			this.length = length;
 			this.val = val;
 		}
-	}// YAM
+	}
 
 	// (double)배열은 생성하면서 배열의 정보를 가지는 클래스를 하나 더 생성하고 arrayVal에 해당 클래스를 가지게 됨
 	static public class DoubleArrayVal {
@@ -92,7 +92,7 @@ public class SymbolTable {
 			this.length = length;
 			this.val = val;
 		}
-	}// YAM
+	}
 
 	static public class FInfo {
 		public String sigStr;
@@ -133,7 +133,7 @@ public class SymbolTable {
 		} else if (currentVar.type == Type.DOUBLEARRAY) {
 			currentVar.addArrayVal(new DoubleArrayVal(currentVar.id, Integer.parseInt(arrayLength)));
 		} // 타입이 무엇인지 판단하고 intArray 또는 doubleArray로 이동, 어레이를 해당 길이로 생성해준다
-	}// YAM
+	}
 
 	// VarInfo에 어레이를 해당 길이로 할당해주고, 초기값을 넣어줌
 	void putArrayInitVal(String varname, String arrayLength, ParseTree arrayInitVal) {
@@ -161,7 +161,7 @@ public class SymbolTable {
 			}
 			// 해당 길이로 어레이를 생성한 뒤 초기값을 하나씩 넣어준다.
 		}
-	}// YAM
+	}
 
 //	void editArrayValIn(String varname, ParseTree indexTree, String inputVal) {
 //		VarInfo currentVar = _lsymtable.get(varname);
@@ -210,7 +210,7 @@ public class SymbolTable {
 			}
 		}
 		return null;
-	}// YAM
+	}
 
 	void putGlobalVarWithInitVal(String varname, Type type, int initVar) {
 		// <Fill here>
@@ -330,5 +330,5 @@ public class SymbolTable {
 			return "double";
 		}
 		return "";
-	}//YAM
+	}
 }

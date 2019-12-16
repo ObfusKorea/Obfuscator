@@ -61,14 +61,14 @@ public class BytecodeGenListenerHelper {
 	static boolean isArrayDecl(Local_declContext ctx) {
 		// 6이면서 3번째가 [인것
 		return (ctx.getChildCount() == 6) && (ctx.getChild(2).getText().equals("["));
-	}// YAM
+	}
 
 	// type_spec IDENT '[' ']' '=' '{' array_init_val '}' ';' | type_spec IDENT '['
 	// LITERAL ']' '=' '{' array_init_val '}' ';'
 	static boolean isArrayDeclWithInit(Local_declContext ctx) {
 		// 6이상이면서 3번째가 [인것
 		return (ctx.getChildCount() > 6) && (ctx.getChild(2).getText().equals("["));
-	}// YAM
+	}
 
 	// type_spec IDENT '=' (LITERAL|DOUBLE_Lit) ';'
 	static boolean isDeclWithInit(Local_declContext ctx) {
@@ -169,7 +169,7 @@ public class BytecodeGenListenerHelper {
 
 	static String getArrayName(ExprContext ctx) {
 		return ctx.IDENT().getText();
-	}// YAM
+	}
 
 	static boolean noElse(If_stmtContext ctx) {
 		return ctx.getChildCount() <= 5;
@@ -194,7 +194,7 @@ public class BytecodeGenListenerHelper {
 		} else {
 			return Type.VOID;
 		}
-	}//YAM
+	}
 
 	//들여쓰기를 위한 메소드
 	static String tab(int n) {
