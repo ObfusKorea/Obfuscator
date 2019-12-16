@@ -18,7 +18,6 @@ import listener.main.SymbolTable.VarInfo;
 public class BytecodeGenListenerHelper {
 
 	// <boolean functions>
-
 	static boolean isFunDecl(MiniCParser.ProgramContext ctx, int i) {
 		return ctx.getChild(i).getChild(0) instanceof MiniCParser.Fun_declContext;
 	}
@@ -59,13 +58,13 @@ public class BytecodeGenListenerHelper {
 	static boolean isArrayDecl(Local_declContext ctx) {
 		// 6이면서 3번째가 [인것
 		return (ctx.getChildCount() == 6) && (ctx.getChild(2).getText().equals("["));
-	}
+	}//YAM
 
 	// type_spec IDENT '[' ']' '=' '{' array_init_val '}' ';' | type_spec IDENT '[' LITERAL ']' '=' '{' array_init_val '}' ';' 
 	static boolean isArrayDeclWithInit(Local_declContext ctx) {
 		// 6이상이면서 3번째가 [인것
 		return (ctx.getChildCount() > 6) && (ctx.getChild(2).getText().equals("["));
-	}
+	}//YAM
 
 	// type_spec IDENT '=' (LITERAL|DOUBLE_Lit) ';'
 	static boolean isDeclWithInit(Local_declContext ctx) {
@@ -163,7 +162,7 @@ public class BytecodeGenListenerHelper {
 
 	static String getArrayName(ExprContext ctx) {
 		return ctx.getChild(0).getText();
-	}
+	}//YAM
 
 	static boolean noElse(If_stmtContext ctx) {
 		return ctx.getChildCount() <= 5;
@@ -187,10 +186,10 @@ public class BytecodeGenListenerHelper {
 			// 임시로 int가 아닌 값이 들어올 경우 void타입을 반환
 			return Type.VOID;
 		}
-	}
+	}//YAM
 
 	// 배열의 타입(INTARRAY말고 int)알아내는 메소드
 	static String getArrayElementType() {
 		return "int";
-	}
+	}//YAM
 }

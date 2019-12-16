@@ -17,7 +17,7 @@ import static listener.main.BytecodeGenListenerHelper.*;
 
 public class SymbolTable {
 	enum Type {
-		INT, INTARRAY, VOID, ERROR, CHAR, DOUBLE
+		INT, INTARRAY, VOID, ERROR, CHAR, DOUBLE, DOUBLEARRAY
 	}
 
 	static public class VarInfo {
@@ -25,7 +25,7 @@ public class SymbolTable {
 		int id;
 		int initVal;
 		double d_initVal; // double형 변수를 위함
-		Object arrayVal;
+		Object arrayVal;//YAM
 
 		public VarInfo(Type type, int id, int initVal) {
 			this.type = type;
@@ -52,7 +52,7 @@ public class SymbolTable {
 
 		public void addArrayVal(Object arrayVal) {
 			this.arrayVal = arrayVal;
-		}
+		}//YAM
 	}
 
 	// (int)배열은 생성하면서 배열의 정보를 가지는 클래스를 하나 더 생성
@@ -72,7 +72,26 @@ public class SymbolTable {
 			this.length = length;
 			this.val = val;
 		}
-	}
+	}//YAM
+	
+	// (double)배열은 생성하면서 배열의 정보를 가지는 클래스를 하나 더 생성
+	static public class DoubleArrayVal {
+		int id;
+		int length;
+		double[] val;
+
+		public DoubleArrayVal(int id, int length) {
+			this.id = id;
+			this.length = length;
+			this.val = new double[length];
+		}
+
+		public DoubleArrayVal(int id, int length, double[] val) {
+			this.id = id;
+			this.length = length;
+			this.val = val;
+		}
+	}//YAM
 
 	static public class FInfo {
 		public String sigStr;
@@ -108,9 +127,11 @@ public class SymbolTable {
 		VarInfo currentVar = _lsymtable.get(varname);
 		if (currentVar.type == Type.INTARRAY) {
 			currentVar.addArrayVal(new IntArrayVal(currentVar.id, Integer.parseInt(arrayLength)));
+		}else if (currentVar.type == Type.DOUBLEARRAY) {
+			currentVar.addArrayVal(new DoubleArrayVal(currentVar.id, Integer.parseInt(arrayLength)));
 		}
-		// 타입이 무엇인지 판단하고 (지금은)intArray로 이동
-	}// int intArray[5];
+		// 타입이 무엇인지 판단하고 intArray 또는 doubleArray로 이동
+	}// int intArray[5];//YAM
 
 	void putArrayInitVal(String varname, String arrayLength, ParseTree arrayInitVal) {
 		VarInfo currentVar = _lsymtable.get(varname);		//현재 array의 초기값을 넣어줄 어레이 var정보를 가져옴
@@ -132,7 +153,7 @@ public class SymbolTable {
 		}
 		// 타입이 무엇인지 판단하고 intArray로 이동
 	}// int intArray[]={0,1,2,3};, int intArray[4]={0,1,2,3};, int
-		// intArray[10]={0,1,2,3};
+		// intArray[10]={0,1,2,3};//YAM
 
 //	void editArrayValIn(String varname, ParseTree indexTree, String inputVal) {
 //		VarInfo currentVar = _lsymtable.get(varname);
@@ -175,8 +196,7 @@ public class SymbolTable {
 			}
 		}
 		return null;
-
-	}
+	}//YAM
 
 	void putGlobalVarWithInitVal(String varname, Type type, int initVar) {
 		// <Fill here>
