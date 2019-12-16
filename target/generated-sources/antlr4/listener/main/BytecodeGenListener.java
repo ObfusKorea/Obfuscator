@@ -76,10 +76,9 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 												// IDENT '[' LITERAL ']' '=' '{' array_init_val '}' ';'
 			symbolTable.putLocalVar(getLocalVarName(ctx), getArrayType((MiniCParser.Type_specContext) ctx.type_spec()));
 			String arrayLength = "";
-			if (!ctx.getChild(3).getText().equals("]")) { // type_spec IDENT '[' LITERAL ']' '=' '{' array_init_val '}'
-															// ';'
+			if (!ctx.getChild(3).getText().equals("]")) {
 				arrayLength = ctx.getChild(3).getText();
-			}
+			} // [6]과 같이 길이를 지정해줬을 때는 길이를 넣어줌
 			symbolTable.putArrayInitVal(getLocalVarName(ctx), arrayLength, ctx.array_init_val());
 		} else if (isDeclWithInit(ctx)) {
 			if (initVal(ctx) instanceof Integer) {
@@ -93,7 +92,6 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 				int ascii = (int) ((char) initVal(ctx));
 				symbolTable.putLocalVarWithInitVal(getLocalVarName(ctx), getType(ctx.type_spec()), ascii);
 			}
-
 		} else { // simple decl
 			symbolTable.putLocalVar(getLocalVarName(ctx), getType(ctx.type_spec()));
 		}
@@ -266,25 +264,30 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 		String indentation = tab(func_count);
 		String varDecl = "";
 		// YAM
-		if (isArrayDecl(ctx)) {
+		if (isArrayDecl(ctx)) { // type_spec IDENT '[' LITERAL ']' ';'
 			String vId = symbolTable.getVarId(ctx);
-			varDecl += "ldc " + ctx.LITERAL().getText() + "\n" + "newarray " + getArrayElementType() + "\nastore " + vId
-					+ "\n";
-		} else if (isArrayDeclWithInit(ctx)) {
+			varDecl += "ldc " + ctx.LITERAL().getText() + "\n" + "newarray " + ctx.type_spec().getText() + "\nastore "
+					+ vId + "\n";
+		} else if (isArrayDeclWithInit(ctx)) { // type_spec IDENT '[' ']' '=' '{' array_init_val '}' ';'
+												// | type_spec IDENT '[' LITERAL ']' '=' '{' array_init_val '}' ';'
 			String vId = symbolTable.getVarId(ctx);
 			String arrayLength = "";
 			if (ctx.getChild(3).getText().equals("]")) {
 				arrayLength = (ctx.getChild(6).getChildCount()) / 2 + 1 + "";
 			} else {
 				arrayLength = ctx.LITERAL().getText();
-			}
-			// 어레이 길이를 가져오는것
-			varDecl += "ldc " + arrayLength + "\n" + "newarray " + getArrayElementType() + "\n" + "astore " + vId
+			}// 어레이 길이를 가져오는것
+			varDecl += "ldc " + arrayLength + "\n" + "newarray " + ctx.type_spec().getText() + "\n" + "astore " + vId
 					+ "\n";
-			if (getArrayElementType() == "int") {
+			if (ctx.type_spec().getText().equals("int")) {
 				int[] arrayVal = (int[]) symbolTable.getArrayInitVal(ctx.getChild(1).getText());
 				for (int i = 0; i < arrayVal.length; i++) {
 					varDecl += "aload " + vId + "\n" + "ldc " + i + "\n" + "ldc " + arrayVal[i] + "\n" + "iastore\n";
+				}
+			}else if(ctx.type_spec().getText().equals("double")){
+				double[] arrayVal = (double[]) symbolTable.getArrayInitVal(ctx.getChild(1).getText());
+				for (int i = 0; i < arrayVal.length; i++) {
+					varDecl += "aload " + vId + "\n" + "ldc " + i + "\n" + "ldc " + arrayVal[i] + "\n" + "dastore\n";
 				}
 			}
 		} else if (isDeclWithInit(ctx)) {
@@ -419,32 +422,39 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 		else if (ctx.getChildCount() == 4) {
 			if (ctx.args() != null) { // function calls
 				expr = handleFunCall(ctx, expr);
-			}
-			// YAM
-			else if (ctx.getChild(1).getText().equals("[")) { // array call
+			} else if (ctx.getChild(1).getText().equals("[")) { // IDENT '[' expr ']'
 				String arrayName = getArrayName(ctx);
 				expr += indentation + "aload " + symbolTable.getVarId(arrayName) + "\n";
 				expr += newTexts.get(ctx.getChild(2));
-				expr += indentation + "iaload\n";
+				if(symbolTable.getArrayInitType(ctx.getChild(0).getText()).equals("int")) {
+					expr += indentation +"iaload\n";
+				}else if(symbolTable.getArrayInitType(ctx.getChild(0).getText()).equals("double")) {
+					expr += indentation +"daload\n";
+				}// YAM
 			} else {
 			}
-		}
-		// YAM
-		// IDENT '[' expr ']' '=' expr
-		else if (ctx.getChild(1).getText().equals("[")) {
+		} else if (ctx.getChild(1).getText().equals("[")) {// IDENT '[' expr ']' '=' expr
 			String arrayName = getArrayName(ctx);
 			expr += indentation + "aload " + symbolTable.getVarId(arrayName) + "\n";
 			expr += newTexts.get(ctx.getChild(2));
 			expr += newTexts.get(ctx.getChild(5));
-			expr += indentation + "iastore\n";
+			if(symbolTable.getArrayInitType(ctx.getChild(0).getText()).equals("int")) {
+				expr += indentation + "iastore\n";
+			}else if(symbolTable.getArrayInitType(ctx.getChild(0).getText()).equals("double")) {
+				expr += indentation + "dastore\n";
+			}// YAM
 
 			expr += indentation + "aload " + symbolTable.getVarId(arrayName) + "\n";
 			expr += newTexts.get(ctx.getChild(2));
-			expr += indentation + "iaload\n";
+			if(symbolTable.getArrayInitType(ctx.getChild(0).getText()).equals("int")) {
+				expr += indentation + "iaload\n";
+			}else if(symbolTable.getArrayInitType(ctx.getChild(0).getText()).equals("double")) {
+				expr += indentation + "daload\n";
+			}// YAM
 
 			// symbolTable.editArrayValIn(arrayName, ctx.getChild(2),
 			// ctx.getChild(5).getText());
-			// 진짜 값도 바꿔주기 <--필요없을것같음 근데 안지우고있어쥬
+			// 진짜 값도 바꿔주기 <--필요없을것같음// YAM
 		} else {
 		}
 		newTexts.put(ctx, expr);

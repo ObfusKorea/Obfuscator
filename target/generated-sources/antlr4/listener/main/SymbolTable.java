@@ -25,7 +25,7 @@ public class SymbolTable {
 		int id;
 		int initVal;
 		double d_initVal; // double형 변수를 위함
-		Object arrayVal;//YAM
+		Object arrayVal;// YAM
 
 		public VarInfo(Type type, int id, int initVal) {
 			this.type = type;
@@ -50,12 +50,13 @@ public class SymbolTable {
 			}
 		}
 
+		// VarInfo에 어레이를 할당해주는 메소드
 		public void addArrayVal(Object arrayVal) {
 			this.arrayVal = arrayVal;
-		}//YAM
+		}// YAM
 	}
 
-	// (int)배열은 생성하면서 배열의 정보를 가지는 클래스를 하나 더 생성
+	// (int)배열은 생성하면서 배열의 정보를 가지는 클래스를 하나 더 생성하고 arrayVal에 해당 클래스를 가지게 됨
 	static public class IntArrayVal {
 		int id;
 		int length;
@@ -72,9 +73,9 @@ public class SymbolTable {
 			this.length = length;
 			this.val = val;
 		}
-	}//YAM
-	
-	// (double)배열은 생성하면서 배열의 정보를 가지는 클래스를 하나 더 생성
+	}// YAM
+
+	// (double)배열은 생성하면서 배열의 정보를 가지는 클래스를 하나 더 생성하고 arrayVal에 해당 클래스를 가지게 됨
 	static public class DoubleArrayVal {
 		int id;
 		int length;
@@ -91,7 +92,7 @@ public class SymbolTable {
 			this.length = length;
 			this.val = val;
 		}
-	}//YAM
+	}// YAM
 
 	static public class FInfo {
 		public String sigStr;
@@ -123,37 +124,44 @@ public class SymbolTable {
 		_lsymtable.put(varname, new VarInfo(type, _localVarID++));
 	}
 
+	// VarInfo에 어레이를 해당 길이로 할당해줌
 	void putArray(String varname, String arrayLength) {
-		VarInfo currentVar = _lsymtable.get(varname);
+		VarInfo currentVar = _lsymtable.get(varname); // 현재 array의 초기값을 넣어줄 어레이 var정보를 가져옴
+
 		if (currentVar.type == Type.INTARRAY) {
 			currentVar.addArrayVal(new IntArrayVal(currentVar.id, Integer.parseInt(arrayLength)));
-		}else if (currentVar.type == Type.DOUBLEARRAY) {
+		} else if (currentVar.type == Type.DOUBLEARRAY) {
 			currentVar.addArrayVal(new DoubleArrayVal(currentVar.id, Integer.parseInt(arrayLength)));
-		}
-		// 타입이 무엇인지 판단하고 intArray 또는 doubleArray로 이동
-	}// int intArray[5];//YAM
+		} // 타입이 무엇인지 판단하고 intArray 또는 doubleArray로 이동, 어레이를 해당 길이로 생성해준다
+	}// YAM
 
+	// VarInfo에 어레이를 해당 길이로 할당해주고, 초기값을 넣어줌
 	void putArrayInitVal(String varname, String arrayLength, ParseTree arrayInitVal) {
-		VarInfo currentVar = _lsymtable.get(varname);		//현재 array의 초기값을 넣어줄 어레이 var정보를 가져옴
-		int thisArrayLength = 0;	//array의 초기값의 길이 지정
+		VarInfo currentVar = _lsymtable.get(varname); // 현재 array의 초기값을 넣어줄 어레이 var정보를 가져옴
+		int thisArrayLength = 0; // 어레이 생성을 위한 길이를 선언
+		if (arrayLength == "") { // type_spec IDENT '[' ']' '=' '{' array_init_val '}' ';' 일때 어레이 길이
+			thisArrayLength = (arrayInitVal.getChildCount()) / 2 + 1;
+		} else {// type_spec IDENT '[' LITERAL ']' '=' '{' array_init_val '}' ';' ; 일때 어레이 길이
+			thisArrayLength = Integer.parseInt(arrayLength);
+		}
 
 		if (arrayInitVal instanceof MiniCParser.Array_init_valContext) {
 			if (currentVar.type == Type.INTARRAY) {
-				if (arrayLength == "") {
-					thisArrayLength = (arrayInitVal.getChildCount())/2+1;
-				} else {
-					thisArrayLength = Integer.parseInt(arrayLength);
-				}
 				int[] thisInitValArray = new int[thisArrayLength];
 				for (int i = 0; i < arrayInitVal.getChildCount(); i = i + 2) {
 					thisInitValArray[i / 2] = Integer.parseInt(arrayInitVal.getChild(i).getText());
 				}
 				currentVar.addArrayVal(new IntArrayVal(currentVar.id, thisArrayLength, thisInitValArray));
+			} else if (currentVar.type == Type.DOUBLEARRAY) {
+				double[] thisInitValArray = new double[thisArrayLength];
+				for (int i = 0; i < arrayInitVal.getChildCount(); i = i + 2) {
+					thisInitValArray[i / 2] = Double.parseDouble(arrayInitVal.getChild(i).getText());
+				}
+				currentVar.addArrayVal(new DoubleArrayVal(currentVar.id, thisArrayLength, thisInitValArray));
 			}
+			// 해당 길이로 어레이를 생성한 뒤 초기값을 하나씩 넣어준다.
 		}
-		// 타입이 무엇인지 판단하고 intArray로 이동
-	}// int intArray[]={0,1,2,3};, int intArray[4]={0,1,2,3};, int
-		// intArray[10]={0,1,2,3};//YAM
+	}// YAM
 
 //	void editArrayValIn(String varname, ParseTree indexTree, String inputVal) {
 //		VarInfo currentVar = _lsymtable.get(varname);
@@ -187,6 +195,7 @@ public class SymbolTable {
 		_lsymtable.put(varname, new VarInfo(type, _localVarID++, initVar));
 	}
 
+	// 해당 어레이의 초기값 배열을 가져옴
 	Object getArrayInitVal(String varname) {
 		VarInfo arrayVarInfo = _lsymtable.get(varname);
 		if (arrayVarInfo.type == Type.INTARRAY) {
@@ -194,9 +203,14 @@ public class SymbolTable {
 				IntArrayVal iav = ((IntArrayVal) arrayVarInfo.arrayVal);
 				return iav.val;
 			}
+		}else if(arrayVarInfo.type == Type.DOUBLEARRAY){
+			if (arrayVarInfo.arrayVal instanceof DoubleArrayVal) {
+				DoubleArrayVal dav = ((DoubleArrayVal) arrayVarInfo.arrayVal);
+				return dav.val;
+			}
 		}
 		return null;
-	}//YAM
+	}// YAM
 
 	void putGlobalVarWithInitVal(String varname, Type type, int initVar) {
 		// <Fill here>
@@ -307,4 +321,14 @@ public class SymbolTable {
 		return sname;
 	}
 
+	//VarInfo에 저장되어있는 arrayVal의 클래스를 이용해 무슨 타입인지를 알아냄
+	public String getArrayInitType(String varname) {
+		VarInfo temp = (VarInfo) _lsymtable.get(varname);
+		if (temp.arrayVal instanceof IntArrayVal) {
+			return "int";
+		} else if (temp.arrayVal instanceof DoubleArrayVal) {
+			return "double";
+		}
+		return "";
+	}//YAM
 }
