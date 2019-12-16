@@ -12,7 +12,6 @@ var_decl	:  type_spec IDENT ';'
 		| type_spec IDENT '[' LITERAL ']' ';'
 		| type_spec IDENT '[' ']' '=' '{' array_init_val '}' ';'
 		| type_spec IDENT '[' LITERAL ']' '{' array_init_val '}' ';' ;
-
 type_spec	: VOID
 		| INT
 		| CHAR
