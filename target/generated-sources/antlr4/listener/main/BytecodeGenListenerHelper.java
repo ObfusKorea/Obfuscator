@@ -63,7 +63,8 @@ public class BytecodeGenListenerHelper {
 		return (ctx.getChildCount() == 6) && (ctx.getChild(2).getText().equals("["));
 	}//YAM
 
-	// type_spec IDENT '[' ']' '=' '{' array_init_val '}' ';' | type_spec IDENT '[' LITERAL ']' '=' '{' array_init_val '}' ';' 
+	// type_spec IDENT '[' ']' '=' '{' array_init_val '}' ';' | type_spec IDENT '['
+	// LITERAL ']' '=' '{' array_init_val '}' ';'
 	static boolean isArrayDeclWithInit(Local_declContext ctx) {
 		// 6이상이면서 3번째가 [인것
 		return (ctx.getChildCount() > 6) && (ctx.getChild(2).getText().equals("["));
@@ -176,7 +177,7 @@ public class BytecodeGenListenerHelper {
 
 	static String getFunProlog() {
 		return ".class public Test" + "\n" + ".super java/lang/Object" + "\n" + ".method public <init>()V" + "\n"
-				+ "aload_0" + "\n" + "invokenonvirtual java/lang/Object/<init>()V" + "\n" + "return" + "\n"
+				+ "   aload_0" + "\n" + "   invokenonvirtual java/lang/Object/<init>()V" + "\n" + "   return" + "\n"
 				+ ".end method" + "\n";
 	}
 
@@ -197,5 +198,13 @@ public class BytecodeGenListenerHelper {
 	// 배열의 타입(INTARRAY말고 int)알아내는 메소드
 	static String getArrayElementType() {
 		return "int";
-	}//YAM
+	}
+
+	//들여쓰기를 위한 메소드
+	static String tab(int n) {
+		if (n > 0) {
+			return "   ";
+		}
+		return "";
+	}
 }
