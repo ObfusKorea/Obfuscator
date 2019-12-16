@@ -9,7 +9,10 @@ decl		: var_decl
 		| fun_decl		;
 var_decl	:  type_spec IDENT ';'
 		| type_spec IDENT '=' (LITERAL|DOUBLE_Lit|CHARACTER) ';'
-		| type_spec IDENT '[' LITERAL ']' ';' ;
+		| type_spec IDENT '[' LITERAL ']' ';'
+		| type_spec IDENT '[' ']' '=' '{' array_init_val '}' ';'
+		| type_spec IDENT '[' LITERAL ']' '{' array_init_val '}' ';' ;
+
 type_spec	: VOID
 		| INT
 		| CHAR
@@ -95,7 +98,7 @@ IDENT  : [a-zA-Z_]
         )*;
 
 CHARACTER  : '\'' + [a-zA-Z] + '\'';
-        
+
 DOUBLE_Lit : [0-9]+ '.' [0-9]*;
 
 LITERAL:   DecimalConstant     |   OctalConstant     |   HexadecimalConstant     ;

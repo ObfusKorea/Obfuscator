@@ -24,7 +24,7 @@ public class SymbolTable {
 		Type type;
 		int id;
 		int initVal;
-		double d_initVal; //double형 변수를 위함
+		double d_initVal; // double형 변수를 위함
 		Object arrayVal;
 
 		public VarInfo(Type type, int id, int initVal) {
@@ -32,7 +32,7 @@ public class SymbolTable {
 			this.id = id;
 			this.initVal = initVal;
 		}
-		
+
 		public VarInfo(Type type, int id, double initVal) {
 			this.type = type;
 			this.id = id;
@@ -42,14 +42,13 @@ public class SymbolTable {
 		public VarInfo(Type type, int id) {
 			this.type = type;
 			this.id = id;
-			if(type == Type.INT) {
+			if (type == Type.INT) {
 				this.initVal = 0;
 			}
-			if(type == Type.DOUBLE) {
+			if (type == Type.DOUBLE) {
 				this.d_initVal = 0.0;
 			}
 		}
-		
 
 		public void addArrayVal(Object arrayVal) {
 			this.arrayVal = arrayVal;
@@ -113,11 +112,17 @@ public class SymbolTable {
 		// 타입이 무엇인지 판단하고 (지금은)intArray로 이동
 	}// int intArray[5];
 
-	void putArrayInit(String varname, String arrayLength, ParseTree arrayInitVal) {
-		VarInfo currentVar = _lsymtable.get(varname);
+	void putArrayInitVal(String varname, String arrayLength, ParseTree arrayInitVal) {
+		VarInfo currentVar = _lsymtable.get(varname);		//현재 array의 초기값을 넣어줄 어레이 var정보를 가져옴
+		int thisArrayLength = 0;	//array의 초기값의 길이 지정
+
 		if (arrayInitVal instanceof MiniCParser.Array_init_valContext) {
 			if (currentVar.type == Type.INTARRAY) {
-				int thisArrayLength = Integer.parseInt(arrayLength);
+				if (arrayLength == "") {
+					thisArrayLength = (arrayInitVal.getChildCount())/2+1;
+				} else {
+					thisArrayLength = Integer.parseInt(arrayLength);
+				}
 				int[] thisInitValArray = new int[thisArrayLength];
 				for (int i = 0; i < arrayInitVal.getChildCount(); i = i + 2) {
 					thisInitValArray[i / 2] = Integer.parseInt(arrayInitVal.getChild(i).getText());
@@ -134,10 +139,10 @@ public class SymbolTable {
 ////		int indexVal = Integer.parseInt(indexTree);
 //		if (currentVar.type == Type.INTARRAY) {
 //			int inputIntVal = Integer.parseInt(inputVal);
-//			
+//
 //			int[] oldArray = ((IntArrayVal)currentVar.arrayVal).val;
 //			oldArray[0] = inputIntVal;
-//			
+//
 //			//수정된 IntArrayVal을 넣기
 //			currentVar.addArrayVal(new IntArrayVal(currentVar.id, oldArray.length, oldArray));
 //		}
@@ -154,13 +159,12 @@ public class SymbolTable {
 		// <Fill here>
 		_lsymtable.put(varname, new VarInfo(type, _localVarID++, initVar));
 	}
-	
-	//double type 로컬 변수를 초기 값과 함께 생성, 로컬 심벌 테이블에 삽입
+
+	// double type 로컬 변수를 초기 값과 함께 생성, 로컬 심벌 테이블에 삽입
 	void putLocalVarWithInitVal(String varname, Type type, double initVar) {
 		// <Fill here>
 		_lsymtable.put(varname, new VarInfo(type, _localVarID++, initVar));
 	}
-	
 
 	Object getArrayInitVal(String varname) {
 		VarInfo arrayVarInfo = _lsymtable.get(varname);
@@ -178,8 +182,8 @@ public class SymbolTable {
 		// <Fill here>
 		_gsymtable.put(varname, new VarInfo(type, _globalVarID++, initVar));
 	}
-	
-	//double type 전역 변수를 초기 값과 함께 생성, 글로벌 심벌 테이블에 삽입
+
+	// double type 전역 변수를 초기 값과 함께 생성, 글로벌 심벌 테이블에 삽입
 	void putGlobalVarWithInitVal(String varname, Type type, double initVar) {
 		// <Fill here>
 		_gsymtable.put(varname, new VarInfo(type, _globalVarID++, initVar));
@@ -197,16 +201,16 @@ public class SymbolTable {
 	private void initFunTable() {
 		FInfo printlninfo = new FInfo();
 		printlninfo.sigStr = "java/io/PrintStream/println(I)V";
-		
+
 		FInfo printDoubleInfo = new FInfo();
 		printDoubleInfo.sigStr = "java/io/PrintStream/println(D)V";
-		
+
 		FInfo printCharInfo = new FInfo();
 		printCharInfo.sigStr = "java/io/PrintStream/println(C)V";
 
 		FInfo maininfo = new FInfo();
 		maininfo.sigStr = "main([Ljava/lang/String;)V";
-		
+
 		// println 함수가 출력하는것을 구분하기 위해서 기존의 _print를 I,D,C로 나누었음 !!!
 		_fsymtable.put("_printI", printlninfo);
 		_fsymtable.put("_printD", printDoubleInfo);
