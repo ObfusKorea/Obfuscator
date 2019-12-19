@@ -1,9 +1,9 @@
-int arrayValIn(int a){
-   int qwer[2] = {100,200};
-   qwer[a] = 300;
-   return qwer[a];
+int arrayValIn(int index){
+   int qwer[3] = {99,98};
+qwer[index] = 1;
+   return qwer[index];
 }
 
 void main() {
-   _print(arrayValIn(1));
+   _printI(arrayValIn(2));
 }
