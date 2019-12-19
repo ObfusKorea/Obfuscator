@@ -562,7 +562,7 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 		String fname = getFunName(ctx);
 
 		if (fname.equals("_printI") || fname.equals("_printD") || fname.equals("_printC")) { // System.out.println
-			expr = indentation + "getstatic java/lang/System/out Ljava/io/PrintStream; " + newTexts.get(ctx.args())
+			expr = indentation + "getstatic java/lang/System/out Ljava/io/PrintStream; \n" + newTexts.get(ctx.args())
 					+ indentation + "invokevirtual " + symbolTable.getFunSpecStr(fname) + "\n";
 		} else {
 			expr = newTexts.get(ctx.args()) + indentation + "invokestatic " + getCurrentClassName() + "/"
