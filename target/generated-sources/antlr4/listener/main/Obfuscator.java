@@ -2,6 +2,10 @@ package listener.main;
 
 public class Obfuscator {
 	
+	// 변수명 매핑을 위한 맵
+	public static final HashMap<String, String> map = new HashMap<String, String>();
+	String underBars = "";	// 난독화를 위한 변수
+	
 	// invariant opaque : exitStmt함수에서 return stmt를 제외한 모든 stmt를 난독화하는 데 사용
 	public static String invariant(String input) {
 		String front = "if (a * a >= 0) {\n"
@@ -38,6 +42,41 @@ public class Obfuscator {
 				+ dots(1) + "}\n"
 				+ dots(1) + "";
 		return front1 + front2 + input;
+	}
+	
+	// ident가 map에 있는지 판별
+	public boolean isObfuscated(String ident) {
+		if(map.get(ident) == null) return false;
+		else return true;
+ 	}
+	
+	// ident를 key로 value(난독화 후의 변수명)를 반환, expr에서 사용
+	public String getObfIdent(String ident) {
+		return map.get(ident);
+	}
+	
+	// ident를 key, '_'로 이루어진 문자열을 value로 map에 삽입 - 난독화
+	public void obfuscateIdent(String ident) {
+		underBars += "_";
+		myMap.put(ident, underBars);
+	}
+	
+	// 함수 내부에서, 매개변수의 값을 가지는 새로운 변수를 할당하는 부분
+	public String reAssign(String[] before, int t) {
+		String b = null;
+		String ret = "";
+		for(int i=0; i<before.length; i++) {
+			b = before[i];
+			ret += dots(t)+"int "+map.get(b)+" = 0;\n";
+		}
+		for(int i=0; i<before.length; i++) {
+			b = before[i];
+			ret += dots(t)+"for(int i = 0; i < "+b+"; i++)\n"
+					+dots(t)+"{\n"
+					+dots(t+1)+map.get(b)+"++;\n"
+					+dots(t)+"}\n";
+		}
+		return ret;
 	}
 	
 	// 점 찍는거
