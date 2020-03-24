@@ -1,5 +1,7 @@
 package listener.main;
 
+import java.util.HashMap;
+
 public class Obfuscator {
 	
 	// 변수명 매핑을 위한 맵
@@ -58,7 +60,7 @@ public class Obfuscator {
 	// ident를 key, '_'로 이루어진 문자열을 value로 map에 삽입 - 난독화
 	public void obfuscateIdent(String ident) {
 		underBars += "_";
-		myMap.put(ident, underBars);
+		map.put(ident, underBars);
 	}
 	
 	// 함수 내부에서, 매개변수의 값을 가지는 새로운 변수를 할당하는 부분

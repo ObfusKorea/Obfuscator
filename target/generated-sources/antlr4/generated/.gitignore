@@ -2,3 +2,8 @@
 /MiniC.tokens
 /MiniCLexer.interp
 /MiniCLexer.tokens
+/MiniCBaseListener.java
+/MiniCLexer.java
+/MiniCListener.java
+/MiniCParser.java
+/MiniCPrintListener.java
