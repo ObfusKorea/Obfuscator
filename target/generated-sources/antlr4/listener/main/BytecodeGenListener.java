@@ -38,7 +38,7 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 	public void enterFun_decl(MiniCParser.Fun_declContext ctx) {
 		symbolTable.initFunDecl();
 		func_count++;
-
+		
 		String fname = getFunName(ctx);
 		ParamsContext params;
 
@@ -165,6 +165,7 @@ public class BytecodeGenListener extends MiniCBaseListener implements ParseTreeL
 			stmt += newTexts.get(ctx.expr()); // expr
 		}
 		newTexts.put(ctx, stmt);
+		
 	}
 
 	// while_stmt : WHILE '(' expr ')' stmt

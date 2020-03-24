@@ -12,19 +12,19 @@ public class Translator {
 	}
 
 	private static OPTIONS getOption(String[] args) {
-		if (args.length < 1)
-			return OPTIONS.BYTECODEGEN;
-
-		if (args[0].startsWith("-p") || args[0].startsWith("-P"))
-			return OPTIONS.PRETTYPRINT;
-
-		if (args[0].startsWith("-b") || args[0].startsWith("-B"))
-			return OPTIONS.BYTECODEGEN;
-
-		if (args[0].startsWith("-u") || args[0].startsWith("-U"))
-			return OPTIONS.UCODEGEN;
-
-		return OPTIONS.ERROR;
+//		if (args.length < 1)
+//			return OPTIONS.BYTECODEGEN;
+//		if (args[0].startsWith("-p") || args[0].startsWith("-P"))
+//			return OPTIONS.PRETTYPRINT;
+//
+//		if (args[0].startsWith("-b") || args[0].startsWith("-B"))
+//			return OPTIONS.BYTECODEGEN;
+//
+//		if (args[0].startsWith("-u") || args[0].startsWith("-U"))
+//			return OPTIONS.UCODEGEN;
+//
+//		return OPTIONS.ERROR;
+		return OPTIONS.PRETTYPRINT;
 	}
 
 	public static void main(String[] args) throws Exception {
