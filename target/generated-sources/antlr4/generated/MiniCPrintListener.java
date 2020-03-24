@@ -147,27 +147,16 @@ public class MiniCPrintListener extends MiniCBaseListener {
 
 		if (ctx.getChild(0) instanceof MiniCParser.Expr_stmtContext) { // case : expr_stmt
 			s1 = newTexts.get(ctx.expr_stmt());
-			// s1 = Obfuscator.invariant(s1);
-			// s1 = Obfuscator.contextual(s1);
 		} else if (ctx.getChild(0) instanceof MiniCParser.Compound_stmtContext) { // case : compound_stmt
 			s1 = newTexts.get(ctx.compound_stmt());
-			// s1 = Obfuscator.invariant(s1);
-			// s1 = Obfuscator.contextual(s1);
 		} else if (ctx.getChild(0) instanceof MiniCParser.If_stmtContext) { // case : if_stmt
 			s1 = newTexts.get(ctx.if_stmt());
-			// s1 = Obfuscator.invariant(s1);
-			// s1 = Obfuscator.contextual(s1);
 		} else if (ctx.getChild(0) instanceof MiniCParser.While_stmtContext) { // case : while_stmt
 			s1 = newTexts.get(ctx.while_stmt());
-			// s1 = Obfuscator.invariant(s1);
-			// s1 = Obfuscator.contextual(s1);
 		} else if (ctx.getChild(0) instanceof MiniCParser.For_stmtContext) {
 			s1 = newTexts.get(ctx.for_stmt());
-			// s1 = Obfuscator.invariant(s1);
-			// s1 = Obfuscator.contextual(s1);
 		} else { // case : return_stmt
 			s1 = newTexts.get(ctx.return_stmt());
-			s1 = Obfuscator.dynamic(s1);
 		}
 
 		if (ctx.getChild(0) instanceof MiniCParser.Compound_stmtContext) {
