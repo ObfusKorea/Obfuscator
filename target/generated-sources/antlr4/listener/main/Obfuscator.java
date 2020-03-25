@@ -82,7 +82,7 @@ public class Obfuscator {
 	}
 	
 	// 점 찍는거
-	public static String dots(int n) {
+	private static String dots(int n) {
 		int i = 0;
 		String dots = "";
 		while (i < n) {
