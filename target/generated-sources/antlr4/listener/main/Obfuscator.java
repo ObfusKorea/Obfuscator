@@ -81,6 +81,17 @@ public class Obfuscator {
 		return ret;
 	}
 	
+	
+	public static String qwer(String s1, String op, String s2) {
+		String dummy01 = "0;\n"+
+				dots(1)+"char temp[10] = \"qwerqwerq\";\n" + 
+				dots(1)+"temp[0] = "+s1+"+'0';\n" + 
+				dots(1)+"temp[1] = "+s2+"+'0';\n" + 
+				dots(1)+"temp[2] = temp[0]-'0' + temp[1]-'0';\n" + 
+				dots(1)+"result = temp[2]-'0';";
+		return dummy01;
+	}
+	
 	// 점 찍는거
 	private static String dots(int n) {
 		int i = 0;
