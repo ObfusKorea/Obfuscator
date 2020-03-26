@@ -8,7 +8,7 @@ public class Obfuscator {
 	public static final HashMap<String, String> map = new HashMap<String, String>();
 	static String underBars = "";	// 난독화를 위한 변수
 	
-	// invariant opaque : exitStmt함수에서 return stmt를 제외한 모든 stmt를 난독화하는 데 사용
+	// invariant opaque : exitStmt함수에서 return stmt를 제외한 모든 stmt에 붙여 해당 코드를 난독화하는데 사용
 	public static String invariant(String input) {
 		String front = "if (a * a >= 0) {\n"
 				+ dots(2);
@@ -19,7 +19,7 @@ public class Obfuscator {
 		return front + input + end;
 	}
 
-	// contextual opaque : exitStmt함수에서 return stmt를 제외한 모든 stmt를 난독화하는 데 사용
+	// contextual opaque : exitStmt함수에서 return stmt를 제외한 모든 stmt에 붙여 해당 코드를 난독화하는데 사용
 	public static String contextual(String input) {
 		String front = "int para = 2;\n"
 				+ dots(1) + "if (para * para >= 0) {\n"
@@ -31,7 +31,7 @@ public class Obfuscator {
 		return front + input + end;
 	}
 
-	// dynamic opaque : exitStmt함수에서 return stmt를 난독화하는데 사용
+	// dynamic opaque : exitStmt함수에서 return stmt에 붙여 해당 코드를 난독화하는데 사용
 	public static String dynamic(String input) {
 		String front1 = "int para = rand() % 9;\n"
 				+ dots(1) + "if (para * para >= 0) {\n"
@@ -81,8 +81,19 @@ public class Obfuscator {
 		return ret;
 	}
 	
+	
+	public static String qwer(String s1, String op, String s2) {
+		String dummy01 = "0;\n"+
+				dots(1)+"char temp[10] = \"qwerqwerq\";\n" + 
+				dots(1)+"temp[0] = "+s1+"+'0';\n" + 
+				dots(1)+"temp[1] = "+s2+"+'0';\n" + 
+				dots(1)+"temp[2] = temp[0]-'0' + temp[1]-'0';\n" + 
+				dots(1)+"result = temp[2]-'0';";
+		return dummy01;
+	}
+	
 	// 점 찍는거
-	public static String dots(int n) {
+	private static String dots(int n) {
 		int i = 0;
 		String dots = "";
 		while (i < n) {

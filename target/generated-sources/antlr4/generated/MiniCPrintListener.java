@@ -132,7 +132,7 @@ public class MiniCPrintListener extends MiniCBaseListener {
 			newTexts.put(ctx, s1 + " " + s2 + s3 + s4);
 		} else { // case : type_spec IDENT
 			newTexts.put(ctx, s1 + " " + s2);
-			Obfuscator.obfuscateIdent(s2);
+//			Obfuscator.obfuscateIdent(s2);
 		}
 	}
 
@@ -147,27 +147,16 @@ public class MiniCPrintListener extends MiniCBaseListener {
 
 		if (ctx.getChild(0) instanceof MiniCParser.Expr_stmtContext) { // case : expr_stmt
 			s1 = newTexts.get(ctx.expr_stmt());
-			// s1 = Obfuscator.invariant(s1);
-			// s1 = Obfuscator.contextual(s1);
 		} else if (ctx.getChild(0) instanceof MiniCParser.Compound_stmtContext) { // case : compound_stmt
 			s1 = newTexts.get(ctx.compound_stmt());
-			// s1 = Obfuscator.invariant(s1);
-			// s1 = Obfuscator.contextual(s1);
 		} else if (ctx.getChild(0) instanceof MiniCParser.If_stmtContext) { // case : if_stmt
 			s1 = newTexts.get(ctx.if_stmt());
-			// s1 = Obfuscator.invariant(s1);
-			// s1 = Obfuscator.contextual(s1);
 		} else if (ctx.getChild(0) instanceof MiniCParser.While_stmtContext) { // case : while_stmt
 			s1 = newTexts.get(ctx.while_stmt());
-			// s1 = Obfuscator.invariant(s1);
-			// s1 = Obfuscator.contextual(s1);
 		} else if (ctx.getChild(0) instanceof MiniCParser.For_stmtContext) {
 			s1 = newTexts.get(ctx.for_stmt());
-			// s1 = Obfuscator.invariant(s1);
-			// s1 = Obfuscator.contextual(s1);
 		} else { // case : return_stmt
 			s1 = newTexts.get(ctx.return_stmt());
-			s1 = Obfuscator.dynamic(s1);
 		}
 
 		if (ctx.getChild(0) instanceof MiniCParser.Compound_stmtContext) {
@@ -270,7 +259,7 @@ public class MiniCPrintListener extends MiniCBaseListener {
 				p = ps.param(i);
 				params[i] = p.IDENT().getText();
 			}
-			temp = Obfuscator.reAssign(params, t);
+//			temp = Obfuscator.reAssign(params, t);
 		}
 
 		s1 = ctx.getChild(0).getText(); // '{'
@@ -398,9 +387,9 @@ public class MiniCPrintListener extends MiniCBaseListener {
 
 		if (ctx.getChildCount() == 1) { // LITERAL or IDENT
 			s1 = ctx.getChild(0).getText();
-			if (Obfuscator.isObfuscated(s1)) {
-				s1 = Obfuscator.getObfIdent(s1);
-			}
+//			if (Obfuscator.isObfuscated(s1)) {
+//				s1 = Obfuscator.getObfIdent(s1);
+//			}
 			newTexts.put(ctx, s1);
 		} else if (ctx.getChildCount() == 2) { // 전위연산
 			s1 = ctx.getChild(0).getText(); // operator
@@ -414,38 +403,43 @@ public class MiniCPrintListener extends MiniCBaseListener {
 				newTexts.put(ctx, s1 + s2 + s3); // 괄호와 expression 띄우지 않고 출력
 			} else if (ctx.getChild(0) == ctx.IDENT()) { // case : IDENT '=' expr
 				s1 = ctx.getChild(0).getText(); // INDENT
-				if (Obfuscator.isObfuscated(s1)) {
-					s1 = Obfuscator.getObfIdent(s1);
-				}
+//				if (Obfuscator.isObfuscated(s1)) {
+//					s1 = Obfuscator.getObfIdent(s1);
+//				}
 				s2 = ctx.getChild(1).getText(); // '='
 				s3 = newTexts.get(ctx.expr(0)); // expr
 				newTexts.put(ctx, s1 + " " + s2 + " " + s3);
 			} else { // ex : expr '+' expr
 				s1 = newTexts.get(ctx.expr(0)); // expr
-				if (Obfuscator.isObfuscated(s1)) {
-					s1 = Obfuscator.getObfIdent(s1);
-				}
+//				if (Obfuscator.isObfuscated(s1)) {
+//					s1 = Obfuscator.getObfIdent(s1);
+//				}
 				s2 = newTexts.get(ctx.expr(1)); // expr
-				if (Obfuscator.isObfuscated(s2)) {
-					s1 = Obfuscator.getObfIdent(s1);
-				}
+//				if (Obfuscator.isObfuscated(s2)) {
+//					s1 = Obfuscator.getObfIdent(s1);
+//				}
 				op = ctx.getChild(1).getText(); // operator
-				newTexts.put(ctx, s1 + " " + op + " " + s2);
+				
+				String result = s1 + " " + op + " " + s2;
+				
+				result = Obfuscator.qwer(s1,op,s2);
+				
+				newTexts.put(ctx, result);
 			}
 		} else if (ctx.getChildCount() == 4) {
 			if (ctx.getChild(2) == ctx.expr()) { // case : IDENT '[' expr ']'
 				s1 = ctx.getChild(0).getText(); // IDENT
-				if (Obfuscator.isObfuscated(s1)) {
-					s1 = Obfuscator.getObfIdent(s1);
-				}
+//				if (Obfuscator.isObfuscated(s1)) {
+//					s1 = Obfuscator.getObfIdent(s1);
+//				}
 				s2 = ctx.getChild(1).getText(); // '['
 				s3 = newTexts.get(ctx.expr(0)); // expr
 				s4 = ctx.getChild(3).getText(); // ']'
 			} else { // case : IDENT '(' args ')'
 				s1 = ctx.getChild(0).getText(); // INDENT
-				if (Obfuscator.isObfuscated(s1)) {
-					s1 = Obfuscator.getObfIdent(s1);
-				}
+//				if (Obfuscator.isObfuscated(s1)) {
+//					s1 = Obfuscator.getObfIdent(s1);
+//				}
 				s2 = ctx.getChild(1).getText(); // '('
 				s3 = newTexts.get(ctx.args()); // args
 				s4 = ctx.getChild(3).getText(); // ')'
@@ -453,9 +447,9 @@ public class MiniCPrintListener extends MiniCBaseListener {
 			newTexts.put(ctx, s1 + s2 + s3 + s4);
 		} else { // case : IDENT '[' expr ']' '=' expr
 			s1 = ctx.getChild(0).getText(); // IDENT
-			if (Obfuscator.isObfuscated(s1)) {
-				s1 = Obfuscator.getObfIdent(s1);
-			}
+//			if (Obfuscator.isObfuscated(s1)) {
+//				s1 = Obfuscator.getObfIdent(s1);
+//			}
 			s2 = ctx.getChild(1).getText(); // '['
 			s3 = newTexts.get(ctx.expr(0)); // expr
 			s4 = ctx.getChild(3).getText(); // ']'
