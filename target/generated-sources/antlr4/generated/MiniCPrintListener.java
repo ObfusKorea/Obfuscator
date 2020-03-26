@@ -293,10 +293,17 @@ public class MiniCPrintListener extends MiniCBaseListener {
 		}
 		s2 = ctx.getChild(ctx.getChildCount() - 1).getText(); // '}'
 
-		newTexts.put(ctx, dots(if_count + while_count + fun_decl_count + for_count - 1) // 여는 중괄호 앞의 indentation
-				+ s1 + "\n" + l_decl + stmt + dots(if_count + while_count + fun_decl_count + for_count - 1) // 닫는 중괄호 앞의
-																											// indentation
-				+ s2 + "\n");
+		if (ctx.parent instanceof MiniCParser.Fun_declContext) {
+			newTexts.put(ctx, tabs(if_count + while_count + fun_decl_count - 1) // 여는 중괄호 앞의 indentation
+					+ s1 + "\n"+ l_decl + temp + stmt
+					+ tabs(if_count + while_count + fun_decl_count - 1) // 닫는 중괄호 앞의
+					// indentation
+					+ s2 + "\n");
+		} else {
+			newTexts.put(ctx, tabs(if_count + while_count + fun_decl_count - 1) // 여는 중괄호 앞의 indentation
+					+ s1 + "\n" + l_decl + stmt + tabs(if_count + while_count + fun_decl_count - 1) // 닫는 중괄호 앞의
+																									// indentation
+					+ s2 + "\n");
 		/*
 		 * dots(if_count + while_count + fun_decl_count - 1)은 복합문을 여닫는 중괄호 앞에 출력되는
 		 * indentation에 해당한다 중괄호의 경우 자신이 속해있는 특수절이나 함수와 들여쓰기 정도가 같으므로 절, 함수 enter 합에 대해
@@ -480,13 +487,13 @@ public class MiniCPrintListener extends MiniCBaseListener {
 	}
 
 	// n 개의 "...."이 이어진 문자열을 반환
-	public String dots(int n) {
+	public String tabs(int n) {
 		int i = 0;
-		String dots = "";
+		String tabs = "";
 		while (i < n) {
-			dots = dots + "....";
+			tabs = tabs + "    ";
 			i++;
 		}
-		return dots;
+		return tabs;
 	}
 }
