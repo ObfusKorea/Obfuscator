@@ -139,7 +139,7 @@ public class MiniCPrintListener extends MiniCBaseListener {
 	@Override
 	public void exitStmt(MiniCParser.StmtContext ctx) {
 		String indentation = null, s1 = null;
-		indentation = dots(if_count + while_count + fun_decl_count + for_count);
+		indentation = tabs(if_count + while_count + fun_decl_count + for_count);
 		/*
 		 * stmt의 들여쓰기에 해당하는 문자열 if, while과 같은 절 혹은 함수의 내부에 있는 문장에 대해 들여쓰기 처리를 하기 때문에 현재
 		 * ctx가 if, while, 함수 내부로 enter한 횟수를 세서 처리한다
@@ -290,11 +290,10 @@ public class MiniCPrintListener extends MiniCBaseListener {
 					+ s2 + "\n");
 		} else {
 			newTexts.put(ctx, tabs(if_count + while_count + fun_decl_count - 1) // 여는 중괄호 앞의 indentation
-					+ s1 + "\n" + l_decl + stmt + tabs(if_count + while_count + fun_decl_count - 1) // 닫는 중괄호 앞의
-																									// indentation
-					+ s2 + "\n");
+					+ s1 + "\n" + l_decl + stmt + tabs(if_count + while_count + fun_decl_count - 1) // 닫는 중괄호 앞의											// indentation
+					+ s2 + "\n");}
 		/*
-		 * dots(if_count + while_count + fun_decl_count - 1)은 복합문을 여닫는 중괄호 앞에 출력되는
+		 * tabs(if_count + while_count + fun_decl_count - 1)은 복합문을 여닫는 중괄호 앞에 출력되는
 		 * indentation에 해당한다 중괄호의 경우 자신이 속해있는 특수절이나 함수와 들여쓰기 정도가 같으므로 절, 함수 enter 합에 대해
 		 * 1을 빼서 들여쓰기 단계를 맞춘다
 		 */
@@ -305,9 +304,9 @@ public class MiniCPrintListener extends MiniCBaseListener {
 		String indentation = null, typeStr = null, identStr = null, valStr = null, nl = "\n";
 		int count = ctx.getChildCount();
 
-		indentation = dots(if_count + while_count + fun_decl_count + for_count); // Local_decl의 indentation
+		indentation = tabs(if_count + while_count + fun_decl_count + for_count); // Local_decl의 indentation
 		if (ctx.parent instanceof MiniCParser.For_stmtContext) {
-			indentation = dots(0);
+			indentation = tabs(0);
 			nl = "";
 		}
 		typeStr = newTexts.get(ctx.type_spec()); // type_spec
@@ -355,7 +354,7 @@ public class MiniCPrintListener extends MiniCBaseListener {
 			s6 = ctx.getChild(5).getText(); // ELSE
 			s7 = newTexts.get(ctx.stmt(1)); // stmt
 			newTexts.put(ctx,
-					s1 + " " + s2 + s3 + s4 + "\n" + s5 + dots(if_count + fun_decl_count + while_count + for_count - 1) // else
+					s1 + " " + s2 + s3 + s4 + "\n" + s5 + tabs(if_count + fun_decl_count + while_count + for_count - 1) // else
 					// 키워드의
 					// indentation
 							+ s6 + "\n" + s7);
@@ -419,11 +418,11 @@ public class MiniCPrintListener extends MiniCBaseListener {
 //					s1 = Obfuscator.getObfIdent(s1);
 //				}
 				op = ctx.getChild(1).getText(); // operator
-				
+
 				String result = s1 + " " + op + " " + s2;
-				
-				result = Obfuscator.qwer(s1,op,s2);
-				
+
+				result = Obfuscator.changingTypes(s1, op, s2);
+
 				newTexts.put(ctx, result);
 			}
 		} else if (ctx.getChildCount() == 4) {

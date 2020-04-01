@@ -81,8 +81,8 @@ public class Obfuscator {
 		return ret;
 	}
 	
-	
-	public static String qwer(String s1, String op, String s2) {
+	// 형변환 난독화
+	public static String changingTypes(String s1, String op, String s2) {
 		String dummy01 = "0;\n"+
 				dots(1)+"char temp[10] = \"qwerqwerq\";\n" + 
 				dots(1)+"temp[0] = "+s1+"+'0';\n" + 
