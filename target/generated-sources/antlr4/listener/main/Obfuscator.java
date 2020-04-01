@@ -91,6 +91,40 @@ public class Obfuscator {
 				dots(1)+"result = temp[2]-'0';";
 		return dummy01;
 	}
+
+	private static String plusOP_1(String x, String y){
+		String result = String.format("(%s or %s) + %s - ((~%s) and %s)", x, y, y,x,y);
+		return result;
+	}
+
+	private static String plusOP_2(String x, String y){
+		return String.format("(%s or %s) + (%s and %s)", x, y, x,y);
+	}
+
+	private static String xorOP(String x, String y){
+		return String.format("(%s or %s) - %s + ((~%s) and %s)", x, y, y,x,y);
+	}
+
+	private static String andOP(String x, String y){
+		return String.format("((~%s) or %s) - (~%s)", x, y, x);
+	}
+	private static String orOP(String x, String y){
+		return String.format("(%s ^ %s) + %s - ((~%s) and %s))", x, y, y, x, y);
+	}
+
+	public static String MBAExp(String x, String y, String op){
+		switch (op){
+			case "+":
+				return plusOP_1(x,y);
+			case "^":
+				return xorOP(x,y);
+			case "and":
+				return andOP(x, y);
+			case "or":
+				return orOP(x, y);
+		}
+		return x+op+y;
+	}
 	
 	// 점 찍는거
 	private static String dots(int n) {
