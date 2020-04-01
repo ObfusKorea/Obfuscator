@@ -11,38 +11,38 @@ public class Obfuscator {
 	// invariant opaque : exitStmt함수에서 return stmt를 제외한 모든 stmt에 붙여 해당 코드를 난독화하는데 사용
 	public static String invariant(String input) {
 		String front = "if (a * a >= 0) {\n"
-				+ dots(2);
-		String end = dots(1) + "} else {\n"
-				+ dots(2) + "int temp = 0;\r\n"
-				+ dots(2) + "result = temp;\r\n"
-				+ dots(1) + "}\n";
+				+ tabs(2);
+		String end = tabs(1) + "} else {\n"
+				+ tabs(2) + "int temp = 0;\r\n"
+				+ tabs(2) + "result = temp;\r\n"
+				+ tabs(1) + "}\n";
 		return front + input + end;
 	}
 
 	// contextual opaque : exitStmt함수에서 return stmt를 제외한 모든 stmt에 붙여 해당 코드를 난독화하는데 사용
 	public static String contextual(String input) {
 		String front = "int para = 2;\n"
-				+ dots(1) + "if (para * para >= 0) {\n"
-				+ dots(2);
-		String end = dots(1) + "} else {\n"
-				+ dots(2) + "int temp = 0;\r\n"
-				+ dots(2) + "result = temp;\r\n"
-				+ dots(1) + "}\n";
+				+ tabs(1) + "if (para * para >= 0) {\n"
+				+ tabs(2);
+		String end = tabs(1) + "} else {\n"
+				+ tabs(2) + "int temp = 0;\r\n"
+				+ tabs(2) + "result = temp;\r\n"
+				+ tabs(1) + "}\n";
 		return front + input + end;
 	}
 
 	// dynamic opaque : exitStmt함수에서 return stmt에 붙여 해당 코드를 난독화하는데 사용
 	public static String dynamic(String input) {
 		String front1 = "int para = rand() % 9;\n"
-				+ dots(1) + "if (para * para >= 0) {\n"
-				+ dots(2) + "result--;\n" + dots(1) + "} else {\n"
-				+ dots(2) + "result++;\n" + dots(1) + "}\n";
-		String front2 = dots(1) + "if (para * para < 0) {\n"
-				+ dots(2) + "result++;\n"
-				+ dots(1) + "} else {\n"
-				+ dots(2) + "result--;\n"
-				+ dots(1) + "}\n"
-				+ dots(1) + "";
+				+ tabs(1) + "if (para * para >= 0) {\n"
+				+ tabs(2) + "result--;\n" + tabs(1) + "} else {\n"
+				+ tabs(2) + "result++;\n" + tabs(1) + "}\n";
+		String front2 = tabs(1) + "if (para * para < 0) {\n"
+				+ tabs(2) + "result++;\n"
+				+ tabs(1) + "} else {\n"
+				+ tabs(2) + "result--;\n"
+				+ tabs(1) + "}\n"
+				+ tabs(1) + "";
 		return front1 + front2 + input;
 	}
 	
@@ -69,14 +69,14 @@ public class Obfuscator {
 		String ret = "";
 		for(int i=0; i<before.length; i++) {
 			b = before[i];
-			ret += dots(t)+"int "+map.get(b)+" = 0;\n";
+			ret += tabs(t)+"int "+map.get(b)+" = 0;\n";
 		}
 		for(int i=0; i<before.length; i++) {
 			b = before[i];
-			ret += dots(t)+"for(int i = 0; i < "+b+"; i++)\n"
-					+dots(t)+"{\n"
-					+dots(t+1)+map.get(b)+"++;\n"
-					+dots(t)+"}\n";
+			ret += tabs(t)+"for(int i = 0; i < "+b+"; i++)\n"
+					+tabs(t)+"{\n"
+					+tabs(t+1)+map.get(b)+"++;\n"
+					+tabs(t)+"}\n";
 		}
 		return ret;
 	}
@@ -84,23 +84,23 @@ public class Obfuscator {
 	// 형변환 난독화
 	public static String changingTypes(String s1, String op, String s2) {
 		String dummy01 = "0;\n"+
-				dots(1)+"char temp[10] = \"qwerqwerq\";\n" + 
-				dots(1)+"temp[0] = "+s1+"+'0';\n" + 
-				dots(1)+"temp[1] = "+s2+"+'0';\n" + 
-				dots(1)+"temp[2] = temp[0]-'0' + temp[1]-'0';\n" + 
-				dots(1)+"result = temp[2]-'0';";
+				tabs(1)+"char temp[10] = \"qwerqwerq\";\n" + 
+				tabs(1)+"temp[0] = "+s1+"+'0';\n" + 
+				tabs(1)+"temp[1] = "+s2+"+'0';\n" + 
+				tabs(1)+"temp[2] = temp[0]-'0' + temp[1]-'0';\n" + 
+				tabs(1)+"result = temp[2]-'0';";
 		return dummy01;
 	}
 	
 	// 점 찍는거
-	private static String dots(int n) {
+	private static String tabs(int n) {
 		int i = 0;
-		String dots = "";
+		String tabs = "";
 		while (i < n) {
-			dots = dots + "....";
+			tabs = tabs + "\t";
 			i++;
 		}
-		return dots;
+		return tabs;
 	}
 	
 }

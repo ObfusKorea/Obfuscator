@@ -484,7 +484,7 @@ public class MiniCPrintListener extends MiniCBaseListener {
 		int i = 0;
 		String tabs = "";
 		while (i < n) {
-			tabs = tabs + "    ";
+			tabs = tabs + "\t";
 			i++;
 		}
 		return tabs;
