@@ -83,12 +83,16 @@ public class Obfuscator {
 	
 	// 형변환 난독화
 	public static String changingTypes(String s1, String op, String s2) {
-		String dummy01 = "0;\n"+
-				tabs(1)+"char temp[10] = \"qwerqwerq\";\n" + 
-				tabs(1)+"temp[0] = "+s1+"+'0';\n" + 
-				tabs(1)+"temp[1] = "+s2+"+'0';\n" + 
-				tabs(1)+"temp[2] = temp[0]-'0' + temp[1]-'0';\n" + 
-				tabs(1)+"result = temp[2]-'0';";
+		String dummy01 = "0;\n" +
+				tabs(1)+"char str[10] = \"1001qwer\";\n" + 
+				tabs(1)+"char str2[10] = \"qsd92sds\";\n" + 
+				tabs(1)+"sprintf( str, \"%d\", "+s1+" );\n" + 
+				tabs(1)+"sprintf( str2, \"%d\", "+s2+" );\n\n" + 
+				tabs(1)+"char str3[10] = \"thsisres\";\n" + 
+				tabs(1)+"int value = 9;\n" + 
+				tabs(1)+"value = atoi(str) "+op+" atoi(str2);\n" + 
+				tabs(1)+"sprintf( str3, \"%d\", value );\n" + 
+				tabs(1)+"result = atoi(str3)";
 		return dummy01;
 	}
 	
