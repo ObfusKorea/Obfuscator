@@ -4,6 +4,10 @@ import org.antlr.v4.runtime.tree.ParseTreeProperty;
 
 import listener.main.Obfuscator;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class MiniCPrintListener extends MiniCBaseListener {
 	// 들여쓰기 횟수를 세기 위한 변수들
 	int fun_decl_count = 0;
@@ -12,6 +16,11 @@ public class MiniCPrintListener extends MiniCBaseListener {
 	int for_count = 0;
 
 	ParseTreeProperty<String> newTexts = new ParseTreeProperty<String>();
+
+	int outputCount;
+	public MiniCPrintListener(int count){
+		this.outputCount = count;
+	}
 
 	@Override
 	public void exitProgram(MiniCParser.ProgramContext ctx) {
@@ -26,6 +35,19 @@ public class MiniCPrintListener extends MiniCBaseListener {
 		}
 		newTexts.put(ctx, program);
 		System.out.println(program);
+
+		File file = new File(String.format("result%d.c",this.outputCount));
+
+		try {
+			//파일에 문자열을 쓴다.
+			//하지만 이미 파일이 존재하면 모든 내용을 삭제하고 그위에 덮어쓴다
+			//파일이 손산될 우려가 있다.
+			FileWriter fw = new FileWriter(file);
+			fw.write(program);
+			fw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
