@@ -1,5 +1,7 @@
 package listener.main;
 
+import obfusListener.Listener;
+import obfusListener.MBA_Listener;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
@@ -25,6 +27,10 @@ public class Translator {
                 options.add(OPTIONS.BYTECODEGEN);
             else if (args[i].startsWith("-u") || args[i].startsWith("-U"))
                 options.add(OPTIONS.UCODEGEN);
+            else if (args[i].equals("-default"))
+                options.add(OPTIONS.DEFAULT);
+            else if(args[i].equals("-MBA"))
+                options.add(OPTIONS.MBA);
             continue;
         }
         return options;
@@ -40,6 +46,12 @@ public class Translator {
                 break;
             case UCODEGEN:
                 walker.walk(new UCodeGenListener(), tree);
+                break;
+            case DEFAULT:
+                walker.walk(new Listener(count), tree);
+                break;
+            case MBA:
+                walker.walk(new MBA_Listener(count), tree);
                 break;
             default:
                 break;
