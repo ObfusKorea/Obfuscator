@@ -510,7 +510,7 @@ public class Listener extends MiniCBaseListener {
         }
         return tabs;
     }
-
+    // exitExpr에서 s1 + s2 처리할 때 사용하는 함수 (디폴트 리스너)
     public String applyObfus_binary(String s1, String op, String s2){
         return String.format("%s %s %s", s1, op, s2);
     }
