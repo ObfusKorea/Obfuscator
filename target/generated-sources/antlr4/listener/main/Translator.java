@@ -62,7 +62,9 @@ public class Translator {
         CharStream codeCharStream;
         String filename = "test.c";
 
-        List options = getOption(args);
+        String[] flags = {"-default", "-MBA", "-MBA"};
+        List options = getOption(flags);
+//        List options = getOption(args);
 
         for (int i = 0; i < options.size(); i++) {
             if (i > 0) {
