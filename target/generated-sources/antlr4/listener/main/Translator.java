@@ -13,7 +13,7 @@ import java.util.List;
 
 public class Translator {
     enum OPTIONS {
-        PRETTYPRINT, BYTECODEGEN, UCODEGEN, ERROR
+        PRETTYPRINT, BYTECODEGEN, UCODEGEN, ERROR, DEFAULT, MBA
     }
 
     private static ArrayList getOption(String[] args) {
@@ -21,7 +21,7 @@ public class Translator {
         if (args.length < 1)
             options.add(OPTIONS.PRETTYPRINT);
         for (int i = 0; i < args.length; i++) {
-            if (args[i].startsWith("-p") || args[i].startsWith("-P"))
+            if (args[i].startsWith("-pr") || args[i].startsWith("-PR"))
                 options.add(OPTIONS.PRETTYPRINT);
             else if (args[i].startsWith("-b") || args[i].startsWith("-B"))
                 options.add(OPTIONS.BYTECODEGEN);
