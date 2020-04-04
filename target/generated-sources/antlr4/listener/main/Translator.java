@@ -6,47 +6,65 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import generated.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Translator {
-	enum OPTIONS {
-		PRETTYPRINT, BYTECODEGEN, UCODEGEN, ERROR
-	}
+    enum OPTIONS {
+        PRETTYPRINT, BYTECODEGEN, UCODEGEN, ERROR
+    }
 
-	private static OPTIONS getOption(String[] args) {
-//		if (args.length < 1)
-//			return OPTIONS.BYTECODEGEN;
-//		if (args[0].startsWith("-p") || args[0].startsWith("-P"))
-//			return OPTIONS.PRETTYPRINT;
-//
-//		if (args[0].startsWith("-b") || args[0].startsWith("-B"))
-//			return OPTIONS.BYTECODEGEN;
-//
-//		if (args[0].startsWith("-u") || args[0].startsWith("-U"))
-//			return OPTIONS.UCODEGEN;
-//
-//		return OPTIONS.ERROR;
-		return OPTIONS.PRETTYPRINT;
-	}
+    private static ArrayList getOption(String[] args) {
+        ArrayList options = new ArrayList();
+        if (args.length < 1)
+            options.add(OPTIONS.PRETTYPRINT);
+        for (int i = 0; i < args.length; i++) {
+            if (args[i].startsWith("-p") || args[i].startsWith("-P"))
+                options.add(OPTIONS.PRETTYPRINT);
+            else if (args[i].startsWith("-b") || args[i].startsWith("-B"))
+                options.add(OPTIONS.BYTECODEGEN);
+            else if (args[i].startsWith("-u") || args[i].startsWith("-U"))
+                options.add(OPTIONS.UCODEGEN);
+            continue;
+        }
+        return options;
+    }
 
-	public static void main(String[] args) throws Exception {
-		CharStream codeCharStream = CharStreams.fromFileName("test.c");
-		MiniCLexer lexer = new MiniCLexer(codeCharStream);
-		CommonTokenStream tokens = new CommonTokenStream(lexer);
-		MiniCParser parser = new MiniCParser(tokens);
-		ParseTree tree = parser.program();
+    private static void callListener(OPTIONS option, ParseTreeWalker walker, ParseTree tree, int count) {
+        switch (option) {
+            case PRETTYPRINT:
+                walker.walk(new MiniCPrintListener(count), tree);
+                break;
+            case BYTECODEGEN:
+                walker.walk(new BytecodeGenListener(), tree);
+                break;
+            case UCODEGEN:
+                walker.walk(new UCodeGenListener(), tree);
+                break;
+            default:
+                break;
+        }
+    }
 
-		ParseTreeWalker walker = new ParseTreeWalker();
-		switch (getOption(args)) {
-		case PRETTYPRINT:
-			walker.walk(new MiniCPrintListener(), tree);
-			break;
-		case BYTECODEGEN:
-			walker.walk(new BytecodeGenListener(), tree);
-			break;
-		case UCODEGEN:
-			walker.walk(new UCodeGenListener(), tree);
-			break;
-		default:
-			break;
-		}
-	}
+    public static void main(String[] args) throws Exception {
+        CharStream codeCharStream;
+        String filename = "test.c";
+
+        List options = getOption(args);
+
+        for (int i = 0; i < options.size(); i++) {
+            if (i > 0) {
+                filename = String.format("result%d.c", i - 1);
+            }
+            codeCharStream = CharStreams.fromFileName(filename);
+            MiniCLexer lexer = new MiniCLexer(codeCharStream);
+            CommonTokenStream tokens = new CommonTokenStream(lexer);
+            MiniCParser parser = new MiniCParser(tokens);
+            ParseTree tree = parser.program();
+            ParseTreeWalker walker = new ParseTreeWalker();
+
+            callListener((OPTIONS) options.get(i), walker, tree, i);
+        }
+
+    }
 }
