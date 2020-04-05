@@ -2,6 +2,7 @@ package listener.main;
 
 import obfusListener.Listener;
 import obfusListener.MBA_Listener;
+import obfusListener.changeType_Listener;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
@@ -13,7 +14,7 @@ import java.util.List;
 
 public class Translator {
     enum OPTIONS {
-        PRETTYPRINT, BYTECODEGEN, UCODEGEN, ERROR, DEFAULT, MBA
+        PRETTYPRINT, BYTECODEGEN, UCODEGEN, ERROR, DEFAULT, MBA, CTYPE
     }
 
     private static ArrayList getOption(String[] args) {
@@ -31,6 +32,8 @@ public class Translator {
                 options.add(OPTIONS.DEFAULT);
             else if(args[i].equals("-MBA"))
                 options.add(OPTIONS.MBA);
+            else if(args[i].equals("-Ctype"))
+                options.add(OPTIONS.CTYPE);
             continue;
         }
         return options;
@@ -52,6 +55,9 @@ public class Translator {
                 break;
             case MBA:
                 walker.walk(new MBA_Listener(count), tree);
+                break;
+            case CTYPE:
+                walker.walk(new changeType_Listener(count), tree);
                 break;
             default:
                 break;
