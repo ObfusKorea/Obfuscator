@@ -1,7 +1,6 @@
 package listener.main;
 
-import obfusListener.Listener;
-import obfusListener.MBA_Listener;
+import obfusListener.*;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
@@ -13,7 +12,7 @@ import java.util.List;
 
 public class Translator {
     enum OPTIONS {
-        PRETTYPRINT, BYTECODEGEN, UCODEGEN, ERROR, DEFAULT, MBA
+        PRETTYPRINT, BYTECODEGEN, UCODEGEN, ERROR, DEFAULT, MBA, CTYPE, INVARIANT, CONTEXTUAL, DYNAMICOP
     }
 
     private static ArrayList getOption(String[] args) {
@@ -21,16 +20,25 @@ public class Translator {
         if (args.length < 1)
             options.add(OPTIONS.PRETTYPRINT);
         for (int i = 0; i < args.length; i++) {
-            if (args[i].startsWith("-pr") || args[i].startsWith("-PR"))
+            String option = args[i];
+            if (option.startsWith("-pr") || option.startsWith("-PR"))
                 options.add(OPTIONS.PRETTYPRINT);
-            else if (args[i].startsWith("-b") || args[i].startsWith("-B"))
+            else if (option.startsWith("-b") || option.startsWith("-B"))
                 options.add(OPTIONS.BYTECODEGEN);
-            else if (args[i].startsWith("-u") || args[i].startsWith("-U"))
+            else if (option.startsWith("-u") || option.startsWith("-U"))
                 options.add(OPTIONS.UCODEGEN);
-            else if (args[i].equals("-default"))
+            else if (option.equals("-default"))
                 options.add(OPTIONS.DEFAULT);
-            else if(args[i].equals("-MBA"))
+            else if(option.equals("-MBA"))
                 options.add(OPTIONS.MBA);
+            else if(option.equals("-Ctype"))
+                options.add(OPTIONS.CTYPE);
+            else if(option.equals("-Invariant"))
+                options.add(OPTIONS.INVARIANT);
+            else if(option.equals("-Contextual"))
+                options.add(OPTIONS.CONTEXTUAL);
+            else if(option.equals("-Dynamic"))
+                options.add(OPTIONS.DYNAMICOP);
             continue;
         }
         return options;
@@ -52,6 +60,18 @@ public class Translator {
                 break;
             case MBA:
                 walker.walk(new MBA_Listener(count), tree);
+                break;
+            case CTYPE:
+                walker.walk(new changeType_Listener(count), tree);
+                break;
+            case INVARIANT:
+                walker.walk(new invariant_Listener(count), tree);
+                break;
+            case CONTEXTUAL:
+                walker.walk(new contextual_Listener(count), tree);
+                break;
+            case DYNAMICOP:
+                walker.walk(new dynamicOpaque_Listener(count), tree);
                 break;
             default:
                 break;
