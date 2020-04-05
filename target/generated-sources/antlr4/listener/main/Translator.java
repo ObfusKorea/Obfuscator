@@ -1,8 +1,6 @@
 package listener.main;
 
-import obfusListener.Listener;
-import obfusListener.MBA_Listener;
-import obfusListener.changeType_Listener;
+import obfusListener.*;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
@@ -14,7 +12,7 @@ import java.util.List;
 
 public class Translator {
     enum OPTIONS {
-        PRETTYPRINT, BYTECODEGEN, UCODEGEN, ERROR, DEFAULT, MBA, CTYPE
+        PRETTYPRINT, BYTECODEGEN, UCODEGEN, ERROR, DEFAULT, MBA, CTYPE, INVARIANT, CONTEXTUAL, DYNAMICOP
     }
 
     private static ArrayList getOption(String[] args) {
@@ -35,6 +33,12 @@ public class Translator {
                 options.add(OPTIONS.MBA);
             else if(option.equals("-Ctype"))
                 options.add(OPTIONS.CTYPE);
+            else if(option.equals("-Invariant"))
+                options.add(OPTIONS.INVARIANT);
+            else if(option.equals("-Contextual"))
+                options.add(OPTIONS.CONTEXTUAL);
+            else if(option.equals("-Dynamic"))
+                options.add(OPTIONS.DYNAMICOP);
             continue;
         }
         return options;
@@ -59,6 +63,15 @@ public class Translator {
                 break;
             case CTYPE:
                 walker.walk(new changeType_Listener(count), tree);
+                break;
+            case INVARIANT:
+                walker.walk(new invariant_Listener(count), tree);
+                break;
+            case CONTEXTUAL:
+                walker.walk(new contextual_Listener(count), tree);
+                break;
+            case DYNAMICOP:
+                walker.walk(new dynamicOpaque_Listener(count), tree);
                 break;
             default:
                 break;

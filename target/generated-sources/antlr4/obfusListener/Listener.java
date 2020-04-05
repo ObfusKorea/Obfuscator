@@ -180,6 +180,12 @@ public class Listener extends MiniCBaseListener {
             s1 = newTexts.get(ctx.return_stmt());
         }
 
+        if(!(ctx.getChild(0) instanceof MiniCParser.Return_stmtContext)){
+            s1 = applyObfus_exceptRtStmt(s1);
+        }else{
+            s1 = applyObfus_RtStmt(s1);
+        }
+
         if (ctx.getChild(0) instanceof MiniCParser.Compound_stmtContext) {
             /*
              * compound_stmt일 경우 indentation을 붙일 경우 중괄호의 시작 부분에 부적절한 들여쓰기 처리를 하게 되므로
@@ -513,5 +519,17 @@ public class Listener extends MiniCBaseListener {
     // exitExpr에서 s1 + s2 처리할 때 사용하는 함수 (디폴트 리스너)
     public String applyObfus_binary(String s1, String op, String s2){
         return String.format("%s %s %s", s1, op, s2);
+    }
+
+    public String applyObfus_param(String s){
+        return s;
+    }
+
+    public String applyObfus_exceptRtStmt(String s1) {
+        return s1;
+    }
+
+    public String applyObfus_RtStmt(String s1) {
+        return s1;
     }
 }
