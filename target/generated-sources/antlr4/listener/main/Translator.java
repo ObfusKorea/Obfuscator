@@ -22,17 +22,18 @@ public class Translator {
         if (args.length < 1)
             options.add(OPTIONS.PRETTYPRINT);
         for (int i = 0; i < args.length; i++) {
-            if (args[i].startsWith("-pr") || args[i].startsWith("-PR"))
+            String option = args[i];
+            if (option.startsWith("-pr") || option.startsWith("-PR"))
                 options.add(OPTIONS.PRETTYPRINT);
-            else if (args[i].startsWith("-b") || args[i].startsWith("-B"))
+            else if (option.startsWith("-b") || option.startsWith("-B"))
                 options.add(OPTIONS.BYTECODEGEN);
-            else if (args[i].startsWith("-u") || args[i].startsWith("-U"))
+            else if (option.startsWith("-u") || option.startsWith("-U"))
                 options.add(OPTIONS.UCODEGEN);
-            else if (args[i].equals("-default"))
+            else if (option.equals("-default"))
                 options.add(OPTIONS.DEFAULT);
-            else if(args[i].equals("-MBA"))
+            else if(option.equals("-MBA"))
                 options.add(OPTIONS.MBA);
-            else if(args[i].equals("-Ctype"))
+            else if(option.equals("-Ctype"))
                 options.add(OPTIONS.CTYPE);
             continue;
         }
