@@ -75,7 +75,7 @@ public class Translator {
                 walker.walk(new dynamicOpaque_Listener(count), tree);
                 break;
             case C:
-                walker.walk(new C_2011.Listener.Listener(), tree);
+                walker.walk(new C_2011.Listener.Listener(count), tree);
                 break;
             default:
                 break;
