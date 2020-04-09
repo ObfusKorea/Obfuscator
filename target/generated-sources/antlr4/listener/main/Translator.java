@@ -6,19 +6,20 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import generated.*;
+import C_2011.Listener.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Translator {
     enum OPTIONS {
-        PRETTYPRINT, BYTECODEGEN, UCODEGEN, ERROR, DEFAULT, MBA, CTYPE, INVARIANT, CONTEXTUAL, DYNAMICOP
+        PRETTYPRINT, BYTECODEGEN, UCODEGEN, ERROR, DEFAULT, MBA, CTYPE, INVARIANT, CONTEXTUAL, DYNAMICOP, C
     }
 
     private static ArrayList getOption(String[] args) {
         ArrayList options = new ArrayList();
         if (args.length < 1)
-            options.add(OPTIONS.PRETTYPRINT);
+            options.add(OPTIONS.C);
         for (int i = 0; i < args.length; i++) {
             String option = args[i];
             if (option.startsWith("-pr") || option.startsWith("-PR"))
@@ -56,7 +57,7 @@ public class Translator {
                 walker.walk(new UCodeGenListener(), tree);
                 break;
             case DEFAULT:
-                walker.walk(new Listener(count), tree);
+                walker.walk(new obfusListener.Listener(count), tree);
                 break;
             case MBA:
                 walker.walk(new MBA_Listener(count), tree);
@@ -72,6 +73,9 @@ public class Translator {
                 break;
             case DYNAMICOP:
                 walker.walk(new dynamicOpaque_Listener(count), tree);
+                break;
+            case C:
+                walker.walk(new C_2011.Listener.Listener(), tree);
                 break;
             default:
                 break;
