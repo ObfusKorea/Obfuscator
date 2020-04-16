@@ -434,7 +434,8 @@ public class Listener extends MiniCBaseListener {
 //				}
                 s2 = ctx.getChild(1).getText(); // '='
                 s3 = newTexts.get(ctx.expr(0)); // expr
-                newTexts.put(ctx, s1 + " " + s2 + " " + s3);
+                String result = applyObfus_assign(s1,s3);
+                newTexts.put(ctx, result);
             } else { // ex : expr '+' expr
                 s1 = newTexts.get(ctx.expr(0)); // expr
 //				if (Obfuscator.isObfuscated(s1)) {
@@ -531,5 +532,9 @@ public class Listener extends MiniCBaseListener {
 
     public String applyObfus_RtStmt(String s1) {
         return s1;
+    }
+
+    public String applyObfus_assign(String a, String b){
+        return String.format("%s = %s", a,b);
     }
 }

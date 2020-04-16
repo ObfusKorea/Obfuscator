@@ -13,7 +13,7 @@ import java.util.List;
 
 public class Translator {
     enum OPTIONS {
-        PRETTYPRINT, BYTECODEGEN, UCODEGEN, ERROR, DEFAULT, MBA, CTYPE, INVARIANT, CONTEXTUAL, DYNAMICOP, C
+        PRETTYPRINT, BYTECODEGEN, UCODEGEN, ERROR, DEFAULT, MBA, CTYPE, INVARIANT, CONTEXTUAL, DYNAMICOP, C, ASM
     }
 
     private static ArrayList getOption(String[] args) {
@@ -40,6 +40,8 @@ public class Translator {
                 options.add(OPTIONS.CONTEXTUAL);
             else if(option.equals("-Dynamic"))
                 options.add(OPTIONS.DYNAMICOP);
+            else if(option.equals("-ASM"))
+                options.add(OPTIONS.ASM);
             continue;
         }
         return options;
@@ -77,6 +79,8 @@ public class Translator {
             case C:
                 walker.walk(new C_2011.Listener.Listener(count), tree);
                 break;
+            case ASM:
+                walker.walk(new asm_Listener(count), tree);
             default:
                 break;
         }

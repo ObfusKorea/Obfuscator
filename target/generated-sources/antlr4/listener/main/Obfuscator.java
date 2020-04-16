@@ -129,6 +129,49 @@ public class Obfuscator {
 		}
 		return x+op+y;
 	}
+
+	public static String dynamicASM(String a, String b){
+		String c = "int a = %s;\n" +
+				"int b = %s;\n" +
+				"int temp_a = %s;\n" +
+				"\n" +
+				"__asm {\n" +
+				"\tmov ecx, b;\n" +
+				"\tcmp ecx, 0;\n" +
+				"\tjnz A;\n" +
+				"\tmov temp_a, 0;\n" +
+				"\tmov eax, b;\n" +
+				"\tadd temp_a, eax;\n" +
+				"\tjmp not_A;\n" +
+				"}\n" +
+				"A:\n" +
+				"__asm {\n" +
+				"mov temp_a, 0;\n" +
+				"jmp not_A;\n" +
+				"}\n" +
+				"return;\n" +
+				"\n" +
+				"not_A:\n" +
+				"__asm {\n" +
+				"mov ecx, b;\n" +
+				"cmp ecx, 0;\n" +
+				"jnz B;\n" +
+				"mov eax, temp_a;\n" +
+				"mov a, eax;\n" +
+				"}\n" +
+				"return;\n" +
+				"\n" +
+				"B:\n" +
+				"__asm {\n" +
+				"mov eax, b;\n" +
+				"add temp_a, eax;\n" +
+				"mov eax, temp_a;\n" +
+				"mov a, eax;\n" +
+				"}\n" +
+				"return;";
+		return String.format(c,a,b,"111");
+
+	}
 	
 	// 점 찍는거
 	private static String tabs(int n) {
