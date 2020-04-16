@@ -84,7 +84,7 @@ public class Translator {
 
     public static void main(String[] args) throws Exception {
         CharStream codeCharStream;
-        String filename = "test.c";
+        String filename = "input.c";
 
         String[] flags = {"-default", "-MBA", "-MBA"};
         List options = getOption(flags);
