@@ -22,16 +22,22 @@ public class Listener extends CBaseListener {
     @Override
     public void exitPrimaryExpression(CParser.PrimaryExpressionContext ctx) {
         String program = "";
-        int size = ctx.StringLiteral().size();
-        if (size>0){
-            for (int i = 0; i < size; i++) {
-                program += newTexts.get(ctx.StringLiteral(i));
+        if (ctx.Identifier() != null) {
+            program = newTexts.get(ctx.Identifier());
+        } else if (ctx.Constant() != null) {
+            program = newTexts.get(ctx.Constant());
+        } else if (ctx.StringLiteral() != null) {
+            for (int i = 0; i < ctx.StringLiteral().size(); i++) {
+                program = newTexts.get(ctx.StringLiteral(i));
             }
+        } else if (ctx.expression() != null) {
+            program = String.format("(%s)", newTexts.get(ctx.expression()));
         }
+
         newTexts.put(ctx, program);
         System.out.println(program);
 
-        File file = new File(String.format("result_C_%d.c",this.outputCount));
+        File file = new File(String.format("result_C_%d.c", this.outputCount));
 
         try {
             FileWriter fw = new FileWriter(file);
@@ -47,169 +53,223 @@ public class Listener extends CBaseListener {
         super.enterPrimaryExpression(ctx);
     }
 
-    @Override
-    public void enterGenericSelection(CParser.GenericSelectionContext ctx) {
-        super.enterGenericSelection(ctx);
-    }
-
-    @Override
-    public void exitGenericSelection(CParser.GenericSelectionContext ctx) {
-        super.exitGenericSelection(ctx);
-    }
-
-    @Override
-    public void enterGenericAssocList(CParser.GenericAssocListContext ctx) {
-        super.enterGenericAssocList(ctx);
-    }
-
-    @Override
-    public void exitGenericAssocList(CParser.GenericAssocListContext ctx) {
-        super.exitGenericAssocList(ctx);
-    }
-
-    @Override
-    public void enterGenericAssociation(CParser.GenericAssociationContext ctx) {
-        super.enterGenericAssociation(ctx);
-    }
-
-    @Override
-    public void exitGenericAssociation(CParser.GenericAssociationContext ctx) {
-        super.exitGenericAssociation(ctx);
-    }
-
-    @Override
-    public void enterPostfixExpression(CParser.PostfixExpressionContext ctx) {
-        super.enterPostfixExpression(ctx);
-    }
+//    @Override
+//    public void enterGenericSelection(CParser.GenericSelectionContext ctx) {
+//        super.enterGenericSelection(ctx);
+//    }
+//
+//    @Override
+//    public void exitGenericSelection(CParser.GenericSelectionContext ctx) {
+//        super.exitGenericSelection(ctx);
+//    }
+//
+//    @Override
+//    public void enterGenericAssocList(CParser.GenericAssocListContext ctx) {
+//        super.enterGenericAssocList(ctx);
+//    }
+//
+//    @Override
+//    public void exitGenericAssocList(CParser.GenericAssocListContext ctx) {
+//        super.exitGenericAssocList(ctx);
+//    }
+//
+//    @Override
+//    public void enterGenericAssociation(CParser.GenericAssociationContext ctx) {
+//        super.enterGenericAssociation(ctx);
+//    }
+//
+//    @Override
+//    public void exitGenericAssociation(CParser.GenericAssociationContext ctx) {
+//        super.exitGenericAssociation(ctx);
+//    }
 
     @Override
     public void exitPostfixExpression(CParser.PostfixExpressionContext ctx) {
-        super.exitPostfixExpression(ctx);
-    }
+        String bf = "";
+        String postfix = newTexts.get(ctx.postfixExpression());
+        int child = ctx.children.size();
+        if (child == 1) { //primaryExp
+            bf = newTexts.get(ctx.primaryExpression());
+        } else if (child == 2) { // postfixExp ++/--
+            bf = String.format("%s%s", postfix, newTexts.get(ctx.getChild(1)));
+        } else if (ctx.Identifier() != null) { //postfix -> / . Identifier
+            bf = String.format("%s %s %s", postfix, newTexts.get(ctx.getChild(1)), newTexts.get(ctx.Identifier()));
+        } else if (ctx.getChild(1).equals(CParser.LeftBracket)) { // profixEXP [ expression ]
+            bf = String.format("%s[%s]", postfix, newTexts.get(ctx.expression()));
+        } else if (ctx.getChild(1).equals(CParser.LeftParen)) { // postfix ( argument? )
+            String argument = (ctx.argumentExpressionList() != null) ? newTexts.get(ctx.argumentExpressionList()) : "";
+            bf = String.format("%s(%s)", postfix, argument);
+        }
 
-    @Override
-    public void enterArgumentExpressionList(CParser.ArgumentExpressionListContext ctx) {
-        super.enterArgumentExpressionList(ctx);
+        newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitArgumentExpressionList(CParser.ArgumentExpressionListContext ctx) {
-        super.exitArgumentExpressionList(ctx);
-    }
+        String bf = "";
+        String assignExp = newTexts.get(ctx.assignmentExpression());
 
-    @Override
-    public void enterUnaryExpression(CParser.UnaryExpressionContext ctx) {
-        super.enterUnaryExpression(ctx);
+        if (ctx.argumentExpressionList() == null) {
+            bf = assignExp;
+        } else {
+            bf = String.format("%s, %s", newTexts.get(ctx.argumentExpressionList()), assignExp);
+        }
+
+        newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitUnaryExpression(CParser.UnaryExpressionContext ctx) {
-        super.exitUnaryExpression(ctx);
-    }
-
-    @Override
-    public void enterUnaryOperator(CParser.UnaryOperatorContext ctx) {
-        super.enterUnaryOperator(ctx);
+        String bf = "";
+        if (ctx.postfixExpression() != null) { // postfixExp
+            bf = newTexts.get(ctx.postfixExpression());
+        } else if (ctx.unaryExpression() != null) { // ++ / -- / sizeof unaryExp
+            bf = String.format("%s%s", newTexts.get(ctx.getChild(0)), newTexts.get(ctx.unaryExpression()));
+        } else if (ctx.unaryOperator() != null) { //unaryOp castExp
+            bf = String.format("%s%s", newTexts.get(ctx.unaryOperator()), newTexts.get(ctx.castExpression()));
+        }
+        newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitUnaryOperator(CParser.UnaryOperatorContext ctx) {
-        super.exitUnaryOperator(ctx);
+        String bf = newTexts.get(ctx.getChild(0));
+        newTexts.put(ctx, bf);
     }
 
-    @Override
-    public void enterCastExpression(CParser.CastExpressionContext ctx) {
-        super.enterCastExpression(ctx);
-    }
-
-    @Override
-    public void exitCastExpression(CParser.CastExpressionContext ctx) {
-        super.exitCastExpression(ctx);
-    }
-
-    @Override
-    public void enterMultiplicativeExpression(CParser.MultiplicativeExpressionContext ctx) {
-        super.enterMultiplicativeExpression(ctx);
-    }
+//    @Override
+//    public void enterCastExpression(CParser.CastExpressionContext ctx) {
+//        super.enterCastExpression(ctx);
+//    }
+//
+//    @Override
+//    public void exitCastExpression(CParser.CastExpressionContext ctx) {
+//        super.exitCastExpression(ctx);
+//    }
+//
+//    @Override
+//    public void enterMultiplicativeExpression(CParser.MultiplicativeExpressionContext ctx) {
+//        super.enterMultiplicativeExpression(ctx);
+//    }
 
     @Override
     public void exitMultiplicativeExpression(CParser.MultiplicativeExpressionContext ctx) {
-        super.exitMultiplicativeExpression(ctx);
-    }
+        String bf = "";
+        if (ctx.children.size() == 1) { // castExp
+            bf = newTexts.get(ctx.castExpression());
+        } else {
+            String multi = newTexts.get(ctx.multiplicativeExpression());
+            String op = newTexts.get(ctx.getChild(1));
+            String cast = newTexts.get(ctx.castExpression());
+            bf = String.format("%s %s %s", multi, op, cast);
+        }
 
-    @Override
-    public void enterAdditiveExpression(CParser.AdditiveExpressionContext ctx) {
-        super.enterAdditiveExpression(ctx);
+        newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitAdditiveExpression(CParser.AdditiveExpressionContext ctx) {
-        super.exitAdditiveExpression(ctx);
-    }
+        String bf = "";
+        String multi = newTexts.get(ctx.multiplicativeExpression());
+        if (ctx.children.size() == 1) { // multiplicativeExp
+            bf = multi;
+        } else {
+            String additive = newTexts.get(ctx.additiveExpression());
+            String op = newTexts.get(ctx.getChild(1));
+            bf = String.format("%s %s %s", additive, op, multi);
+        }
 
-    @Override
-    public void enterShiftExpression(CParser.ShiftExpressionContext ctx) {
-        super.enterShiftExpression(ctx);
+        newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitShiftExpression(CParser.ShiftExpressionContext ctx) {
-        super.exitShiftExpression(ctx);
-    }
+        String bf = "";
+        String additive = newTexts.get(ctx.additiveExpression());
+        if (ctx.children.size() == 1) { // additiveExp
+            bf = additive;
+        } else {
+            String shift = newTexts.get(ctx.shiftExpression());
+            String op = newTexts.get(ctx.getChild(1));
+            bf = String.format("%s %s %s", shift, op, additive);
+        }
 
-    @Override
-    public void enterRelationalExpression(CParser.RelationalExpressionContext ctx) {
-        super.enterRelationalExpression(ctx);
+        newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitRelationalExpression(CParser.RelationalExpressionContext ctx) {
-        super.exitRelationalExpression(ctx);
-    }
+        String bf = "";
+        String shift = newTexts.get(ctx.shiftExpression());
+        if (ctx.children.size() == 1) { // shiftExp
+            bf = shift;
+        } else {
+            String relation = newTexts.get(ctx.relationalExpression());
+            String op = newTexts.get(ctx.getChild(1));
+            bf = String.format("%s %s %s", relation, op, shift);
+        }
 
-    @Override
-    public void enterEqualityExpression(CParser.EqualityExpressionContext ctx) {
-        super.enterEqualityExpression(ctx);
+        newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitEqualityExpression(CParser.EqualityExpressionContext ctx) {
-        super.exitEqualityExpression(ctx);
-    }
+        String bf = "";
+        String relation = newTexts.get(ctx.relationalExpression());
+        if (ctx.children.size() == 1) { // relationalExpression
+            bf = relation;
+        } else {
+            String equality = newTexts.get(ctx.equalityExpression());
+            String op = newTexts.get(ctx.getChild(1));
+            bf = String.format("%s %s %s", equality, op, relation);
+        }
 
-    @Override
-    public void enterAndExpression(CParser.AndExpressionContext ctx) {
-        super.enterAndExpression(ctx);
+        newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitAndExpression(CParser.AndExpressionContext ctx) {
-        super.exitAndExpression(ctx);
-    }
+        String bf = "";
+        String equal = newTexts.get(ctx.equalityExpression());
+        if (ctx.children.size() == 1) { // equalExp
+            bf = equal;
+        } else {
+            String and = newTexts.get(ctx.andExpression());
+            String op = newTexts.get(ctx.getChild(1));
+            bf = String.format("%s %s %s", and, op, equal);
+        }
 
-    @Override
-    public void enterExclusiveOrExpression(CParser.ExclusiveOrExpressionContext ctx) {
-        super.enterExclusiveOrExpression(ctx);
+        newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitExclusiveOrExpression(CParser.ExclusiveOrExpressionContext ctx) {
-        super.exitExclusiveOrExpression(ctx);
-    }
+        String bf = "";
+        String and = newTexts.get(ctx.andExpression());
+        if (ctx.children.size() == 1) { // andExp
+            bf = and;
+        } else {
+            String exclusive = newTexts.get(ctx.exclusiveOrExpression());
+            String op = newTexts.get(ctx.getChild(1));
+            bf = String.format("%s %s %s", exclusive, op, and);
+        }
 
-    @Override
-    public void enterInclusiveOrExpression(CParser.InclusiveOrExpressionContext ctx) {
-        super.enterInclusiveOrExpression(ctx);
+        newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitInclusiveOrExpression(CParser.InclusiveOrExpressionContext ctx) {
-        super.exitInclusiveOrExpression(ctx);
-    }
+        String bf = "";
+        String exclusive = newTexts.get(ctx.exclusiveOrExpression());
+        if (ctx.children.size() == 1) { // relationalExpression
+            bf = exclusive;
+        } else {
+            String inclusive = newTexts.get(ctx.inclusiveOrExpression());
+            String op = newTexts.get(ctx.getChild(1));
+            bf = String.format("%s %s %s", inclusive, op, exclusive);
+        }
 
-    @Override
-    public void enterLogicalAndExpression(CParser.LogicalAndExpressionContext ctx) {
-        super.enterLogicalAndExpression(ctx);
+        newTexts.put(ctx, bf);
     }
 
     @Override
