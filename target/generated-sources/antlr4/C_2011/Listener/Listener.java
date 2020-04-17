@@ -15,7 +15,7 @@ public class Listener extends CBaseListener {
     int outputCount;
     ParseTreeProperty<String> newTexts = new ParseTreeProperty<>();
 
-    public Listener(int count){
+    public Listener(int count) {
         this.outputCount = count;
     }
 
@@ -261,7 +261,7 @@ public class Listener extends CBaseListener {
     public void exitInclusiveOrExpression(CParser.InclusiveOrExpressionContext ctx) {
         String bf = "";
         String exclusive = newTexts.get(ctx.exclusiveOrExpression());
-        if (ctx.children.size() == 1) { // relationalExpression
+        if (ctx.children.size() == 1) { // exclusiveOr
             bf = exclusive;
         } else {
             String inclusive = newTexts.get(ctx.inclusiveOrExpression());
@@ -274,77 +274,106 @@ public class Listener extends CBaseListener {
 
     @Override
     public void exitLogicalAndExpression(CParser.LogicalAndExpressionContext ctx) {
-        super.exitLogicalAndExpression(ctx);
-    }
+        String bf = "";
+        String incluesive = newTexts.get(ctx.inclusiveOrExpression());
+        if (ctx.children.size() == 1) { // inclusiveAnd
+            bf = incluesive;
+        } else {
+            String logical = newTexts.get(ctx.logicalAndExpression());
+            String op = newTexts.get(ctx.getChild(1));
+            bf = String.format("%s %s %s", logical, op, incluesive);
+        }
 
-    @Override
-    public void enterLogicalOrExpression(CParser.LogicalOrExpressionContext ctx) {
-        super.enterLogicalOrExpression(ctx);
+        newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitLogicalOrExpression(CParser.LogicalOrExpressionContext ctx) {
-        super.exitLogicalOrExpression(ctx);
-    }
+        String bf = "";
+        String logicalAnd = newTexts.get(ctx.logicalAndExpression());
+        if (ctx.children.size() == 1) { // logicalAnd
+            bf = logicalAnd;
+        } else {
+            String logicalOr = newTexts.get(ctx.logicalOrExpression());
+            String op = newTexts.get(ctx.getChild(1));
+            bf = String.format("%s %s %s", logicalOr, op, logicalAnd);
+        }
 
-    @Override
-    public void enterConditionalExpression(CParser.ConditionalExpressionContext ctx) {
-        super.enterConditionalExpression(ctx);
+        newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitConditionalExpression(CParser.ConditionalExpressionContext ctx) {
-        super.exitConditionalExpression(ctx);
-    }
+        String bf = "";
+        String logicalOr = newTexts.get(ctx.logicalOrExpression());
+        if (ctx.children.size() == 1) {
+            bf = logicalOr;
+        } else {
+            String exp = newTexts.get(ctx.expression());
+            String condiExp = newTexts.get(ctx.conditionalExpression());
+            bf = String.format("%s ? %s : %s", logicalOr, exp, condiExp);
+        }
 
-    @Override
-    public void enterAssignmentExpression(CParser.AssignmentExpressionContext ctx) {
-        super.enterAssignmentExpression(ctx);
+        newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitAssignmentExpression(CParser.AssignmentExpressionContext ctx) {
-        super.exitAssignmentExpression(ctx);
-    }
+        String bf = "";
+        if (ctx.conditionalExpression() != null) { //conditionalExpression
+            bf = newTexts.get(ctx.conditionalExpression());
+        } else if (ctx.unaryExpression() != null) { //unaryExpression assignmentOperator assignmentExpression
+            String unary = newTexts.get(ctx.unaryExpression());
+            String assignOP = newTexts.get(ctx.assignmentOperator());
+            String assignExp = newTexts.get(ctx.assignmentExpression());
+            bf = String.format("%s %s %s", unary, assignOP, assignExp);
+        } else { //DigitSequence
+            bf = newTexts.get(ctx.DigitSequence());
+        }
 
-    @Override
-    public void enterAssignmentOperator(CParser.AssignmentOperatorContext ctx) {
-        super.enterAssignmentOperator(ctx);
+        newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitAssignmentOperator(CParser.AssignmentOperatorContext ctx) {
-        super.exitAssignmentOperator(ctx);
-    }
-
-    @Override
-    public void enterExpression(CParser.ExpressionContext ctx) {
-        super.enterExpression(ctx);
+        newTexts.put(ctx, newTexts.get(ctx.getChild(0)));
     }
 
     @Override
     public void exitExpression(CParser.ExpressionContext ctx) {
-        super.exitExpression(ctx);
-    }
+        String bf = "";
+        String assignExp = newTexts.get(ctx.assignmentExpression());
+        if(ctx.children.size() == 1){
+            bf = assignExp;
+        }else{
+            String exp = newTexts.get(ctx.expression());
+            bf = String.format("%s, %s", exp, assignExp);
+        }
 
-    @Override
-    public void enterConstantExpression(CParser.ConstantExpressionContext ctx) {
-        super.enterConstantExpression(ctx);
+        newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitConstantExpression(CParser.ConstantExpressionContext ctx) {
-        super.exitConstantExpression(ctx);
-    }
-
-    @Override
-    public void enterDeclaration(CParser.DeclarationContext ctx) {
-        super.enterDeclaration(ctx);
+        newTexts.put(ctx, newTexts.get(ctx.conditionalExpression()));
     }
 
     @Override
     public void exitDeclaration(CParser.DeclarationContext ctx) {
-        super.exitDeclaration(ctx);
+        String bf = "";
+        int cSize = ctx.children.size();
+        if(cSize==1){ //staticAssertDeclaration
+            bf = newTexts.get(ctx.staticAssertDeclaration());
+        }else if(cSize==2){ // declarationSpecifiers ';'
+            String declarSpeci = newTexts.get(ctx.declarationSpecifiers());
+            bf = String.format("%s;", declarSpeci);
+        }else{ // declarationSpecifiers initDeclaratorList ';'
+            String declarSpeci = newTexts.get(ctx.declarationSpecifiers());
+            String initDecl = newTexts.get(ctx.initDeclaratorList());
+            bf = String.format("%s %s;", declarSpeci, initDecl);
+        }
+
+        newTexts.put(ctx, bf);
     }
 
     @Override
