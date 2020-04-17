@@ -377,73 +377,95 @@ public class Listener extends CBaseListener {
     }
 
     @Override
-    public void enterDeclarationSpecifiers(CParser.DeclarationSpecifiersContext ctx) {
-        super.enterDeclarationSpecifiers(ctx);
-    }
-
-    @Override
     public void exitDeclarationSpecifiers(CParser.DeclarationSpecifiersContext ctx) {
-        super.exitDeclarationSpecifiers(ctx);
-    }
-
-    @Override
-    public void enterDeclarationSpecifiers2(CParser.DeclarationSpecifiers2Context ctx) {
-        super.enterDeclarationSpecifiers2(ctx);
+        StringBuilder bf = new StringBuilder();
+        for (int i = 0; i < ctx.children.size(); i++) {
+            bf.append(newTexts.get(ctx.declarationSpecifier(i)));
+        }
+        newTexts.put(ctx, bf.toString());
     }
 
     @Override
     public void exitDeclarationSpecifiers2(CParser.DeclarationSpecifiers2Context ctx) {
-        super.exitDeclarationSpecifiers2(ctx);
-    }
-
-    @Override
-    public void enterDeclarationSpecifier(CParser.DeclarationSpecifierContext ctx) {
-        super.enterDeclarationSpecifier(ctx);
+        StringBuilder bf = new StringBuilder();
+        for (int i = 0; i < ctx.children.size(); i++) {
+            bf.append(newTexts.get(ctx.declarationSpecifier(i)));
+        }
+        newTexts.put(ctx, bf.toString());
     }
 
     @Override
     public void exitDeclarationSpecifier(CParser.DeclarationSpecifierContext ctx) {
-        super.exitDeclarationSpecifier(ctx);
-    }
+        String bf = "";
+        if (ctx.storageClassSpecifier() != null) {
+            bf = newTexts.get(ctx.storageClassSpecifier());
+        } else if (ctx.typeSpecifier() != null) {
+            bf = newTexts.get(ctx.typeSpecifier());
+        } else if (ctx.typeQualifier() != null) {
+            bf = newTexts.get(ctx.typeQualifier());
+        } else if (ctx.functionSpecifier() != null) {
+            bf = newTexts.get(ctx.functionSpecifier());
+        } else {
+            bf = newTexts.get(ctx.alignmentSpecifier());
+        }
 
-    @Override
-    public void enterInitDeclaratorList(CParser.InitDeclaratorListContext ctx) {
-        super.enterInitDeclaratorList(ctx);
+        newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitInitDeclaratorList(CParser.InitDeclaratorListContext ctx) {
-        super.exitInitDeclaratorList(ctx);
-    }
+        String bf = "";
+        String initDecl = newTexts.get(ctx.initDeclarator());
+        if (ctx.children.size() == 1) {
+            bf = initDecl;
+        } else {
+            String initDeclList = newTexts.get(ctx.initDeclaratorList());
+            bf = String.format("%s, %s", initDeclList, initDecl);
+        }
 
-    @Override
-    public void enterInitDeclarator(CParser.InitDeclaratorContext ctx) {
-        super.enterInitDeclarator(ctx);
+        newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitInitDeclarator(CParser.InitDeclaratorContext ctx) {
-        super.exitInitDeclarator(ctx);
-    }
+        String bf = "";
+        String decl = newTexts.get(ctx.declarator());
+        if (ctx.children.size() == 1) {
+            bf = decl;
+        } else {
+            String init = newTexts.get(ctx.initializer());
+            bf = String.format("%s = %s", decl, init);
+        }
 
-    @Override
-    public void enterStorageClassSpecifier(CParser.StorageClassSpecifierContext ctx) {
-        super.enterStorageClassSpecifier(ctx);
+        newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitStorageClassSpecifier(CParser.StorageClassSpecifierContext ctx) {
-        super.exitStorageClassSpecifier(ctx);
+        newTexts.put(ctx, newTexts.get(ctx.getChild(0)));
     }
 
     @Override
     public void enterTypeSpecifier(CParser.TypeSpecifierContext ctx) {
-        super.enterTypeSpecifier(ctx);
+        String bf = "";
+        if (ctx.atomicTypeSpecifier() != null) {
+            bf = newTexts.get(ctx.atomicTypeSpecifier());
+        } else if (ctx.structOrUnionSpecifier() != null) {
+            bf = newTexts.get(ctx.structOrUnionSpecifier());
+        } else if (ctx.enumSpecifier() != null) {
+            bf = newTexts.get(ctx.enumSpecifier());
+        } else if (ctx.typedefName() != null) {
+            bf = newTexts.get(ctx.typedefName());
+        } else if (ctx.children.size() == 1) {
+            bf = newTexts.get(ctx.getChild(0));
+        }
+
+        newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitTypeSpecifier(CParser.TypeSpecifierContext ctx) {
-        super.exitTypeSpecifier(ctx);
+
     }
 
     @Override
@@ -597,18 +619,18 @@ public class Listener extends CBaseListener {
     }
 
     @Override
-    public void enterDeclarator(CParser.DeclaratorContext ctx) {
-        super.enterDeclarator(ctx);
-    }
-
-    @Override
     public void exitDeclarator(CParser.DeclaratorContext ctx) {
-        super.exitDeclarator(ctx);
-    }
+        StringBuilder bf = new StringBuilder();
+        String pointer = (ctx.pointer()!=null) ? newTexts.get(ctx.pointer())+" " : "";
+        String directDecl = newTexts.get(ctx.directDeclarator());
+        bf.append(pointer);
+        bf.append(directDecl);
 
-    @Override
-    public void enterDirectDeclarator(CParser.DirectDeclaratorContext ctx) {
-        super.enterDirectDeclarator(ctx);
+        for (int i = 0; i < ctx.gccDeclaratorExtension().size(); i++) {
+            bf.append(newTexts.get(ctx.gccDeclaratorExtension(i)));
+        }
+
+        newTexts.put(ctx, bf.toString());
     }
 
     @Override
@@ -617,13 +639,19 @@ public class Listener extends CBaseListener {
     }
 
     @Override
-    public void enterGccDeclaratorExtension(CParser.GccDeclaratorExtensionContext ctx) {
-        super.enterGccDeclaratorExtension(ctx);
-    }
-
-    @Override
     public void exitGccDeclaratorExtension(CParser.GccDeclaratorExtensionContext ctx) {
-        super.exitGccDeclaratorExtension(ctx);
+        String bf = "";
+        if(ctx.children.size()==1){
+            bf=newTexts.get(ctx.gccAttributeSpecifier());
+        }else{
+            StringBuilder stringLiteral = new StringBuilder();
+            for (int i = 0; i < ctx.StringLiteral().size(); i++) {
+                stringLiteral.append(newTexts.get(ctx.StringLiteral(i)));
+            }
+            bf = String.format("__asm(%s)",stringLiteral);
+        }
+
+        newTexts.put(ctx, bf);
     }
 
     @Override
@@ -655,15 +683,10 @@ public class Listener extends CBaseListener {
     public void exitGccAttribute(CParser.GccAttributeContext ctx) {
         super.exitGccAttribute(ctx);
     }
-
-    @Override
-    public void enterNestedParenthesesBlock(CParser.NestedParenthesesBlockContext ctx) {
-        super.enterNestedParenthesesBlock(ctx);
-    }
-
+//todo
     @Override
     public void exitNestedParenthesesBlock(CParser.NestedParenthesesBlockContext ctx) {
-        super.exitNestedParenthesesBlock(ctx);
+
     }
 
     @Override
