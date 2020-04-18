@@ -106,7 +106,7 @@ public class Listener extends CBaseListener {
 
     @Override
     public void exitArgumentExpressionList(CParser.ArgumentExpressionListContext ctx) {
-        String bf = "";
+        String bf;
         String assignExp = newTexts.get(ctx.assignmentExpression());
 
         if (ctx.argumentExpressionList() == null) {
