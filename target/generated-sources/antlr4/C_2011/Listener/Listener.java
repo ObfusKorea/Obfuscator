@@ -862,33 +862,45 @@ public class Listener extends CBaseListener {
     }
 
     @Override
-    public void enterStaticAssertDeclaration(CParser.StaticAssertDeclarationContext ctx) {
-        super.enterStaticAssertDeclaration(ctx);
-    }
-
-    @Override
     public void exitStaticAssertDeclaration(CParser.StaticAssertDeclarationContext ctx) {
         super.exitStaticAssertDeclaration(ctx);
     }
 
     @Override
-    public void enterStatement(CParser.StatementContext ctx) {
-        super.enterStatement(ctx);
-    }
-
-    @Override
     public void exitStatement(CParser.StatementContext ctx) {
-        super.exitStatement(ctx);
-    }
-
-    @Override
-    public void enterLabeledStatement(CParser.LabeledStatementContext ctx) {
-        super.enterLabeledStatement(ctx);
+        String bf = "";
+        if(ctx.labeledStatement()!=null){
+            bf = newTexts.get(ctx.labeledStatement());
+        }else if(ctx.compoundStatement()!=null){
+            bf = newTexts.get(ctx.compoundStatement());
+        }else if(ctx.expressionStatement()!=null){
+            bf = newTexts.get(ctx.expressionStatement());
+        }else if(ctx.selectionStatement()!=null){
+            bf = newTexts.get(ctx.selectionStatement());
+        }else if(ctx.iterationStatement() !=null){
+            bf = newTexts.get(ctx.iterationStatement());
+        }else if(ctx.jumpStatement()!=null){
+            bf = newTexts.get(ctx.jumpStatement());
+        }else{
+            // todo
+        }
+        newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitLabeledStatement(CParser.LabeledStatementContext ctx) {
-        super.exitLabeledStatement(ctx);
+        String bf = "";
+        String stmt = newTexts.get(ctx.statement());
+        if(ctx.children.size()==3 && ctx.Identifier()!=null){
+            String id = newTexts.get(ctx.Identifier());
+            bf = String.format("%s : %s", id, stmt);
+        }else if(ctx.children.size()==3 && ctx.Identifier()==null){
+            bf = String.format("default : %s", stmt);
+        }else {
+            String constant = newTexts.get(ctx.constantExpression());
+            bf = String.format("case %s : %s", constant, stmt);
+        }
+        newTexts.put(ctx, bf);
     }
 
     @Override
@@ -898,57 +910,78 @@ public class Listener extends CBaseListener {
 
     @Override
     public void exitCompoundStatement(CParser.CompoundStatementContext ctx) {
-        super.exitCompoundStatement(ctx);
-    }
-
-    @Override
-    public void enterBlockItemList(CParser.BlockItemListContext ctx) {
-        super.enterBlockItemList(ctx);
+        String blocklist = (ctx.blockItemList()!=null) ? newTexts.get(ctx.blockItemList()) : "";
+        String bf = String.format("{%s}", blocklist);
+        newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitBlockItemList(CParser.BlockItemListContext ctx) {
-        super.exitBlockItemList(ctx);
-    }
-
-    @Override
-    public void enterBlockItem(CParser.BlockItemContext ctx) {
-        super.enterBlockItem(ctx);
+        String bf;
+        String blckitem = newTexts.get(ctx.blockItem());
+        if(ctx.children.size()==1){
+            bf = blckitem;
+        }else{
+            String blckList = newTexts.get(ctx.blockItemList());
+            bf = String.format("%s %s", blckList, blckitem);
+        }
+        newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitBlockItem(CParser.BlockItemContext ctx) {
-        super.exitBlockItem(ctx);
-    }
-
-    @Override
-    public void enterExpressionStatement(CParser.ExpressionStatementContext ctx) {
-        super.enterExpressionStatement(ctx);
+        String bf;
+        if(ctx.statement()!=null){
+            bf = newTexts.get(ctx.statement());
+        }else{
+            bf = newTexts.get(ctx.declaration());
+        }
+        newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitExpressionStatement(CParser.ExpressionStatementContext ctx) {
-        super.exitExpressionStatement(ctx);
-    }
-
-    @Override
-    public void enterSelectionStatement(CParser.SelectionStatementContext ctx) {
-        super.enterSelectionStatement(ctx);
+        String exp = (ctx.expression()!=null) ? newTexts.get(ctx.expression()) : "";
+        String bf = String.format("%s;\n",exp);
+        newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitSelectionStatement(CParser.SelectionStatementContext ctx) {
-        super.exitSelectionStatement(ctx);
-    }
-
-    @Override
-    public void enterIterationStatement(CParser.IterationStatementContext ctx) {
-        super.enterIterationStatement(ctx);
+        String bf;
+        String exp = newTexts.get(ctx.expression());
+        String stmt1 = newTexts.get(ctx.statement(0));
+        String stmt2 = (ctx.statement().size() > 1) ? newTexts.get(ctx.statement(1)) : null;
+        if(newTexts.get(ctx.getChild(0)).equals("if")){
+            bf = String.format("if(%s)%s",exp, stmt1);
+            if(stmt2!=null){
+                bf+= String.format("else %s",stmt2);
+            }
+        }else{
+            bf = String.format("switch (%s) %s", exp, stmt1);
+        }
+        newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitIterationStatement(CParser.IterationStatementContext ctx) {
-        super.exitIterationStatement(ctx);
+        String bf;
+        String stmt = newTexts.get(ctx.statement());
+        if(ctx.For()!=null){
+            String forCond = newTexts.get(ctx.forCondition());
+            String forT = newTexts.get(ctx.For());
+            bf = String.format("%s (%s) %s", forT, forCond, stmt);
+        }else{
+            String exp = newTexts.get(ctx.expression());
+            String whileT = newTexts.get(ctx.While());
+            if(ctx.Do()==null){
+                bf = String.format("%s (%s) %s", whileT, exp, stmt);
+            }else{
+                String doT = newTexts.get(ctx.Do());
+                bf = String.format("%s %s %s (%s);\n", doT, stmt, whileT, exp);
+            }
+        }
+        newTexts.put(ctx, bf);
     }
 
     @Override
