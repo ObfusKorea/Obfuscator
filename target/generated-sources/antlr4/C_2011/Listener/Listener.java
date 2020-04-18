@@ -683,15 +683,19 @@ public class Listener extends CBaseListener {
     public void exitGccAttribute(CParser.GccAttributeContext ctx) {
         super.exitGccAttribute(ctx);
     }
-//todo
+
     @Override
     public void exitNestedParenthesesBlock(CParser.NestedParenthesesBlockContext ctx) {
+        String bf = "";
+        for (int i = 0; i < ctx.children.size(); i++) {
+            if(newTexts.get(ctx.getChild(i)).startsWith("(")){ //애매쓰...
+                bf = String.format("(%s)", newTexts.get(ctx.nestedParenthesesBlock(i)));
+            }else{
+                bf = newTexts.get(ctx.getChild(0));
+            }
+        }
 
-    }
-
-    @Override
-    public void enterPointer(CParser.PointerContext ctx) {
-        super.enterPointer(ctx);
+        newTexts.put(ctx, bf);
     }
 
     @Override
@@ -710,68 +714,79 @@ public class Listener extends CBaseListener {
     }
 
     @Override
-    public void enterParameterTypeList(CParser.ParameterTypeListContext ctx) {
-        super.enterParameterTypeList(ctx);
-    }
-
-    @Override
     public void exitParameterTypeList(CParser.ParameterTypeListContext ctx) {
-        super.exitParameterTypeList(ctx);
-    }
-
-    @Override
-    public void enterParameterList(CParser.ParameterListContext ctx) {
-        super.enterParameterList(ctx);
+        String bf = "";
+        String paramList = newTexts.get(ctx.parameterList());
+        if(ctx.children.size()==1){
+            bf = paramList;
+        }else{
+            bf = String.format("%s, ...", paramList);
+        }
+        newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitParameterList(CParser.ParameterListContext ctx) {
-        super.exitParameterList(ctx);
-    }
-
-    @Override
-    public void enterParameterDeclaration(CParser.ParameterDeclarationContext ctx) {
-        super.enterParameterDeclaration(ctx);
+        String bf = "";
+        String paramlist = newTexts.get(ctx.parameterList());
+        if(ctx.children.size()==1){
+            bf = paramlist;
+        }else{
+            bf = String.format("%s, %s", paramlist, newTexts.get(ctx.parameterDeclaration()));
+        }
+        newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitParameterDeclaration(CParser.ParameterDeclarationContext ctx) {
-        super.exitParameterDeclaration(ctx);
-    }
-
-    @Override
-    public void enterIdentifierList(CParser.IdentifierListContext ctx) {
-        super.enterIdentifierList(ctx);
+        String bf = "";
+        if(ctx.declarationSpecifiers()!=null){
+            String declSpec = newTexts.get(ctx.declarationSpecifiers());
+            String decl = newTexts.get(ctx.declarator());
+            bf = String.format("%s %s", declSpec, decl);
+        }else{
+            String declSpec2 = newTexts.get(ctx.declarationSpecifiers2());
+            String abst = (ctx.abstractDeclarator()!=null) ? newTexts.get(ctx.abstractDeclarator()) : "";
+            bf = String.format("%s %s", declSpec2, abst);
+        }
+        newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitIdentifierList(CParser.IdentifierListContext ctx) {
-        super.exitIdentifierList(ctx);
-    }
+        String bf = "";
+        String ident = newTexts.get(ctx.Identifier());
 
-    @Override
-    public void enterTypeName(CParser.TypeNameContext ctx) {
-        super.enterTypeName(ctx);
+        if(ctx.children.size()==1){
+            bf = ident;
+        }else{
+            String idList = newTexts.get(ctx.identifierList());
+            bf = String.format("%s, %s", idList, ident);
+        }
+
+        newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitTypeName(CParser.TypeNameContext ctx) {
-        super.exitTypeName(ctx);
-    }
-
-    @Override
-    public void enterAbstractDeclarator(CParser.AbstractDeclaratorContext ctx) {
-        super.enterAbstractDeclarator(ctx);
+        String bf = (ctx.specifierQualifierList()!=null) ? newTexts.get(ctx.specifierQualifierList()) : "";
+        newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitAbstractDeclarator(CParser.AbstractDeclaratorContext ctx) {
-        super.exitAbstractDeclarator(ctx);
-    }
-
-    @Override
-    public void enterDirectAbstractDeclarator(CParser.DirectAbstractDeclaratorContext ctx) {
-        super.enterDirectAbstractDeclarator(ctx);
+        String bf = "";
+        String pointer = (ctx.pointer()!=null) ? newTexts.get(ctx.pointer()) : "";
+        if(ctx.directAbstractDeclarator()==null){
+            bf = pointer;
+        }else{
+            String directdecl = newTexts.get(ctx.directAbstractDeclarator());
+            bf = pointer + directdecl;
+            for (int i = 0; i < ctx.gccDeclaratorExtension().size(); i++) {
+                bf += newTexts.get(ctx.gccDeclaratorExtension(i));
+            }
+        }
+        newTexts.put(ctx, bf);
     }
 
     @Override
@@ -780,63 +795,70 @@ public class Listener extends CBaseListener {
     }
 
     @Override
-    public void enterTypedefName(CParser.TypedefNameContext ctx) {
-        super.enterTypedefName(ctx);
-    }
-
-    @Override
     public void exitTypedefName(CParser.TypedefNameContext ctx) {
-        super.exitTypedefName(ctx);
-    }
-
-    @Override
-    public void enterInitializer(CParser.InitializerContext ctx) {
-        super.enterInitializer(ctx);
+       String bf = newTexts.get(ctx.Identifier());
+       newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitInitializer(CParser.InitializerContext ctx) {
-        super.exitInitializer(ctx);
-    }
-
-    @Override
-    public void enterInitializerList(CParser.InitializerListContext ctx) {
-        super.enterInitializerList(ctx);
+        String bf = "";
+        int size = ctx.children.size();
+        if(size==1){
+            bf = newTexts.get(ctx.assignmentExpression());
+        }else if(size==3){
+            String init = newTexts.get(ctx.initializerList());
+            bf = String.format("{%s}", init);
+        }else{
+            String init = newTexts.get(ctx.initializerList());
+            bf = String.format("{%s, }",init);
+        }
+        newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitInitializerList(CParser.InitializerListContext ctx) {
-        super.exitInitializerList(ctx);
-    }
+        String bf = "";
+        String design = (ctx.designation()!=null) ? newTexts.get(ctx.designation()) : "";
+        String init = newTexts.get(ctx.initializer());
+        if(ctx.initializerList()!=null){
+            String initlist = newTexts.get(ctx.initializerList());
+            bf = String.format("%s, %s%s",initlist, design, init);
+        }else{
+            bf = design+init;
+        }
 
-    @Override
-    public void enterDesignation(CParser.DesignationContext ctx) {
-        super.enterDesignation(ctx);
+        newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitDesignation(CParser.DesignationContext ctx) {
-        super.exitDesignation(ctx);
-    }
-
-    @Override
-    public void enterDesignatorList(CParser.DesignatorListContext ctx) {
-        super.enterDesignatorList(ctx);
+        String bf = String.format("%s = ",newTexts.get(ctx.designatorList()));
+        newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitDesignatorList(CParser.DesignatorListContext ctx) {
-        super.exitDesignatorList(ctx);
-    }
+        String bf = "";
+        String designator = newTexts.get(ctx.designator());
+        if(ctx.children.size()==1){
+            bf = designator;
+        }else{
+            bf = String.format("%s %s", newTexts.get(ctx.designatorList()), designator);
+        }
 
-    @Override
-    public void enterDesignator(CParser.DesignatorContext ctx) {
-        super.enterDesignator(ctx);
+        newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitDesignator(CParser.DesignatorContext ctx) {
-        super.exitDesignator(ctx);
+        String bf = "";
+        if(ctx.children.size()==3){
+            bf = String.format("[%s]",newTexts.get(ctx.constantExpression()));
+        }else{
+            bf = String.format(".%s", newTexts.get(ctx.Identifier()));
+        }
+        newTexts.put(ctx, bf);
     }
 
     @Override
