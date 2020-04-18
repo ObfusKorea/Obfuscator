@@ -154,7 +154,7 @@ public class Listener extends CBaseListener {
 
     @Override
     public void exitMultiplicativeExpression(CParser.MultiplicativeExpressionContext ctx) {
-        String bf = "";
+        String bf;
         if (ctx.children.size() == 1) { // castExp
             bf = newTexts.get(ctx.castExpression());
         } else {
@@ -169,7 +169,7 @@ public class Listener extends CBaseListener {
 
     @Override
     public void exitAdditiveExpression(CParser.AdditiveExpressionContext ctx) {
-        String bf = "";
+        String bf;
         String multi = newTexts.get(ctx.multiplicativeExpression());
         if (ctx.children.size() == 1) { // multiplicativeExp
             bf = multi;
@@ -184,7 +184,7 @@ public class Listener extends CBaseListener {
 
     @Override
     public void exitShiftExpression(CParser.ShiftExpressionContext ctx) {
-        String bf = "";
+        String bf;
         String additive = newTexts.get(ctx.additiveExpression());
         if (ctx.children.size() == 1) { // additiveExp
             bf = additive;
@@ -199,7 +199,7 @@ public class Listener extends CBaseListener {
 
     @Override
     public void exitRelationalExpression(CParser.RelationalExpressionContext ctx) {
-        String bf = "";
+        String bf;
         String shift = newTexts.get(ctx.shiftExpression());
         if (ctx.children.size() == 1) { // shiftExp
             bf = shift;
@@ -214,7 +214,7 @@ public class Listener extends CBaseListener {
 
     @Override
     public void exitEqualityExpression(CParser.EqualityExpressionContext ctx) {
-        String bf = "";
+        String bf;
         String relation = newTexts.get(ctx.relationalExpression());
         if (ctx.children.size() == 1) { // relationalExpression
             bf = relation;
@@ -229,7 +229,7 @@ public class Listener extends CBaseListener {
 
     @Override
     public void exitAndExpression(CParser.AndExpressionContext ctx) {
-        String bf = "";
+        String bf;
         String equal = newTexts.get(ctx.equalityExpression());
         if (ctx.children.size() == 1) { // equalExp
             bf = equal;
@@ -244,7 +244,7 @@ public class Listener extends CBaseListener {
 
     @Override
     public void exitExclusiveOrExpression(CParser.ExclusiveOrExpressionContext ctx) {
-        String bf = "";
+        String bf;
         String and = newTexts.get(ctx.andExpression());
         if (ctx.children.size() == 1) { // andExp
             bf = and;
@@ -259,7 +259,7 @@ public class Listener extends CBaseListener {
 
     @Override
     public void exitInclusiveOrExpression(CParser.InclusiveOrExpressionContext ctx) {
-        String bf = "";
+        String bf;
         String exclusive = newTexts.get(ctx.exclusiveOrExpression());
         if (ctx.children.size() == 1) { // exclusiveOr
             bf = exclusive;
@@ -274,7 +274,7 @@ public class Listener extends CBaseListener {
 
     @Override
     public void exitLogicalAndExpression(CParser.LogicalAndExpressionContext ctx) {
-        String bf = "";
+        String bf;
         String incluesive = newTexts.get(ctx.inclusiveOrExpression());
         if (ctx.children.size() == 1) { // inclusiveAnd
             bf = incluesive;
@@ -289,7 +289,7 @@ public class Listener extends CBaseListener {
 
     @Override
     public void exitLogicalOrExpression(CParser.LogicalOrExpressionContext ctx) {
-        String bf = "";
+        String bf;
         String logicalAnd = newTexts.get(ctx.logicalAndExpression());
         if (ctx.children.size() == 1) { // logicalAnd
             bf = logicalAnd;
@@ -304,7 +304,7 @@ public class Listener extends CBaseListener {
 
     @Override
     public void exitConditionalExpression(CParser.ConditionalExpressionContext ctx) {
-        String bf = "";
+        String bf;
         String logicalOr = newTexts.get(ctx.logicalOrExpression());
         if (ctx.children.size() == 1) {
             bf = logicalOr;
@@ -319,7 +319,7 @@ public class Listener extends CBaseListener {
 
     @Override
     public void exitAssignmentExpression(CParser.AssignmentExpressionContext ctx) {
-        String bf = "";
+        String bf;
         if (ctx.conditionalExpression() != null) { //conditionalExpression
             bf = newTexts.get(ctx.conditionalExpression());
         } else if (ctx.unaryExpression() != null) { //unaryExpression assignmentOperator assignmentExpression
@@ -341,7 +341,7 @@ public class Listener extends CBaseListener {
 
     @Override
     public void exitExpression(CParser.ExpressionContext ctx) {
-        String bf = "";
+        String bf;
         String assignExp = newTexts.get(ctx.assignmentExpression());
         if (ctx.children.size() == 1) {
             bf = assignExp;
@@ -360,7 +360,7 @@ public class Listener extends CBaseListener {
 
     @Override
     public void exitDeclaration(CParser.DeclarationContext ctx) {
-        String bf = "";
+        String bf;
         int cSize = ctx.children.size();
         if (cSize == 1) { //staticAssertDeclaration
             bf = newTexts.get(ctx.staticAssertDeclaration());
@@ -396,7 +396,7 @@ public class Listener extends CBaseListener {
 
     @Override
     public void exitDeclarationSpecifier(CParser.DeclarationSpecifierContext ctx) {
-        String bf = "";
+        String bf;
         if (ctx.storageClassSpecifier() != null) {
             bf = newTexts.get(ctx.storageClassSpecifier());
         } else if (ctx.typeSpecifier() != null) {
@@ -414,7 +414,7 @@ public class Listener extends CBaseListener {
 
     @Override
     public void exitInitDeclaratorList(CParser.InitDeclaratorListContext ctx) {
-        String bf = "";
+        String bf;
         String initDecl = newTexts.get(ctx.initDeclarator());
         if (ctx.children.size() == 1) {
             bf = initDecl;
@@ -428,7 +428,7 @@ public class Listener extends CBaseListener {
 
     @Override
     public void exitInitDeclarator(CParser.InitDeclaratorContext ctx) {
-        String bf = "";
+        String bf;
         String decl = newTexts.get(ctx.declarator());
         if (ctx.children.size() == 1) {
             bf = decl;
@@ -640,7 +640,7 @@ public class Listener extends CBaseListener {
 
     @Override
     public void exitGccDeclaratorExtension(CParser.GccDeclaratorExtensionContext ctx) {
-        String bf = "";
+        String bf;
         if (ctx.children.size() == 1) {
             bf = newTexts.get(ctx.gccAttributeSpecifier());
         } else {
@@ -715,7 +715,7 @@ public class Listener extends CBaseListener {
 
     @Override
     public void exitParameterTypeList(CParser.ParameterTypeListContext ctx) {
-        String bf = "";
+        String bf;
         String paramList = newTexts.get(ctx.parameterList());
         if (ctx.children.size() == 1) {
             bf = paramList;
@@ -727,7 +727,7 @@ public class Listener extends CBaseListener {
 
     @Override
     public void exitParameterList(CParser.ParameterListContext ctx) {
-        String bf = "";
+        String bf;
         String paramlist = newTexts.get(ctx.parameterList());
         if (ctx.children.size() == 1) {
             bf = paramlist;
@@ -739,7 +739,7 @@ public class Listener extends CBaseListener {
 
     @Override
     public void exitParameterDeclaration(CParser.ParameterDeclarationContext ctx) {
-        String bf = "";
+        String bf;
         if (ctx.declarationSpecifiers() != null) {
             String declSpec = newTexts.get(ctx.declarationSpecifiers());
             String decl = newTexts.get(ctx.declarator());
@@ -754,7 +754,7 @@ public class Listener extends CBaseListener {
 
     @Override
     public void exitIdentifierList(CParser.IdentifierListContext ctx) {
-        String bf = "";
+        String bf;
         String ident = newTexts.get(ctx.Identifier());
 
         if (ctx.children.size() == 1) {
@@ -775,7 +775,7 @@ public class Listener extends CBaseListener {
 
     @Override
     public void exitAbstractDeclarator(CParser.AbstractDeclaratorContext ctx) {
-        String bf = "";
+        String bf;
         String pointer = (ctx.pointer() != null) ? newTexts.get(ctx.pointer()) : "";
         if (ctx.directAbstractDeclarator() == null) {
             bf = pointer;
@@ -802,7 +802,7 @@ public class Listener extends CBaseListener {
 
     @Override
     public void exitInitializer(CParser.InitializerContext ctx) {
-        String bf = "";
+        String bf;
         int size = ctx.children.size();
         if (size == 1) {
             bf = newTexts.get(ctx.assignmentExpression());
@@ -818,7 +818,7 @@ public class Listener extends CBaseListener {
 
     @Override
     public void exitInitializerList(CParser.InitializerListContext ctx) {
-        String bf = "";
+        String bf;
         String design = (ctx.designation() != null) ? newTexts.get(ctx.designation()) : "";
         String init = newTexts.get(ctx.initializer());
         if (ctx.initializerList() != null) {
@@ -839,7 +839,7 @@ public class Listener extends CBaseListener {
 
     @Override
     public void exitDesignatorList(CParser.DesignatorListContext ctx) {
-        String bf = "";
+        String bf;
         String designator = newTexts.get(ctx.designator());
         if (ctx.children.size() == 1) {
             bf = designator;
@@ -852,7 +852,7 @@ public class Listener extends CBaseListener {
 
     @Override
     public void exitDesignator(CParser.DesignatorContext ctx) {
-        String bf = "";
+        String bf;
         if (ctx.children.size() == 3) {
             bf = String.format("[%s]", newTexts.get(ctx.constantExpression()));
         } else {
@@ -889,7 +889,7 @@ public class Listener extends CBaseListener {
 
     @Override
     public void exitLabeledStatement(CParser.LabeledStatementContext ctx) {
-        String bf = "";
+        String bf;
         String stmt = newTexts.get(ctx.statement());
         if (ctx.children.size() == 3 && ctx.Identifier() != null) {
             String id = newTexts.get(ctx.Identifier());
