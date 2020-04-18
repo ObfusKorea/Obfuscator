@@ -94,9 +94,9 @@ public class Listener extends CBaseListener {
             bf = String.format("%s%s", postfix, newTexts.get(ctx.getChild(1)));
         } else if (ctx.Identifier() != null) { //postfix -> / . Identifier
             bf = String.format("%s %s %s", postfix, newTexts.get(ctx.getChild(1)), newTexts.get(ctx.Identifier()));
-        } else if (ctx.getChild(1).equals(CParser.LeftBracket)) { // profixEXP [ expression ]
+        } else if (newTexts.get(ctx.getChild(1)).equals("[")) { // profixEXP [ expression ]
             bf = String.format("%s[%s]", postfix, newTexts.get(ctx.expression()));
-        } else if (ctx.getChild(1).equals(CParser.LeftParen)) { // postfix ( argument? )
+        } else if (newTexts.get(ctx.getChild(1)).equals("(")) { // postfix ( argument? )
             String argument = (ctx.argumentExpressionList() != null) ? newTexts.get(ctx.argumentExpressionList()) : "";
             bf = String.format("%s(%s)", postfix, argument);
         }
