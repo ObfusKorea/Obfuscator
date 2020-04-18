@@ -343,9 +343,9 @@ public class Listener extends CBaseListener {
     public void exitExpression(CParser.ExpressionContext ctx) {
         String bf = "";
         String assignExp = newTexts.get(ctx.assignmentExpression());
-        if(ctx.children.size() == 1){
+        if (ctx.children.size() == 1) {
             bf = assignExp;
-        }else{
+        } else {
             String exp = newTexts.get(ctx.expression());
             bf = String.format("%s, %s", exp, assignExp);
         }
@@ -362,12 +362,12 @@ public class Listener extends CBaseListener {
     public void exitDeclaration(CParser.DeclarationContext ctx) {
         String bf = "";
         int cSize = ctx.children.size();
-        if(cSize==1){ //staticAssertDeclaration
+        if (cSize == 1) { //staticAssertDeclaration
             bf = newTexts.get(ctx.staticAssertDeclaration());
-        }else if(cSize==2){ // declarationSpecifiers ';'
+        } else if (cSize == 2) { // declarationSpecifiers ';'
             String declarSpeci = newTexts.get(ctx.declarationSpecifiers());
             bf = String.format("%s;", declarSpeci);
-        }else{ // declarationSpecifiers initDeclaratorList ';'
+        } else { // declarationSpecifiers initDeclaratorList ';'
             String declarSpeci = newTexts.get(ctx.declarationSpecifiers());
             String initDecl = newTexts.get(ctx.initDeclaratorList());
             bf = String.format("%s %s;", declarSpeci, initDecl);
@@ -621,7 +621,7 @@ public class Listener extends CBaseListener {
     @Override
     public void exitDeclarator(CParser.DeclaratorContext ctx) {
         StringBuilder bf = new StringBuilder();
-        String pointer = (ctx.pointer()!=null) ? newTexts.get(ctx.pointer())+" " : "";
+        String pointer = (ctx.pointer() != null) ? newTexts.get(ctx.pointer()) + " " : "";
         String directDecl = newTexts.get(ctx.directDeclarator());
         bf.append(pointer);
         bf.append(directDecl);
@@ -641,14 +641,14 @@ public class Listener extends CBaseListener {
     @Override
     public void exitGccDeclaratorExtension(CParser.GccDeclaratorExtensionContext ctx) {
         String bf = "";
-        if(ctx.children.size()==1){
-            bf=newTexts.get(ctx.gccAttributeSpecifier());
-        }else{
+        if (ctx.children.size() == 1) {
+            bf = newTexts.get(ctx.gccAttributeSpecifier());
+        } else {
             StringBuilder stringLiteral = new StringBuilder();
             for (int i = 0; i < ctx.StringLiteral().size(); i++) {
                 stringLiteral.append(newTexts.get(ctx.StringLiteral(i)));
             }
-            bf = String.format("__asm(%s)",stringLiteral);
+            bf = String.format("__asm(%s)", stringLiteral);
         }
 
         newTexts.put(ctx, bf);
@@ -688,9 +688,9 @@ public class Listener extends CBaseListener {
     public void exitNestedParenthesesBlock(CParser.NestedParenthesesBlockContext ctx) {
         String bf = "";
         for (int i = 0; i < ctx.children.size(); i++) {
-            if(newTexts.get(ctx.getChild(i)).startsWith("(")){ //애매쓰...
+            if (newTexts.get(ctx.getChild(i)).startsWith("(")) { //애매쓰...
                 bf = String.format("(%s)", newTexts.get(ctx.nestedParenthesesBlock(i)));
-            }else{
+            } else {
                 bf = newTexts.get(ctx.getChild(0));
             }
         }
@@ -717,9 +717,9 @@ public class Listener extends CBaseListener {
     public void exitParameterTypeList(CParser.ParameterTypeListContext ctx) {
         String bf = "";
         String paramList = newTexts.get(ctx.parameterList());
-        if(ctx.children.size()==1){
+        if (ctx.children.size() == 1) {
             bf = paramList;
-        }else{
+        } else {
             bf = String.format("%s, ...", paramList);
         }
         newTexts.put(ctx, bf);
@@ -729,9 +729,9 @@ public class Listener extends CBaseListener {
     public void exitParameterList(CParser.ParameterListContext ctx) {
         String bf = "";
         String paramlist = newTexts.get(ctx.parameterList());
-        if(ctx.children.size()==1){
+        if (ctx.children.size() == 1) {
             bf = paramlist;
-        }else{
+        } else {
             bf = String.format("%s, %s", paramlist, newTexts.get(ctx.parameterDeclaration()));
         }
         newTexts.put(ctx, bf);
@@ -740,13 +740,13 @@ public class Listener extends CBaseListener {
     @Override
     public void exitParameterDeclaration(CParser.ParameterDeclarationContext ctx) {
         String bf = "";
-        if(ctx.declarationSpecifiers()!=null){
+        if (ctx.declarationSpecifiers() != null) {
             String declSpec = newTexts.get(ctx.declarationSpecifiers());
             String decl = newTexts.get(ctx.declarator());
             bf = String.format("%s %s", declSpec, decl);
-        }else{
+        } else {
             String declSpec2 = newTexts.get(ctx.declarationSpecifiers2());
-            String abst = (ctx.abstractDeclarator()!=null) ? newTexts.get(ctx.abstractDeclarator()) : "";
+            String abst = (ctx.abstractDeclarator() != null) ? newTexts.get(ctx.abstractDeclarator()) : "";
             bf = String.format("%s %s", declSpec2, abst);
         }
         newTexts.put(ctx, bf);
@@ -757,9 +757,9 @@ public class Listener extends CBaseListener {
         String bf = "";
         String ident = newTexts.get(ctx.Identifier());
 
-        if(ctx.children.size()==1){
+        if (ctx.children.size() == 1) {
             bf = ident;
-        }else{
+        } else {
             String idList = newTexts.get(ctx.identifierList());
             bf = String.format("%s, %s", idList, ident);
         }
@@ -769,17 +769,17 @@ public class Listener extends CBaseListener {
 
     @Override
     public void exitTypeName(CParser.TypeNameContext ctx) {
-        String bf = (ctx.specifierQualifierList()!=null) ? newTexts.get(ctx.specifierQualifierList()) : "";
+        String bf = (ctx.specifierQualifierList() != null) ? newTexts.get(ctx.specifierQualifierList()) : "";
         newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitAbstractDeclarator(CParser.AbstractDeclaratorContext ctx) {
         String bf = "";
-        String pointer = (ctx.pointer()!=null) ? newTexts.get(ctx.pointer()) : "";
-        if(ctx.directAbstractDeclarator()==null){
+        String pointer = (ctx.pointer() != null) ? newTexts.get(ctx.pointer()) : "";
+        if (ctx.directAbstractDeclarator() == null) {
             bf = pointer;
-        }else{
+        } else {
             String directdecl = newTexts.get(ctx.directAbstractDeclarator());
             bf = pointer + directdecl;
             for (int i = 0; i < ctx.gccDeclaratorExtension().size(); i++) {
@@ -796,22 +796,22 @@ public class Listener extends CBaseListener {
 
     @Override
     public void exitTypedefName(CParser.TypedefNameContext ctx) {
-       String bf = newTexts.get(ctx.Identifier());
-       newTexts.put(ctx, bf);
+        String bf = newTexts.get(ctx.Identifier());
+        newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitInitializer(CParser.InitializerContext ctx) {
         String bf = "";
         int size = ctx.children.size();
-        if(size==1){
+        if (size == 1) {
             bf = newTexts.get(ctx.assignmentExpression());
-        }else if(size==3){
+        } else if (size == 3) {
             String init = newTexts.get(ctx.initializerList());
             bf = String.format("{%s}", init);
-        }else{
+        } else {
             String init = newTexts.get(ctx.initializerList());
-            bf = String.format("{%s, }",init);
+            bf = String.format("{%s, }", init);
         }
         newTexts.put(ctx, bf);
     }
@@ -819,13 +819,13 @@ public class Listener extends CBaseListener {
     @Override
     public void exitInitializerList(CParser.InitializerListContext ctx) {
         String bf = "";
-        String design = (ctx.designation()!=null) ? newTexts.get(ctx.designation()) : "";
+        String design = (ctx.designation() != null) ? newTexts.get(ctx.designation()) : "";
         String init = newTexts.get(ctx.initializer());
-        if(ctx.initializerList()!=null){
+        if (ctx.initializerList() != null) {
             String initlist = newTexts.get(ctx.initializerList());
-            bf = String.format("%s, %s%s",initlist, design, init);
-        }else{
-            bf = design+init;
+            bf = String.format("%s, %s%s", initlist, design, init);
+        } else {
+            bf = design + init;
         }
 
         newTexts.put(ctx, bf);
@@ -833,7 +833,7 @@ public class Listener extends CBaseListener {
 
     @Override
     public void exitDesignation(CParser.DesignationContext ctx) {
-        String bf = String.format("%s = ",newTexts.get(ctx.designatorList()));
+        String bf = String.format("%s = ", newTexts.get(ctx.designatorList()));
         newTexts.put(ctx, bf);
     }
 
@@ -841,9 +841,9 @@ public class Listener extends CBaseListener {
     public void exitDesignatorList(CParser.DesignatorListContext ctx) {
         String bf = "";
         String designator = newTexts.get(ctx.designator());
-        if(ctx.children.size()==1){
+        if (ctx.children.size() == 1) {
             bf = designator;
-        }else{
+        } else {
             bf = String.format("%s %s", newTexts.get(ctx.designatorList()), designator);
         }
 
@@ -853,9 +853,9 @@ public class Listener extends CBaseListener {
     @Override
     public void exitDesignator(CParser.DesignatorContext ctx) {
         String bf = "";
-        if(ctx.children.size()==3){
-            bf = String.format("[%s]",newTexts.get(ctx.constantExpression()));
-        }else{
+        if (ctx.children.size() == 3) {
+            bf = String.format("[%s]", newTexts.get(ctx.constantExpression()));
+        } else {
             bf = String.format(".%s", newTexts.get(ctx.Identifier()));
         }
         newTexts.put(ctx, bf);
@@ -869,19 +869,19 @@ public class Listener extends CBaseListener {
     @Override
     public void exitStatement(CParser.StatementContext ctx) {
         String bf = "";
-        if(ctx.labeledStatement()!=null){
+        if (ctx.labeledStatement() != null) {
             bf = newTexts.get(ctx.labeledStatement());
-        }else if(ctx.compoundStatement()!=null){
+        } else if (ctx.compoundStatement() != null) {
             bf = newTexts.get(ctx.compoundStatement());
-        }else if(ctx.expressionStatement()!=null){
+        } else if (ctx.expressionStatement() != null) {
             bf = newTexts.get(ctx.expressionStatement());
-        }else if(ctx.selectionStatement()!=null){
+        } else if (ctx.selectionStatement() != null) {
             bf = newTexts.get(ctx.selectionStatement());
-        }else if(ctx.iterationStatement() !=null){
+        } else if (ctx.iterationStatement() != null) {
             bf = newTexts.get(ctx.iterationStatement());
-        }else if(ctx.jumpStatement()!=null){
+        } else if (ctx.jumpStatement() != null) {
             bf = newTexts.get(ctx.jumpStatement());
-        }else{
+        } else {
             // todo
         }
         newTexts.put(ctx, bf);
@@ -891,12 +891,12 @@ public class Listener extends CBaseListener {
     public void exitLabeledStatement(CParser.LabeledStatementContext ctx) {
         String bf = "";
         String stmt = newTexts.get(ctx.statement());
-        if(ctx.children.size()==3 && ctx.Identifier()!=null){
+        if (ctx.children.size() == 3 && ctx.Identifier() != null) {
             String id = newTexts.get(ctx.Identifier());
             bf = String.format("%s : %s", id, stmt);
-        }else if(ctx.children.size()==3 && ctx.Identifier()==null){
+        } else if (ctx.children.size() == 3 && ctx.Identifier() == null) {
             bf = String.format("default : %s", stmt);
-        }else {
+        } else {
             String constant = newTexts.get(ctx.constantExpression());
             bf = String.format("case %s : %s", constant, stmt);
         }
@@ -910,7 +910,7 @@ public class Listener extends CBaseListener {
 
     @Override
     public void exitCompoundStatement(CParser.CompoundStatementContext ctx) {
-        String blocklist = (ctx.blockItemList()!=null) ? newTexts.get(ctx.blockItemList()) : "";
+        String blocklist = (ctx.blockItemList() != null) ? newTexts.get(ctx.blockItemList()) : "";
         String bf = String.format("{%s}", blocklist);
         newTexts.put(ctx, bf);
     }
@@ -919,9 +919,9 @@ public class Listener extends CBaseListener {
     public void exitBlockItemList(CParser.BlockItemListContext ctx) {
         String bf;
         String blckitem = newTexts.get(ctx.blockItem());
-        if(ctx.children.size()==1){
+        if (ctx.children.size() == 1) {
             bf = blckitem;
-        }else{
+        } else {
             String blckList = newTexts.get(ctx.blockItemList());
             bf = String.format("%s %s", blckList, blckitem);
         }
@@ -931,9 +931,9 @@ public class Listener extends CBaseListener {
     @Override
     public void exitBlockItem(CParser.BlockItemContext ctx) {
         String bf;
-        if(ctx.statement()!=null){
+        if (ctx.statement() != null) {
             bf = newTexts.get(ctx.statement());
-        }else{
+        } else {
             bf = newTexts.get(ctx.declaration());
         }
         newTexts.put(ctx, bf);
@@ -941,8 +941,8 @@ public class Listener extends CBaseListener {
 
     @Override
     public void exitExpressionStatement(CParser.ExpressionStatementContext ctx) {
-        String exp = (ctx.expression()!=null) ? newTexts.get(ctx.expression()) : "";
-        String bf = String.format("%s;\n",exp);
+        String exp = (ctx.expression() != null) ? newTexts.get(ctx.expression()) : "";
+        String bf = String.format("%s;\n", exp);
         newTexts.put(ctx, bf);
     }
 
@@ -952,12 +952,12 @@ public class Listener extends CBaseListener {
         String exp = newTexts.get(ctx.expression());
         String stmt1 = newTexts.get(ctx.statement(0));
         String stmt2 = (ctx.statement().size() > 1) ? newTexts.get(ctx.statement(1)) : null;
-        if(newTexts.get(ctx.getChild(0)).equals("if")){
-            bf = String.format("if(%s)%s",exp, stmt1);
-            if(stmt2!=null){
-                bf+= String.format("else %s",stmt2);
+        if (newTexts.get(ctx.getChild(0)).equals("if")) {
+            bf = String.format("if(%s)%s", exp, stmt1);
+            if (stmt2 != null) {
+                bf += String.format("else %s", stmt2);
             }
-        }else{
+        } else {
             bf = String.format("switch (%s) %s", exp, stmt1);
         }
         newTexts.put(ctx, bf);
@@ -967,16 +967,16 @@ public class Listener extends CBaseListener {
     public void exitIterationStatement(CParser.IterationStatementContext ctx) {
         String bf;
         String stmt = newTexts.get(ctx.statement());
-        if(ctx.For()!=null){
+        if (ctx.For() != null) {
             String forCond = newTexts.get(ctx.forCondition());
             String forT = newTexts.get(ctx.For());
             bf = String.format("%s (%s) %s", forT, forCond, stmt);
-        }else{
+        } else {
             String exp = newTexts.get(ctx.expression());
             String whileT = newTexts.get(ctx.While());
-            if(ctx.Do()==null){
+            if (ctx.Do() == null) {
                 bf = String.format("%s (%s) %s", whileT, exp, stmt);
-            }else{
+            } else {
                 String doT = newTexts.get(ctx.Do());
                 bf = String.format("%s %s %s (%s);\n", doT, stmt, whileT, exp);
             }
