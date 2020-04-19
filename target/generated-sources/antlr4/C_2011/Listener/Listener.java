@@ -985,112 +985,131 @@ public class Listener extends CBaseListener {
     }
 
     @Override
-    public void enterForCondition(CParser.ForConditionContext ctx) {
-        super.enterForCondition(ctx);
-    }
-
-    @Override
     public void exitForCondition(CParser.ForConditionContext ctx) {
-        super.exitForCondition(ctx);
-    }
-
-    @Override
-    public void enterForDeclaration(CParser.ForDeclarationContext ctx) {
-        super.enterForDeclaration(ctx);
+        //todo
+//        String bf;
+//        String s1, forExp1, forExp2;
+//        if(ctx.forDeclaration()!=null){
+//            if(newTexts.get(ctx.getChild(2)).equals(";")){
+//                forExp1 = "" ;
+//                forExp2 = (ctx.forExpression()!=null) ? newTexts.get(ctx.forExpression(0)) : "";
+//            }else{
+//                forExp1 = newTexts.get(ctx.forExpression(0));
+//                forExp2 = (ctx.forExpression().size()>1) ? newTexts.get(ctx.forExpression(1)) : "";
+//            }
+//            s1 = newTexts.get(ctx.forDeclaration());
+//        }else{
+//            s1 = (ctx.expression()!=null) ? newTexts.get(ctx.expression()) : "";
+//        }
+//        bf = String.format("%s ; %s ; %s", s1, forExp1, forExp2);
+//        newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitForDeclaration(CParser.ForDeclarationContext ctx) {
-        super.exitForDeclaration(ctx);
-    }
-
-    @Override
-    public void enterForExpression(CParser.ForExpressionContext ctx) {
-        super.enterForExpression(ctx);
+        String bf;
+        String declSpec = newTexts.get(ctx.declarationSpecifiers());
+        if(ctx.children.size()==2){
+            String initDecl = newTexts.get(ctx.initDeclaratorList());
+            bf = String.format("%s %s", declSpec, initDecl);
+        }else{
+            bf = declSpec;
+        }
+        newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitForExpression(CParser.ForExpressionContext ctx) {
-        super.exitForExpression(ctx);
-    }
-
-    @Override
-    public void enterJumpStatement(CParser.JumpStatementContext ctx) {
-        super.enterJumpStatement(ctx);
+        String bf;
+        String assignExp = newTexts.get(ctx.assignmentExpression());
+        if(ctx.children.size()==1){
+            bf = assignExp;
+        }else{
+            String forExp = newTexts.get(ctx.forExpression());
+            bf = String.format("%s, %s", forExp, assignExp);
+        }
+        newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitJumpStatement(CParser.JumpStatementContext ctx) {
-        super.exitJumpStatement(ctx);
-    }
+        String bf;
+        if(ctx.Goto()!=null){
+            if(ctx.Identifier()!=null){
+                String id = newTexts.get(ctx.Identifier());
+                bf = String.format("goto %s ;\n", id);
+            }else{
+                String unaryExp = newTexts.get(ctx.unaryExpression());
+                bf = String.format("goto %s ;\n", unaryExp);
+            }
+        }else if(ctx.Continue()!=null){
+            bf = "continue ;\n";
+        }else if(ctx.Break()!=null){
+            bf = "break ;\n";
+        }else{
+            String exp = (ctx.expression()!=null) ? newTexts.get(ctx.expression()) : "";
+            bf = String.format("return %s;\n", exp);
+        }
 
-    @Override
-    public void enterCompilationUnit(CParser.CompilationUnitContext ctx) {
-        super.enterCompilationUnit(ctx);
+        newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitCompilationUnit(CParser.CompilationUnitContext ctx) {
-        super.exitCompilationUnit(ctx);
-    }
-
-    @Override
-    public void enterTranslationUnit(CParser.TranslationUnitContext ctx) {
-        super.enterTranslationUnit(ctx);
+        String bf;
+        String transUnit = (ctx.translationUnit()!=null) ? newTexts.get(ctx.translationUnit())+" " : "";
+        String eof = newTexts.get(ctx.EOF());
+        bf = String.format("%s%s", transUnit, eof);
+        newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitTranslationUnit(CParser.TranslationUnitContext ctx) {
-        super.exitTranslationUnit(ctx);
-    }
-
-    @Override
-    public void enterExternalDeclaration(CParser.ExternalDeclarationContext ctx) {
-        super.enterExternalDeclaration(ctx);
+        String bf;
+        String externDecl = newTexts.get(ctx.externalDeclaration());
+        if(ctx.children.size()==1){
+            bf = externDecl;
+        }else{
+            String transUnit = newTexts.get(ctx.translationUnit());
+            bf = String.format("%s %s", transUnit, externDecl);
+        }
+        newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitExternalDeclaration(CParser.ExternalDeclarationContext ctx) {
-        super.exitExternalDeclaration(ctx);
-    }
-
-    @Override
-    public void enterFunctionDefinition(CParser.FunctionDefinitionContext ctx) {
-        super.enterFunctionDefinition(ctx);
+        String bf;
+        if(ctx.functionDefinition()!=null){
+            bf = newTexts.get(ctx.functionDefinition());
+        }else if(ctx.declaration()!=null){
+            bf = newTexts.get(ctx.declaration());
+        }else{
+            bf = ";";
+        }
+        newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitFunctionDefinition(CParser.FunctionDefinitionContext ctx) {
-        super.exitFunctionDefinition(ctx);
-    }
-
-    @Override
-    public void enterDeclarationList(CParser.DeclarationListContext ctx) {
-        super.enterDeclarationList(ctx);
+        String bf;
+        String declSpec = (ctx.declarationSpecifiers()!=null) ? newTexts.get(ctx.declarationSpecifiers()) : "";
+        String declarator = newTexts.get(ctx.declarator());
+        String declList = (ctx.declarationList()!=null) ? newTexts.get(ctx.declarationList()) : "";
+        String compStmt = newTexts.get(ctx.compoundStatement());
+        bf = String.format("%s %s %s %s", declSpec, declarator, declList, compStmt);
+        newTexts.put(ctx, bf);
     }
 
     @Override
     public void exitDeclarationList(CParser.DeclarationListContext ctx) {
-        super.exitDeclarationList(ctx);
-    }
-
-    @Override
-    public void enterEveryRule(ParserRuleContext ctx) {
-        super.enterEveryRule(ctx);
-    }
-
-    @Override
-    public void exitEveryRule(ParserRuleContext ctx) {
-        super.exitEveryRule(ctx);
-    }
-
-    @Override
-    public void visitTerminal(TerminalNode node) {
-        super.visitTerminal(node);
-    }
-
-    @Override
-    public void visitErrorNode(ErrorNode node) {
-        super.visitErrorNode(node);
+        String bf;
+        String decl = newTexts.get(ctx.declaration());
+        if(ctx.children.size()==1){
+            bf = decl;
+        }else{
+            String declList = newTexts.get(ctx.declarationList());
+            bf = String.format("%s %s", declList, decl);
+        }
+        newTexts.put(ctx, bf);
     }
 }
