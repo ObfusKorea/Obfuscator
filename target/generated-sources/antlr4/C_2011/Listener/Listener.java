@@ -1009,10 +1009,10 @@ public class Listener extends CBaseListener {
     public void exitForDeclaration(CParser.ForDeclarationContext ctx) {
         String bf;
         String declSpec = newTexts.get(ctx.declarationSpecifiers());
-        if(ctx.children.size()==2){
+        if (ctx.children.size() == 2) {
             String initDecl = newTexts.get(ctx.initDeclaratorList());
             bf = String.format("%s %s", declSpec, initDecl);
-        }else{
+        } else {
             bf = declSpec;
         }
         newTexts.put(ctx, bf);
@@ -1022,9 +1022,9 @@ public class Listener extends CBaseListener {
     public void exitForExpression(CParser.ForExpressionContext ctx) {
         String bf;
         String assignExp = newTexts.get(ctx.assignmentExpression());
-        if(ctx.children.size()==1){
+        if (ctx.children.size() == 1) {
             bf = assignExp;
-        }else{
+        } else {
             String forExp = newTexts.get(ctx.forExpression());
             bf = String.format("%s, %s", forExp, assignExp);
         }
@@ -1034,20 +1034,20 @@ public class Listener extends CBaseListener {
     @Override
     public void exitJumpStatement(CParser.JumpStatementContext ctx) {
         String bf;
-        if(ctx.Goto()!=null){
-            if(ctx.Identifier()!=null){
+        if (ctx.Goto() != null) {
+            if (ctx.Identifier() != null) {
                 String id = newTexts.get(ctx.Identifier());
                 bf = String.format("goto %s ;\n", id);
-            }else{
+            } else {
                 String unaryExp = newTexts.get(ctx.unaryExpression());
                 bf = String.format("goto %s ;\n", unaryExp);
             }
-        }else if(ctx.Continue()!=null){
+        } else if (ctx.Continue() != null) {
             bf = "continue ;\n";
-        }else if(ctx.Break()!=null){
+        } else if (ctx.Break() != null) {
             bf = "break ;\n";
-        }else{
-            String exp = (ctx.expression()!=null) ? newTexts.get(ctx.expression()) : "";
+        } else {
+            String exp = (ctx.expression() != null) ? newTexts.get(ctx.expression()) : "";
             bf = String.format("return %s;\n", exp);
         }
 
@@ -1057,7 +1057,7 @@ public class Listener extends CBaseListener {
     @Override
     public void exitCompilationUnit(CParser.CompilationUnitContext ctx) {
         String bf;
-        String transUnit = (ctx.translationUnit()!=null) ? newTexts.get(ctx.translationUnit())+" " : "";
+        String transUnit = (ctx.translationUnit() != null) ? newTexts.get(ctx.translationUnit()) + " " : "";
         String eof = newTexts.get(ctx.EOF());
         bf = String.format("%s%s", transUnit, eof);
         newTexts.put(ctx, bf);
@@ -1067,9 +1067,9 @@ public class Listener extends CBaseListener {
     public void exitTranslationUnit(CParser.TranslationUnitContext ctx) {
         String bf;
         String externDecl = newTexts.get(ctx.externalDeclaration());
-        if(ctx.children.size()==1){
+        if (ctx.children.size() == 1) {
             bf = externDecl;
-        }else{
+        } else {
             String transUnit = newTexts.get(ctx.translationUnit());
             bf = String.format("%s %s", transUnit, externDecl);
         }
@@ -1079,11 +1079,11 @@ public class Listener extends CBaseListener {
     @Override
     public void exitExternalDeclaration(CParser.ExternalDeclarationContext ctx) {
         String bf;
-        if(ctx.functionDefinition()!=null){
+        if (ctx.functionDefinition() != null) {
             bf = newTexts.get(ctx.functionDefinition());
-        }else if(ctx.declaration()!=null){
+        } else if (ctx.declaration() != null) {
             bf = newTexts.get(ctx.declaration());
-        }else{
+        } else {
             bf = ";";
         }
         newTexts.put(ctx, bf);
@@ -1092,9 +1092,9 @@ public class Listener extends CBaseListener {
     @Override
     public void exitFunctionDefinition(CParser.FunctionDefinitionContext ctx) {
         String bf;
-        String declSpec = (ctx.declarationSpecifiers()!=null) ? newTexts.get(ctx.declarationSpecifiers()) : "";
+        String declSpec = (ctx.declarationSpecifiers() != null) ? newTexts.get(ctx.declarationSpecifiers()) : "";
         String declarator = newTexts.get(ctx.declarator());
-        String declList = (ctx.declarationList()!=null) ? newTexts.get(ctx.declarationList()) : "";
+        String declList = (ctx.declarationList() != null) ? newTexts.get(ctx.declarationList()) : "";
         String compStmt = newTexts.get(ctx.compoundStatement());
         bf = String.format("%s %s %s %s", declSpec, declarator, declList, compStmt);
         newTexts.put(ctx, bf);
@@ -1104,9 +1104,9 @@ public class Listener extends CBaseListener {
     public void exitDeclarationList(CParser.DeclarationListContext ctx) {
         String bf;
         String decl = newTexts.get(ctx.declaration());
-        if(ctx.children.size()==1){
+        if (ctx.children.size() == 1) {
             bf = decl;
-        }else{
+        } else {
             String declList = newTexts.get(ctx.declarationList());
             bf = String.format("%s %s", declList, decl);
         }
