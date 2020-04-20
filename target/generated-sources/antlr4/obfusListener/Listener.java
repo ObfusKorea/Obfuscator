@@ -1,10 +1,10 @@
 package obfusListener;
 
-import generated.MiniCBaseListener;
-import generated.MiniCParser;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 
 import listener.main.Obfuscator;
+import oldMiniCFiles.MiniCBaseListener;
+import oldMiniCFiles.MiniCParser;
 
 import java.io.File;
 import java.io.FileWriter;

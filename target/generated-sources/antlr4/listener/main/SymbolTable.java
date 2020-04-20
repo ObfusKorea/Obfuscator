@@ -6,13 +6,14 @@ import java.util.Map;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import generated.MiniCParser;
-import generated.MiniCParser.Fun_declContext;
-import generated.MiniCParser.Local_declContext;
-import generated.MiniCParser.ParamsContext;
-import generated.MiniCParser.Type_specContext;
-import generated.MiniCParser.Var_declContext;
 import listener.main.SymbolTable.Type;
+import oldMiniCFiles.MiniCParser;
+import oldMiniCFiles.MiniCParser.Fun_declContext;
+import oldMiniCFiles.MiniCParser.Local_declContext;
+import oldMiniCFiles.MiniCParser.ParamsContext;
+import oldMiniCFiles.MiniCParser.Type_specContext;
+import oldMiniCFiles.MiniCParser.Var_declContext;
+
 import static listener.main.BytecodeGenListenerHelper.*;
 
 public class SymbolTable {

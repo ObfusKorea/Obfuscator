@@ -1,12 +1,14 @@
 package listener.main;
 
 import obfusListener.*;
+import oldMiniCFiles.*;
+
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
-import generated.*;
 import C_2011.Listener.*;
+import C_2011.generated.*;
 
 import java.util.ArrayList;
 import java.util.List;
