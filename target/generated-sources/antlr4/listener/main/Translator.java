@@ -1,12 +1,14 @@
 package listener.main;
 
 import obfusListener.*;
+import oldMiniCFiles.*;
+
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
-import generated.*;
 import C_2011.Listener.*;
+import C_2011.generated.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,7 +92,7 @@ public class Translator {
         CharStream codeCharStream;
         String filename = "input.c";
 
-        String[] flags = {"-default", "-MBA", "-MBA"};
+        String[] flags = {};
         List options = getOption(flags);
 //        List options = getOption(args);
 
@@ -99,13 +101,13 @@ public class Translator {
                 filename = String.format("result%d.c", i - 1);
             }
             codeCharStream = CharStreams.fromFileName(filename);
-            MiniCLexer lexer = new MiniCLexer(codeCharStream);
+            CLexer lexer = new CLexer(codeCharStream);
             CommonTokenStream tokens = new CommonTokenStream(lexer);
-            MiniCParser parser = new MiniCParser(tokens);
-            ParseTree tree = parser.program();
-            ParseTreeWalker walker = new ParseTreeWalker();
+            CParser parser = new CParser(tokens);
+            ParseTree tree = parser.compilationUnit();
+//            ParseTreeWalker walker = new ParseTreeWalker();
 
-            callListener((OPTIONS) options.get(i), walker, tree, i);
+//            callListener((OPTIONS) options.get(i), walker, tree, i);
         }
 
     }
