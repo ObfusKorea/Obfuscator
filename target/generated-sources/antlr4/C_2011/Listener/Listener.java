@@ -683,23 +683,23 @@ public class Listener extends CBaseListener {
 	@Override
 	public void exitDirectDeclarator(CParser.DirectDeclaratorContext ctx) {
 		String bf;
-		if (ctx.declarator() != null) {
+		if (ctx.declarator() != null) {	// '(' declarator ')'
 			String decl = newTexts.get(ctx.declarator());
 			bf = String.format("(%s)", decl);
 		} else if (ctx.Identifier() != null) {
 			String id = ctx.Identifier().getText();
 			if (ctx.children.size() == 1) { // Identifier
 				bf = id;
-			} else {
+			} else {	// Identifier ':' DigitSequence
 				String digitSeq = ctx.DigitSequence().getText();
 				bf = String.format("%s : %s", id, digitSeq);
 			}
 		} else {
 			String directDecl = newTexts.get(ctx.directDeclarator());
 			if (ctx.pointer() != null) { // '(' typeSpecifier? pointer directDeclarator ')'
-				String typeSpec = (ctx.typeSpecifier() != null) ? newTexts.get(ctx.typeSpecifier()) : "";
+				String typeSpec = (ctx.typeSpecifier() != null) ? newTexts.get(ctx.typeSpecifier())+" " : "";
 				String pointer = newTexts.get(ctx.pointer());
-				bf = String.format("(%s %s %s)", typeSpec, pointer, directDecl);
+				bf = String.format("(%s%s %s)", typeSpec, pointer, directDecl);
 			} else if (ctx.parameterTypeList() != null) { // directDeclarator '(' parameterTypeList ')'
 				String param = newTexts.get(ctx.parameterTypeList());
 				bf = String.format("%s(%s)", directDecl, param);
