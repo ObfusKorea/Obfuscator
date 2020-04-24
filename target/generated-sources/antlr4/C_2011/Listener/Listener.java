@@ -82,12 +82,12 @@ public class Listener extends CBaseListener {
 		if (child == 1) { // primaryExp
 			bf = newTexts.get(ctx.primaryExpression());
 		} else if (child == 2) { // postfixExp ++/--
-			bf = String.format("%s%s", postfix, newTexts.get(ctx.getChild(1)));
+			bf = String.format("%s%s", postfix, ctx.getChild(1).getText());
 		} else if (ctx.Identifier() != null) { // postfix -> / . Identifier
-			bf = String.format("%s %s %s", postfix, newTexts.get(ctx.getChild(1)), ctx.Identifier().getText());
-		} else if (newTexts.get(ctx.getChild(1)).equals("[")) { // profixEXP [ expression ]
+			bf = String.format("%s %s %s", postfix, ctx.getChild(1).getText(), ctx.Identifier().getText());
+		} else if (ctx.getChild(1).getText().equals("[")) { // profixEXP [ expression ]
 			bf = String.format("%s[%s]", postfix, newTexts.get(ctx.expression()));
-		} else if (newTexts.get(ctx.getChild(1)).equals("(")) { // postfix ( argument? )
+		} else if (ctx.getChild(1).getText().equals("(")) { // postfix ( argument? )
 			String argument = (ctx.argumentExpressionList() != null) ? newTexts.get(ctx.argumentExpressionList()) : "";
 			bf = String.format("%s(%s)", postfix, argument);
 		}
@@ -160,7 +160,7 @@ public class Listener extends CBaseListener {
 			bf = newTexts.get(ctx.castExpression());
 		} else {
 			String multi = newTexts.get(ctx.multiplicativeExpression());
-			String op = newTexts.get(ctx.getChild(1));
+			String op = ctx.getChild(1).getText();
 			String cast = newTexts.get(ctx.castExpression());
 			bf = String.format("%s %s %s", multi, op, cast);
 		}
@@ -176,7 +176,7 @@ public class Listener extends CBaseListener {
 			bf = multi;
 		} else {
 			String additive = newTexts.get(ctx.additiveExpression());
-			String op = newTexts.get(ctx.getChild(1));
+			String op = ctx.getChild(1).getText();
 			bf = String.format("%s %s %s", additive, op, multi);
 		}
 
@@ -191,7 +191,7 @@ public class Listener extends CBaseListener {
 			bf = additive;
 		} else {
 			String shift = newTexts.get(ctx.shiftExpression());
-			String op = newTexts.get(ctx.getChild(1));
+			String op = ctx.getChild(1).getText();
 			bf = String.format("%s %s %s", shift, op, additive);
 		}
 
@@ -206,7 +206,7 @@ public class Listener extends CBaseListener {
 			bf = shift;
 		} else {
 			String relation = newTexts.get(ctx.relationalExpression());
-			String op = newTexts.get(ctx.getChild(1));
+			String op = ctx.getChild(1).getText();
 			bf = String.format("%s %s %s", relation, op, shift);
 		}
 
@@ -221,7 +221,7 @@ public class Listener extends CBaseListener {
 			bf = relation;
 		} else {
 			String equality = newTexts.get(ctx.equalityExpression());
-			String op = newTexts.get(ctx.getChild(1));
+			String op = ctx.getChild(1).getText();
 			bf = String.format("%s %s %s", equality, op, relation);
 		}
 
@@ -236,7 +236,7 @@ public class Listener extends CBaseListener {
 			bf = equal;
 		} else {
 			String and = newTexts.get(ctx.andExpression());
-			String op = newTexts.get(ctx.getChild(1));
+			String op = ctx.getChild(1).getText();
 			bf = String.format("%s %s %s", and, op, equal);
 		}
 
@@ -251,7 +251,7 @@ public class Listener extends CBaseListener {
 			bf = and;
 		} else {
 			String exclusive = newTexts.get(ctx.exclusiveOrExpression());
-			String op = newTexts.get(ctx.getChild(1));
+			String op = ctx.getChild(1).getText();
 			bf = String.format("%s %s %s", exclusive, op, and);
 		}
 
@@ -266,7 +266,7 @@ public class Listener extends CBaseListener {
 			bf = exclusive;
 		} else {
 			String inclusive = newTexts.get(ctx.inclusiveOrExpression());
-			String op = newTexts.get(ctx.getChild(1));
+			String op = ctx.getChild(1).getText();
 			bf = String.format("%s %s %s", inclusive, op, exclusive);
 		}
 
@@ -281,7 +281,7 @@ public class Listener extends CBaseListener {
 			bf = incluesive;
 		} else {
 			String logical = newTexts.get(ctx.logicalAndExpression());
-			String op = newTexts.get(ctx.getChild(1));
+			String op = ctx.getChild(1).getText();
 			bf = String.format("%s %s %s", logical, op, incluesive);
 		}
 
@@ -296,7 +296,7 @@ public class Listener extends CBaseListener {
 			bf = logicalAnd;
 		} else {
 			String logicalOr = newTexts.get(ctx.logicalOrExpression());
-			String op = newTexts.get(ctx.getChild(1));
+			String op = ctx.getChild(1).getText();
 			bf = String.format("%s %s %s", logicalOr, op, logicalAnd);
 		}
 
@@ -367,11 +367,11 @@ public class Listener extends CBaseListener {
 			bf = newTexts.get(ctx.staticAssertDeclaration());
 		} else if (cSize == 2) { // declarationSpecifiers ';'
 			String declarSpeci = newTexts.get(ctx.declarationSpecifiers());
-			bf = String.format("%s;", declarSpeci);
+			bf = String.format("%s;\n", declarSpeci);
 		} else { // declarationSpecifiers initDeclaratorList ';'
 			String declarSpeci = newTexts.get(ctx.declarationSpecifiers());
 			String initDecl = newTexts.get(ctx.initDeclaratorList());
-			bf = String.format("%s %s;", declarSpeci, initDecl);
+			bf = String.format("%s %s;\n", declarSpeci, initDecl);
 		}
 
 		newTexts.put(ctx, bf);
@@ -703,7 +703,7 @@ public class Listener extends CBaseListener {
 			} else if (ctx.parameterTypeList() != null) { // directDeclarator '(' parameterTypeList ')'
 				String param = newTexts.get(ctx.parameterTypeList());
 				bf = String.format("%s(%s)", directDecl, param);
-			} else if (newTexts.get(ctx.getChild(1)) == "(") { // directDeclarator '(' identifierList? ')'
+			} else if (ctx.getChild(1).getText() == "(") { // directDeclarator '(' identifierList? ')'
 				String id = (ctx.identifierList() != null) ? newTexts.get(ctx.identifierList()) : "";
 				bf = String.format("%s(%s)", directDecl, id);
 			} else {
