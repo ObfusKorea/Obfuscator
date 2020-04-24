@@ -118,6 +118,10 @@ public class Listener extends CBaseListener {
 			bf = String.format("%s%s", ctx.getChild(0).getText(), newTexts.get(ctx.unaryExpression()));
 		} else if (ctx.unaryOperator() != null) { // unaryOp castExp
 			bf = String.format("%s%s", newTexts.get(ctx.unaryOperator()), newTexts.get(ctx.castExpression()));
+		} else if(ctx.typeName() != null) { // typename
+			bf = String.format("%s(%s)", ctx.getChild(0).getText(), newTexts.get(ctx.typeName()));
+		}else {
+			bf = String.format("%s%s", ctx.getChild(0).getText(), ctx.Identifier().getText());
 		}
 		newTexts.put(ctx, bf);
 	}
