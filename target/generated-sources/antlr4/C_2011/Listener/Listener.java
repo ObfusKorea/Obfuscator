@@ -458,9 +458,20 @@ public class Listener extends CBaseListener {
 	@Override
 	public void exitTypeSpecifier(CParser.TypeSpecifierContext ctx) {
 		String bf = "";
-		bf = ctx.getChild(0).getText();
-		// !!! 타입 출력하는 메소드인데 임시로 작성, 필요시 확장해줘야함
+		if (ctx.atomicTypeSpecifier() != null) {
+			bf = newTexts.get(ctx.atomicTypeSpecifier());
+		} else if (ctx.structOrUnionSpecifier() != null) {
+			bf = newTexts.get(ctx.structOrUnionSpecifier());
+		} else if (ctx.enumSpecifier() != null) {
+			bf = newTexts.get(ctx.enumSpecifier());
+		} else if (ctx.typedefName() != null) {
+			bf = newTexts.get(ctx.typedefName());
+		} else if (ctx.children.size() == 1) {
+			bf = newTexts.get(ctx.getChild(0));
+		}
+
 		newTexts.put(ctx, bf);
+		
 //		super.exitTypeSpecifier(ctx);
 	}
 

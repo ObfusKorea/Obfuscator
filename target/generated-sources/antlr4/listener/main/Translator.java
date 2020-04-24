@@ -105,9 +105,9 @@ public class Translator {
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             CParser parser = new CParser(tokens);
             ParseTree tree = parser.compilationUnit();
-//            ParseTreeWalker walker = new ParseTreeWalker();
+            ParseTreeWalker walker = new ParseTreeWalker();
 
-//            callListener((OPTIONS) options.get(i), walker, tree, i);
+            callListener((OPTIONS) options.get(i), walker, tree, i);
         }
 
     }
