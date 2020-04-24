@@ -25,10 +25,10 @@ public class Listener extends CBaseListener {
 		if (ctx.Identifier() != null) {
 			program = ctx.Identifier().getText();
 		} else if (ctx.Constant() != null) {
-			program = newTexts.get(ctx.Constant());
+			program = ctx.Constant().getText();
 		} else if (ctx.StringLiteral() != null) {
 			for (int i = 0; i < ctx.StringLiteral().size(); i++) {
-				program = newTexts.get(ctx.StringLiteral(i));
+				program = ctx.StringLiteral(i).getText();
 			}
 		} else if (ctx.expression() != null) {
 			program = String.format("(%s)", newTexts.get(ctx.expression()));
@@ -135,7 +135,7 @@ public class Listener extends CBaseListener {
 			String unary = newTexts.get(ctx.unaryExpression());
 			bf = unary;
 		} else if (ctx.DigitSequence() != null) {
-			String digit = newTexts.get(ctx.DigitSequence());
+			String digit = ctx.DigitSequence().getText();
 			bf = digit;
 		} else {
 			String type = newTexts.get(ctx.typeName());
@@ -325,7 +325,7 @@ public class Listener extends CBaseListener {
 			String assignExp = newTexts.get(ctx.assignmentExpression());
 			bf = String.format("%s %s %s", unary, assignOP, assignExp);
 		} else { // DigitSequence
-			bf = newTexts.get(ctx.DigitSequence());
+			bf = ctx.DigitSequence().getText();
 		}
 
 		newTexts.put(ctx, bf);
@@ -687,7 +687,7 @@ public class Listener extends CBaseListener {
 			if (ctx.children.size() == 1) { // Identifier
 				bf = id;
 			} else {
-				String digitSeq = newTexts.get(ctx.DigitSequence());
+				String digitSeq = ctx.DigitSequence().getText();
 				bf = String.format("%s : %s", id, digitSeq);
 			}
 		} else {
@@ -1020,7 +1020,7 @@ public class Listener extends CBaseListener {
 	@Override
 	public void exitCompoundStatement(CParser.CompoundStatementContext ctx) {
 		String blocklist = (ctx.blockItemList() != null) ? newTexts.get(ctx.blockItemList()) : "";
-		String bf = String.format("{%s}", blocklist);
+		String bf = String.format("{\n%s}", blocklist);
 		newTexts.put(ctx, bf);
 	}
 
