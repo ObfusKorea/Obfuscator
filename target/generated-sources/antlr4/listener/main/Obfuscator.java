@@ -97,7 +97,7 @@ public class Obfuscator {
 	}
 
 	private static String plusOP_1(String x, String y){
-		String result = String.format("(%s or %s) + %s - ((~%s) and %s)", x, y, y,x,y);
+		String result = String.format("(%s | %s) + %s - ((~%s) & %s)", x, y, y,x,y);
 		return result;
 	}
 
