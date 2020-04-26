@@ -118,9 +118,9 @@ public class Listener extends CBaseListener {
 			bf = String.format("%s%s", ctx.getChild(0).getText(), newTexts.get(ctx.unaryExpression()));
 		} else if (ctx.unaryOperator() != null) { // unaryOp castExp
 			bf = String.format("%s%s", newTexts.get(ctx.unaryOperator()), newTexts.get(ctx.castExpression()));
-		} else if(ctx.typeName() != null) { // typename
+		} else if (ctx.typeName() != null) { // typename
 			bf = String.format("%s(%s)", ctx.getChild(0).getText(), newTexts.get(ctx.typeName()));
-		}else {
+		} else {
 			bf = String.format("%s%s", ctx.getChild(0).getText(), ctx.Identifier().getText());
 		}
 		newTexts.put(ctx, bf);
@@ -683,21 +683,21 @@ public class Listener extends CBaseListener {
 	@Override
 	public void exitDirectDeclarator(CParser.DirectDeclaratorContext ctx) {
 		String bf;
-		if (ctx.declarator() != null) {	// '(' declarator ')'
+		if (ctx.declarator() != null) { // '(' declarator ')'
 			String decl = newTexts.get(ctx.declarator());
 			bf = String.format("(%s)", decl);
 		} else if (ctx.Identifier() != null) {
 			String id = ctx.Identifier().getText();
 			if (ctx.children.size() == 1) { // Identifier
 				bf = id;
-			} else {	// Identifier ':' DigitSequence
+			} else { // Identifier ':' DigitSequence
 				String digitSeq = ctx.DigitSequence().getText();
 				bf = String.format("%s : %s", id, digitSeq);
 			}
 		} else {
 			String directDecl = newTexts.get(ctx.directDeclarator());
 			if (ctx.pointer() != null) { // '(' typeSpecifier? pointer directDeclarator ')'
-				String typeSpec = (ctx.typeSpecifier() != null) ? newTexts.get(ctx.typeSpecifier())+" " : "";
+				String typeSpec = (ctx.typeSpecifier() != null) ? newTexts.get(ctx.typeSpecifier()) + " " : "";
 				String pointer = newTexts.get(ctx.pointer());
 				bf = String.format("(%s%s %s)", typeSpec, pointer, directDecl);
 			} else if (ctx.parameterTypeList() != null) { // directDeclarator '(' parameterTypeList ')'
