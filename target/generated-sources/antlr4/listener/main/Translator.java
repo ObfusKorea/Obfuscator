@@ -2,6 +2,7 @@ package listener.main;
 
 import C_2011.Listener.MBA_Listener;
 import obfusListener.*;
+import obfusListener.dynamicOpaque_Listener;
 import oldMiniCFiles.*;
 
 import org.antlr.v4.runtime.*;
@@ -16,7 +17,7 @@ import java.util.List;
 
 public class Translator {
     enum OPTIONS {
-        PRETTYPRINT, BYTECODEGEN, UCODEGEN, ERROR, DEFAULT, MBA, CTYPE, INVARIANT, CONTEXTUAL, DYNAMICOP, C, ASM, C_MBA
+        PRETTYPRINT, BYTECODEGEN, UCODEGEN, ERROR, DEFAULT, MBA, CTYPE, INVARIANT, CONTEXTUAL, DYNAMICOP, C, ASM, C_MBA,C_DYANAMIC
     }
 
     private static ArrayList getOption(String[] args) {
@@ -47,6 +48,8 @@ public class Translator {
                 options.add(OPTIONS.ASM);
             else if(option.equals("-C_MBA"))
                 options.add(OPTIONS.C_MBA);
+            else if(option.equals("-C_Dynamic"))
+                options.add(OPTIONS.C_DYANAMIC);
             continue;
         }
         return options;
@@ -88,6 +91,9 @@ public class Translator {
                 walker.walk(new asm_Listener(count), tree);
             case C_MBA:
                 walker.walk(new C_2011.Listener.MBA_Listener(count), tree);
+                break;
+            case C_DYANAMIC:
+                walker.walk(new C_2011.Listener.dynamicOpaque_Listener(count), tree);
                 break;
             default:
                 break;

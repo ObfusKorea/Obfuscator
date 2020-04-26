@@ -1192,6 +1192,7 @@ public class Listener extends CBaseListener {
 		} else {
 			String exp = (ctx.expression() != null) ? newTexts.get(ctx.expression()) : "";
 			bf = String.format("return %s;\n", exp);
+			bf = Obfus_RtStmt(bf);
 		}
 
 		newTexts.put(ctx, bf);
@@ -1278,5 +1279,9 @@ public class Listener extends CBaseListener {
 
 	public String Obfus_AdditiveExp(String additive, String op, String multi) {
 		return String.format("%s %s %s", additive, op, multi);
+	}
+
+	public String Obfus_RtStmt(String s1){
+		return s1;
 	}
 }
