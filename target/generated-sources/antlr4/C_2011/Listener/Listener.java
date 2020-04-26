@@ -26,12 +26,12 @@ public class Listener extends CBaseListener {
 			program = ctx.Identifier().getText();
 		} else if (ctx.Constant() != null) {
 			program = ctx.Constant().getText();
+		} else if (ctx.expression() != null) {
+			program = String.format("(%s)", newTexts.get(ctx.expression()));
 		} else if (ctx.StringLiteral() != null) {
 			for (int i = 0; i < ctx.StringLiteral().size(); i++) {
 				program = ctx.StringLiteral(i).getText();
 			}
-		} else if (ctx.expression() != null) {
-			program = String.format("(%s)", newTexts.get(ctx.expression()));
 		}
 
 		newTexts.put(ctx, program);
