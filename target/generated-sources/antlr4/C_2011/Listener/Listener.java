@@ -703,7 +703,7 @@ public class Listener extends CBaseListener {
 			} else if (ctx.parameterTypeList() != null) { // directDeclarator '(' parameterTypeList ')'
 				String param = newTexts.get(ctx.parameterTypeList());
 				bf = String.format("%s(%s)", directDecl, param);
-			} else if (ctx.getChild(1).getText() == "(") { // directDeclarator '(' identifierList? ')'
+			} else if (ctx.getChild(1).getText().equals("(")) { // directDeclarator '(' identifierList? ')'
 				String id = (ctx.identifierList() != null) ? newTexts.get(ctx.identifierList()) : "";
 				bf = String.format("%s(%s)", directDecl, id);
 			} else {
