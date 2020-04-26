@@ -450,29 +450,6 @@ public class Listener extends CBaseListener {
 	}
 
 	@Override
-	public void enterTypeSpecifier(CParser.TypeSpecifierContext ctx) {
-//		String bf = "";
-//		if (ctx.atomicTypeSpecifier() != null) {
-//			bf = newTexts.get(ctx.atomicTypeSpecifier());
-//		} else if (ctx.structOrUnionSpecifier() != null) {
-//			bf = newTexts.get(ctx.structOrUnionSpecifier());
-//		} else if (ctx.enumSpecifier() != null) {
-//			bf = newTexts.get(ctx.enumSpecifier());
-//		} else if (ctx.typedefName() != null) {
-//			bf = newTexts.get(ctx.typedefName());
-//		} else if (ctx.children.size() == 1) {
-//			bf = newTexts.get(ctx.getChild(0));
-//		} else if(ctx.typeSpecifier()!=null){
-//			String type = newTexts.get(ctx.typeSpecifier());
-//			String pointer = newTexts.get(ctx.pointer());
-//			bf = String.format("%s %s", type, pointer);
-//		}
-//
-//		newTexts.put(ctx, bf);
-		super.enterTypeSpecifier(ctx);
-	}
-
-	@Override
 	public void exitTypeSpecifier(CParser.TypeSpecifierContext ctx) {
 		String bf = "";
 		if (ctx.atomicTypeSpecifier() != null) {
