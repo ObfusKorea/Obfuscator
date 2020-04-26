@@ -1037,7 +1037,7 @@ public class Listener extends CBaseListener {
 	@Override
 	public void exitCompoundStatement(CParser.CompoundStatementContext ctx) {
 		String blocklist = (ctx.blockItemList() != null) ? newTexts.get(ctx.blockItemList()) : "";
-		String bf = String.format("{\n%s}", blocklist);
+		String bf = String.format("{\n%s}\n", blocklist);
 		newTexts.put(ctx, bf);
 	}
 
@@ -1235,7 +1235,7 @@ public class Listener extends CBaseListener {
 			bf = externDecl;
 		} else {
 			String transUnit = newTexts.get(ctx.translationUnit());
-			bf = String.format("%s %s", transUnit, externDecl);
+			bf = String.format("%s%s", transUnit, externDecl);
 		}
 		newTexts.put(ctx, bf);
 	}
