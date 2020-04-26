@@ -117,7 +117,7 @@ public class Translator {
 
         for (int i = 0; i < options.size(); i++) {
             if (i > 0) {
-                filename = String.format("result%d.c", i - 1);
+                filename = String.format("result_C_%d.c", i - 1);
             }
             codeCharStream = CharStreams.fromFileName(filename);
             CLexer lexer = new CLexer(codeCharStream);
