@@ -179,7 +179,8 @@ public class Listener extends CBaseListener {
 		} else {
 			String additive = newTexts.get(ctx.additiveExpression());
 			String op = ctx.getChild(1).getText();
-			bf = String.format("%s %s %s", additive, op, multi);
+			bf = Obfus_AdditiveExp(additive, op, multi);
+//			bf = String.format("%s %s %s", additive, op, multi);
 		}
 
 		newTexts.put(ctx, bf);
@@ -1273,5 +1274,9 @@ public class Listener extends CBaseListener {
 			bf = String.format("%s %s", declList, decl);
 		}
 		newTexts.put(ctx, bf);
+	}
+
+	public String Obfus_AdditiveExp(String additive, String op, String multi) {
+		return String.format("%s %s %s", additive, op, multi);
 	}
 }
