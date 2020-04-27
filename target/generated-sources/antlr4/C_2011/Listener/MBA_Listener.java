@@ -10,7 +10,7 @@ public class MBA_Listener extends Listener {
 
     // s1 + s2에 대한 입력에 대하여 난독화하여 리턴핟록 오버라이드
     @Override
-    public String Obfus_AdditiveExp(String additive, String op, String multi) {
+    public String obfus_binaryExp(String additive, String op, String multi) {
         return Obfuscator.MBAExp(additive, multi, op);
     }
 }
