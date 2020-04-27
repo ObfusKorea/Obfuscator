@@ -1302,6 +1302,7 @@ public class Listener extends CBaseListener {
 
 	public void obfuscateIdent(String ident) {
 	}
+
 	public void obfus_arg(String arg){
 
 	}

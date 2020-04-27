@@ -18,19 +18,19 @@ public class ListenerCaller {
             options.add(OPTIONS.C);
         for (int i = 0; i < args.length; i++) {
             String option = args[i];
-            if(option.equals("-C"))
+            if (option.equals("-C"))
                 options.add(OPTIONS.C);
-            else if(option.equals("-MBA"))
+            else if (option.equals("-MBA"))
                 options.add(OPTIONS.MBA);
-            else if(option.equals("-CTYPE"))
+            else if (option.equals("-CTYPE"))
                 options.add(OPTIONS.CTYPE);
-            else if(option.equals("-Dynamic"))
+            else if (option.equals("-Dynamic"))
                 options.add(OPTIONS.DYNAMICOP);
-            else if(option.equals("-Invariant"))
+            else if (option.equals("-Invariant"))
                 options.add(OPTIONS.INVARIANT);
-            else if(option.equals("-Contextual"))
+            else if (option.equals("-Contextual"))
                 options.add(OPTIONS.CONTEXTUAL);
-            else if(option.equals("-Var"))
+            else if (option.equals("-Var"))
                 options.add(OPTIONS.VAR);
 
             continue;
