@@ -2,9 +2,9 @@ package C_2011.Listener;
 
 import listener.main.Obfuscator;
 
-public class changeType_Listener extends Listener{
+public class ChangeType_Listener extends Listener{
 
-    public changeType_Listener(int count){
+    public ChangeType_Listener(int count){
         super(count);
     }
 

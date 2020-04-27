@@ -2,9 +2,9 @@ package C_2011.Listener;
 
 import listener.main.Obfuscator;
 
-public class dynamicOpaque_Listener extends Listener {
+public class DynamicOpaque_Listener extends Listener {
 
-    public dynamicOpaque_Listener(int count){
+    public DynamicOpaque_Listener(int count){
         super(count);
     }
 

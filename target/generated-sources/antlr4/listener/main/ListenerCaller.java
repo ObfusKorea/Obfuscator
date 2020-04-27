@@ -44,10 +44,10 @@ public class ListenerCaller {
                 walker.walk(new MBA_Listener(count), tree);
                 break;
             case CTYPE:
-                walker.walk(new changeType_Listener(count), tree);
+                walker.walk(new ChangeType_Listener(count), tree);
                 break;
             case DYNAMICOP:
-                walker.walk(new dynamicOpaque_Listener(count), tree);
+                walker.walk(new DynamicOpaque_Listener(count), tree);
                 break;
             default:
                 break;
