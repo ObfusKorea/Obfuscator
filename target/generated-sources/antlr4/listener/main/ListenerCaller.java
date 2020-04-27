@@ -55,6 +55,9 @@ public class ListenerCaller {
             case INVARIANT:
                 walker.walk(new Invariant_Listener(count), tree);
                 break;
+            case CONTEXTUAL:
+                walker.walk(new Contextual_Listener(count), tree);
+                break;
             case VAR:
                 walker.walk(new VarObfus_Listener(count), tree);
                 break;

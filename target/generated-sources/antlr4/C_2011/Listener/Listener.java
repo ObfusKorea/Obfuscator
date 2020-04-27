@@ -1020,6 +1020,10 @@ public class Listener extends CBaseListener {
 		} else {
 			// todo
 		}
+
+		if(ctx.jumpStatement()==null){
+			bf = obfus_opaque(bf);
+		}
 		newTexts.put(ctx, bf);
 	}
 
