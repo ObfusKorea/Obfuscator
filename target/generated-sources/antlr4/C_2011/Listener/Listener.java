@@ -245,7 +245,8 @@ public class Listener extends CBaseListener {
 		} else {
 			String and = newTexts.get(ctx.andExpression());
 			String op = ctx.getChild(1).getText();
-			bf = String.format("%s %s %s", and, op, equal);
+			bf = obfus_binaryExp(and, op, equal);
+//			bf = String.format("%s %s %s", and, op, equal);
 		}
 
 		newTexts.put(ctx, bf);
@@ -260,7 +261,8 @@ public class Listener extends CBaseListener {
 		} else {
 			String exclusive = newTexts.get(ctx.exclusiveOrExpression());
 			String op = ctx.getChild(1).getText();
-			bf = String.format("%s %s %s", exclusive, op, and);
+			bf = obfus_binaryExp(exclusive, op, and);
+//			bf = String.format("%s %s %s", exclusive, op, and);
 		}
 
 		newTexts.put(ctx, bf);
@@ -275,7 +277,8 @@ public class Listener extends CBaseListener {
 		} else {
 			String inclusive = newTexts.get(ctx.inclusiveOrExpression());
 			String op = ctx.getChild(1).getText();
-			bf = String.format("%s %s %s", inclusive, op, exclusive);
+			bf = obfus_binaryExp(inclusive, op, exclusive);
+//			bf = String.format("%s %s %s", inclusive, op, exclusive);
 		}
 
 		newTexts.put(ctx, bf);
