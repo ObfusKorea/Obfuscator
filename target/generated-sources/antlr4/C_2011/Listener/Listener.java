@@ -24,6 +24,7 @@ public class Listener extends CBaseListener {
 		String program = "";
 		if (ctx.Identifier() != null) {
 			program = ctx.Identifier().getText();
+			program = obfus_ID(program);
 		} else if (ctx.Constant() != null) {
 			program = ctx.Constant().getText();
 		} else if (ctx.expression() != null) {
@@ -85,7 +86,9 @@ public class Listener extends CBaseListener {
 			if (child == 2) { // postfixExp ++/--
 				bf = String.format("%s%s", postfix, ctx.getChild(1).getText());
 			} else if (ctx.Identifier() != null) { // postfix -> / . Identifier
-				bf = String.format("%s %s %s", postfix, ctx.getChild(1).getText(), ctx.Identifier().getText());
+				String id = ctx.Identifier().getText();
+				id = obfus_ID(id);
+				bf = String.format("%s %s %s", postfix, ctx.getChild(1).getText(), id);
 			} else if (ctx.getChild(1).getText().equals("[")) { // profixEXP [ expression ]
 				bf = String.format("%s[%s]", postfix, newTexts.get(ctx.expression()));
 			} else if (ctx.getChild(1).getText().equals("(")) { // postfix ( argument? )
@@ -123,7 +126,9 @@ public class Listener extends CBaseListener {
 		} else if (ctx.typeName() != null) { // typename
 			bf = String.format("%s(%s)", ctx.getChild(0).getText(), newTexts.get(ctx.typeName()));
 		} else {
-			bf = String.format("%s%s", ctx.getChild(0).getText(), ctx.Identifier().getText());
+			String id = ctx.Identifier().getText();
+			id = obfus_ID(id);
+			bf = String.format("%s%s", ctx.getChild(0).getText(), id);
 		}
 		newTexts.put(ctx, bf);
 	}
@@ -326,6 +331,7 @@ public class Listener extends CBaseListener {
 		String bf;
 		if (ctx.conditionalExpression() != null) { // conditionalExpression
 			bf = newTexts.get(ctx.conditionalExpression());
+			obfus_arg(bf);
 		} else if (ctx.unaryExpression() != null) { // unaryExpression assignmentOperator assignmentExpression
 			String unary = newTexts.get(ctx.unaryExpression());
 			String assignOP = newTexts.get(ctx.assignmentOperator());
@@ -488,6 +494,7 @@ public class Listener extends CBaseListener {
 		String bf;
 		String struct = newTexts.get(ctx.structOrUnion());
 		String id = (ctx.Identifier() != null) ? ctx.Identifier().getText() : "";
+		id = obfus_ID(id);
 		if (ctx.children.size() == 2) {
 			bf = String.format("%s %s", struct, id);
 		} else {
@@ -574,6 +581,7 @@ public class Listener extends CBaseListener {
 	public void exitEnumSpecifier(CParser.EnumSpecifierContext ctx) {
 		String bf;
 		String id = (ctx.Identifier() != null) ? (ctx.Identifier().getText()) : "";
+		id = obfus_ID(id);
 		String enumList = (ctx.enumeratorList() != null) ? (newTexts.get(ctx.enumeratorList())) : "";
 		int size = ctx.children.size();
 		if (size == 2) {
@@ -613,7 +621,7 @@ public class Listener extends CBaseListener {
 	}
 
 	@Override
-	public void exitEnumerationConstant(CParser.EnumerationConstantContext ctx) {
+	public void exitEnumerationConstant(CParser.EnumerationConstantContext ctx) { //todo : id
 		newTexts.put(ctx, ctx.Identifier().getText());
 	}
 
@@ -671,6 +679,13 @@ public class Listener extends CBaseListener {
 	}
 
 	@Override
+	public void enterDirectDeclarator(CParser.DirectDeclaratorContext ctx) {
+		if (ctx.Identifier() != null) {
+			String id = ctx.Identifier().getText();
+			obfuscateIdent(id);
+		}
+	}
+	@Override
 	public void exitDirectDeclarator(CParser.DirectDeclaratorContext ctx) {
 		String bf;
 		if (ctx.declarator() != null) { // '(' declarator ')'
@@ -678,6 +693,7 @@ public class Listener extends CBaseListener {
 			bf = String.format("(%s)", decl);
 		} else if (ctx.Identifier() != null) {
 			String id = ctx.Identifier().getText();
+			id = obfus_ID(id);
 			if (ctx.children.size() == 1) { // Identifier
 				bf = id;
 			} else { // Identifier ':' DigitSequence
@@ -839,11 +855,20 @@ public class Listener extends CBaseListener {
 	}
 
 	@Override
+	public void enterParameterDeclaration(CParser.ParameterDeclarationContext ctx) {
+		if (ctx.declarationSpecifiers() != null && ctx.declarator()!=null) {
+			String decl = newTexts.get(ctx.declarator());
+			obfuscateIdent(decl);
+		}
+	}
+
+	@Override
 	public void exitParameterDeclaration(CParser.ParameterDeclarationContext ctx) {
 		String bf;
 		if (ctx.declarationSpecifiers() != null) {
 			String declSpec = newTexts.get(ctx.declarationSpecifiers());
 			String decl = newTexts.get(ctx.declarator());
+//			obfuscateIdent(decl);
 			bf = String.format("%s %s", declSpec, decl);
 		} else {
 			String declSpec2 = newTexts.get(ctx.declarationSpecifiers2());
@@ -856,13 +881,13 @@ public class Listener extends CBaseListener {
 	@Override
 	public void exitIdentifierList(CParser.IdentifierListContext ctx) {
 		String bf;
-		String ident = ctx.Identifier().getText();
-
+		String id = ctx.Identifier().getText();
+		id = obfus_ID(id);
 		if (ctx.children.size() == 1) {
-			bf = ident;
+			bf = id;
 		} else {
 			String idList = newTexts.get(ctx.identifierList());
-			bf = String.format("%s, %s", idList, ident);
+			bf = String.format("%s, %s", idList, id);
 		}
 
 		newTexts.put(ctx, bf);
@@ -898,6 +923,7 @@ public class Listener extends CBaseListener {
 	@Override
 	public void exitTypedefName(CParser.TypedefNameContext ctx) {
 		String bf = ctx.Identifier().getText();
+		bf = obfus_ID(bf);
 		newTexts.put(ctx, bf);
 	}
 
@@ -957,7 +983,9 @@ public class Listener extends CBaseListener {
 		if (ctx.children.size() == 3) {
 			bf = String.format("[%s]", newTexts.get(ctx.constantExpression()));
 		} else {
-			bf = String.format(".%s", ctx.Identifier().getText());
+			String id = ctx.Identifier().getText();
+			id = obfus_ID(id);
+			bf = String.format(".%s", id);
 		}
 		newTexts.put(ctx, bf);
 	}
@@ -1001,6 +1029,7 @@ public class Listener extends CBaseListener {
 		String stmt = newTexts.get(ctx.statement());
 		if (ctx.children.size() == 3 && ctx.Identifier() != null) {
 			String id = ctx.Identifier().getText();
+			id = obfus_ID(id); //todo : id 난독화 해도 되는지 체크
 			bf = String.format("%s : %s", id, stmt);
 		} else if (ctx.children.size() == 3 && ctx.Identifier() == null) {
 			bf = String.format("default : %s", stmt);
@@ -1157,6 +1186,7 @@ public class Listener extends CBaseListener {
 		if (ctx.Goto() != null) {
 			if (ctx.Identifier() != null) {
 				String id = ctx.Identifier().getText();
+				id = obfus_ID(id);
 				bf = String.format("goto %s ;\n", id);
 			} else {
 				String unaryExp = newTexts.get(ctx.unaryExpression());
@@ -1260,5 +1290,15 @@ public class Listener extends CBaseListener {
 
 	public String Obfus_RtStmt(String s1){
 		return s1;
+	}
+
+	public String obfus_ID(String id){
+		return id;
+	}
+
+	public void obfuscateIdent(String ident) {
+	}
+	public void obfus_arg(String arg){
+
 	}
 }

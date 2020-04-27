@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class ListenerCaller {
 
     enum OPTIONS {
-        ERROR, MBA, INVARIANT, CONTEXTUAL, DYNAMICOP, C, CTYPE, ASM
+        ERROR, MBA, INVARIANT, CONTEXTUAL, DYNAMICOP, C, CTYPE, ASM, VAR
     }
 
     public static ArrayList getOption(String[] args) {
@@ -30,6 +30,9 @@ public class ListenerCaller {
                 options.add(OPTIONS.INVARIANT);
             else if(option.equals("-Contextual"))
                 options.add(OPTIONS.CONTEXTUAL);
+            else if(option.equals("-Var"))
+                options.add(OPTIONS.VAR);
+
             continue;
         }
         return options;
@@ -48,6 +51,9 @@ public class ListenerCaller {
                 break;
             case DYNAMICOP:
                 walker.walk(new DynamicOpaque_Listener(count), tree);
+                break;
+            case VAR:
+                walker.walk(new VarObfus_Listener(count), tree);
                 break;
             default:
                 break;
