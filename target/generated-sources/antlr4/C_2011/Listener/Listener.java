@@ -1301,4 +1301,8 @@ public class Listener extends CBaseListener {
 	public void obfus_arg(String arg){
 
 	}
+
+	public String obfus_opaque(String stmt){
+		return stmt;
+	}
 }

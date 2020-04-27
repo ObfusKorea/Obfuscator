@@ -52,6 +52,9 @@ public class ListenerCaller {
             case DYNAMICOP:
                 walker.walk(new DynamicOpaque_Listener(count), tree);
                 break;
+            case INVARIANT:
+                walker.walk(new Invariant_Listener(count), tree);
+                break;
             case VAR:
                 walker.walk(new VarObfus_Listener(count), tree);
                 break;
