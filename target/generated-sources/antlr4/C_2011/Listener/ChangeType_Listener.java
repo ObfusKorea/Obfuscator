@@ -9,7 +9,7 @@ public class ChangeType_Listener extends Listener{
     }
 
     @Override
-    public String Obfus_AdditiveExp(String s1, String op, String s2) {
+    public String obfus_binaryExp(String s1, String op, String s2) {
         return Obfuscator.changingTypes(s1, op, s2);
     }
 }
