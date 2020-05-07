@@ -113,7 +113,7 @@ public class Obfuscator {
         return String.format("((~%s) | %s) - (~%s)", x, y, x);
     }
     private static String orOP(String x, String y){
-        return String.format("(%s ^ %s) + %s - ((~%s) & %s))", x, y, y, x, y);
+        return String.format("(%s ^ %s) + %s - (~%s & %s)", x, y, y, x, y);
     }
 
     public static String MBAExp(String x, String y, String op){
