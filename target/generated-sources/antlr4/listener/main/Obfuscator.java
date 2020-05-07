@@ -38,9 +38,9 @@ public class Obfuscator {
                 + tabs(2) + "result = result - 1;\n" + tabs(1) + "} else {\n"
                 + tabs(2) + "result = result + 1;\n" + tabs(1) + "}\n";
         String front2 = tabs(1) + "if (para * para < 0) {\n"
-                + tabs(2) + "result = result + 1;\n"
-                + tabs(1) + "} else {\n"
                 + tabs(2) + "result = result - 1;\n"
+                + tabs(1) + "} else {\n"
+                + tabs(2) + "result = result + 1;\n"
                 + tabs(1) + "}\n"
                 + tabs(1) + "";
         return front1 + front2 + input;
