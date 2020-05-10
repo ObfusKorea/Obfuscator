@@ -24,5 +24,12 @@ $ java -jar Obfuscator.jar -options
 ## Examples
 
 ```
-$ java -jar Obfuscator.jar -MBA -Var
+$ java -jar Obfuscator.jar -MBA
 ```
+
+## Examples Result
+### Origin
+![image](https://user-images.githubusercontent.com/33623107/81507029-595c6a80-9335-11ea-832d-410218eb8f3c.png)
+
+### After Obfuscate
+![image](https://user-images.githubusercontent.com/33623107/81507010-2dd98000-9335-11ea-8fb3-7e569931471f.png)
