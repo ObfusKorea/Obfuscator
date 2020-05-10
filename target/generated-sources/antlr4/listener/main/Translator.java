@@ -110,10 +110,10 @@ public class Translator {
         CharStream codeCharStream;
         String filename = "input.c";
 
-
+        ListenerCaller caller = new ListenerCaller();
 //        String[] flags = {"-default", "-MBA", "-MBA"};
-//        List options = getOption(flags);
-        List options = getOption(args);
+//        List options = caller.getOption(flags);
+        List options = caller.getOption(args);
 
 
         for (int i = 0; i < options.size(); i++) {
