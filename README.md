@@ -17,15 +17,15 @@ It require input file that named "input.c" to run. The input file is one you wan
 
 ## Run
 
-'''
+```
 $ java -jar Obfuscator.jar -options
-'''
+```
 
 ## Examples
 
-'''
+```
 $ java -jar Obfuscator.jar -MBA -Var
-'''
+```
 
 ## Examples Result
 
