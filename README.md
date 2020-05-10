@@ -26,7 +26,3 @@ $ java -jar Obfuscator.jar -options
 ```
 $ java -jar Obfuscator.jar -MBA -Var
 ```
-
-## Examples Result
-
-
