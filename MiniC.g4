@@ -68,6 +68,7 @@ expr	:  LITERAL
 	| expr GE expr
 	| expr '>' expr
 	| '!' expr
+	| '~' expr
 	| expr AND expr
 	| expr OR expr
 	| IDENT '=' expr
