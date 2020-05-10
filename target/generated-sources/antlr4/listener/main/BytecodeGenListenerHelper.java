@@ -2,18 +2,18 @@ package listener.main;
 
 import java.util.Hashtable;
 
-import generated.MiniCParser;
-import generated.MiniCParser.ExprContext;
-import generated.MiniCParser.Fun_declContext;
-import generated.MiniCParser.If_stmtContext;
-import generated.MiniCParser.Local_declContext;
-import generated.MiniCParser.ParamContext;
-import generated.MiniCParser.ParamsContext;
-import generated.MiniCParser.Type_specContext;
-import generated.MiniCParser.Var_declContext;
 import listener.main.SymbolTable;
 import listener.main.SymbolTable.Type;
 import listener.main.SymbolTable.VarInfo;
+import oldMiniCFiles.MiniCParser;
+import oldMiniCFiles.MiniCParser.ExprContext;
+import oldMiniCFiles.MiniCParser.Fun_declContext;
+import oldMiniCFiles.MiniCParser.If_stmtContext;
+import oldMiniCFiles.MiniCParser.Local_declContext;
+import oldMiniCFiles.MiniCParser.ParamContext;
+import oldMiniCFiles.MiniCParser.ParamsContext;
+import oldMiniCFiles.MiniCParser.Type_specContext;
+import oldMiniCFiles.MiniCParser.Var_declContext;
 
 public class BytecodeGenListenerHelper {
 

@@ -10,16 +10,16 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-import generated.MiniCBaseListener;
-import generated.MiniCParser;
-import generated.MiniCParser.ExprContext;
-import generated.MiniCParser.Fun_declContext;
-import generated.MiniCParser.Local_declContext;
-import generated.MiniCParser.ParamsContext;
-import generated.MiniCParser.ProgramContext;
-import generated.MiniCParser.StmtContext;
-import generated.MiniCParser.Type_specContext;
-import generated.MiniCParser.Var_declContext;
+import oldMiniCFiles.MiniCBaseListener;
+import oldMiniCFiles.MiniCParser;
+import oldMiniCFiles.MiniCParser.ExprContext;
+import oldMiniCFiles.MiniCParser.Fun_declContext;
+import oldMiniCFiles.MiniCParser.Local_declContext;
+import oldMiniCFiles.MiniCParser.ParamsContext;
+import oldMiniCFiles.MiniCParser.ProgramContext;
+import oldMiniCFiles.MiniCParser.StmtContext;
+import oldMiniCFiles.MiniCParser.Type_specContext;
+import oldMiniCFiles.MiniCParser.Var_declContext;
 
 import static listener.main.BytecodeGenListenerHelper.*;
 import static listener.main.SymbolTable.*;

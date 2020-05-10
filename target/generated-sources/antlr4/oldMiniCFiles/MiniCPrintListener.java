@@ -1,4 +1,4 @@
-package generated;
+package oldMiniCFiles;
 
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 
