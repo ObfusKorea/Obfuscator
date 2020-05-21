@@ -557,7 +557,7 @@ public class Uglyfier extends Listener {
 		if (ctx.getChild(0).getText().equals("if")) {
 			bf = String.format("if(%s)%s", exp, stmt1);
 			if (stmt2 != null) {
-				bf += String.format("else%s", stmt2);
+				bf += String.format("else %s", stmt2);
 			}
 		} else {
 			bf = String.format("switch(%s) %s", exp, stmt1);
