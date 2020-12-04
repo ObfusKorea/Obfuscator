@@ -22,6 +22,7 @@ public class Translator {
         CharStream codeCharStream;
         String filename = "input.c";
 
+
         ListenerCaller caller = new ListenerCaller();
 //        String[] flags = {"-default", "-MBA", "-MBA"};
 //        List options = caller.getOption(flags);
