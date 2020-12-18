@@ -488,6 +488,7 @@ blockItem
 
 expressionStatement
     :   expression? ';'
+    |   VMOBFUS expressionStatement+ ENDVMOBFUS
     ;
 
 selectionStatement
@@ -551,6 +552,8 @@ declarationList
     |   declarationList declaration
     ;
 
+VMOBFUS : '@vmobfus';
+ENDVMOBFUS : '@end_vmobfus';
 Auto : 'auto';
 Break : 'break';
 Case : 'case';

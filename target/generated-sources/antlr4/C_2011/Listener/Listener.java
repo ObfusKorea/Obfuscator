@@ -1080,8 +1080,15 @@ public class Listener extends CBaseListener {
 
 	@Override
 	public void exitExpressionStatement(CParser.ExpressionStatementContext ctx) {
-		String exp = (ctx.expression() != null) ? newTexts.get(ctx.expression()) : "";
-		String bf = String.format("%s;\n", exp);
+		String bf = "";
+		if(ctx.children.size()>2){
+			for (int i = 0; i < ctx.expressionStatement().size(); i++) {
+				bf += newTexts.get(ctx.expressionStatement(i));
+			}
+		}else{
+			String exp = (ctx.expression() != null) ? newTexts.get(ctx.expression()) : "";
+			bf = String.format("%s;\n", exp);
+		}
 		newTexts.put(ctx, bf);
 	}
 
