@@ -1225,7 +1225,7 @@ public class Listener extends CBaseListener {
 //        String eof = newTexts.get(ctx.EOF());
 //        bf = String.format("%s%s", transUnit, eof);
 		bf = String.format("%s", transUnit);
-
+		bf = insertINIT(bf);
 		newTexts.put(ctx, bf);
 
 		System.out.println(bf);
@@ -1312,5 +1312,9 @@ public class Listener extends CBaseListener {
 
 	public String obfus_opaque(String stmt){
 		return stmt;
+	}
+
+	public String insertINIT(String bf) {
+		return bf;
 	}
 }
