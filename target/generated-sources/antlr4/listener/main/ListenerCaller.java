@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class ListenerCaller {
 
     enum OPTIONS {
-        ERROR, MBA, INVARIANT, CONTEXTUAL, DYNAMICOP, C, CTYPE, ASM, VAR, UGLY
+        ERROR, MBA, INVARIANT, CONTEXTUAL, DYNAMICOP, C, CTYPE, ASM, VAR, UGLY,VM
     }
 
     public static ArrayList getOption(String[] args) {
@@ -34,6 +34,8 @@ public class ListenerCaller {
                 options.add(OPTIONS.VAR);
             else if (option.equals("-Ugly"))
                 options.add(OPTIONS.UGLY);
+            else if (option.equals("-VM"))
+                options.add(OPTIONS.VM);
 
             continue;
         }
@@ -65,6 +67,9 @@ public class ListenerCaller {
                 break;
             case UGLY:
                 walker.walk(new Uglyfier(count), tree);
+                break;
+            case VM:
+                walker.walk(new VM_Listener(count), tree);
                 break;
             default:
                 break;
