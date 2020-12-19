@@ -184,14 +184,13 @@ public class Obfuscator {
         return tabs;
     }
 
-    public static String getVMInit(){
-        String init = "// TO: Generated program\n" +
-                "// simply put 0.~4. and generate 5.\n" +
-                "\n" +
+    public static String getVMInit(int rmax,int codemax){
+        String init =
                 "#include <stdio.h>\n" +
                 "\n" +
                 "// 0. for maximal values : to be updated!\n" +
-                "#define MAX\t100\n" +
+                "#define MAX\t"+codemax+"\n" +
+                "#define R_MAX\t"+(rmax)+
                 "\n" +
                 "\n" +
                 "// 1. code : array of bytes (general, reusable)\n" +

@@ -30,6 +30,7 @@ public class VM_Listener extends Listener {
     String add = "add(&encoded_bytes, %s);\n";
     SymbolTable symbolTable = new SymbolTable();
     boolean isInitVM = false;
+    int _vCodeRegisterCnt = 0;
 
     public VM_Listener(int count) {
         super(count);
@@ -44,7 +45,7 @@ public class VM_Listener extends Listener {
             // INITIALIZE VM OBFUSCATOR
             if (!isInitVM) {
                 bf += "struct code encoded_bytes; // VM  byte code \n" +
-                        "int tempvars[MAX];\t\t\t// mapping : real var => vm only var\n" +
+                        "int tempvars[R_MAX];\t\t\t// mapping : real var => vm only var\n" +
                         "\n" +
                         "begin_add(&encoded_bytes);\n";
                 isInitVM = true;
@@ -355,11 +356,12 @@ public class VM_Listener extends Listener {
 
     @Override
     public String insertINIT(String input){
-        String init = Obfuscator.getVMInit();
+        String init = Obfuscator.getVMInit(symbolTable.getLocalSize(), _vCodeRegisterCnt);
         return init+input;
     }
 
     String getAddCode(String s) {
+        _vCodeRegisterCnt++;
         return String.format(add, s);
     }
 }
@@ -409,5 +411,9 @@ class SymbolTable {
             sb.append(String.format(epilog,k,getLocalVarID(k)));
         }
         return sb.toString();
+    }
+
+    int getLocalSize(){
+        return _lsymtable.size();
     }
 }
