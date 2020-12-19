@@ -131,6 +131,47 @@ public class VM_Listener extends Listener {
         newTexts.put(ctx, bf);
     }
 
+    @Override
+    public void exitVmmultiplicativeExpression(CParser.VmmultiplicativeExpressionContext ctx) {
+        String bf;
+        if (ctx.children.size() == 1) { // castExp
+            bf = newTexts.get(ctx.vmcastExpression());
+        } else {
+            String multi = newTexts.get(ctx.vmmultiplicativeExpression());
+            String op;
+            if (ctx.getChild(1).getText().equals("*")){
+                op = getAddCode(getVCode(VCODE.VMULT));
+            }else{
+                op = getAddCode(getVCode(VCODE.VSUB));
+            }
+            String cast = newTexts.get(ctx.vmcastExpression());
+//            String push = String.format(add, getCode(CODE.VPUSH));
+            bf = String.format("%s %s %s", cast, multi, op);
+        }
+
+        newTexts.put(ctx, bf);
+    }
+
+    @Override
+    public void exitVmadditiveExpression(CParser.VmadditiveExpressionContext ctx) {
+        String bf;
+        String multi = newTexts.get(ctx.vmmultiplicativeExpression());
+        if (ctx.children.size() == 1) { // multiplicativeExp
+            bf = multi;
+        } else {
+            String additive = newTexts.get(ctx.vmadditiveExpression());
+            String op;
+            if (ctx.getChild(1).getText().equals("+")){
+                op = getAddCode(getVCode(VCODE.VADD));
+            }else{
+                op = getAddCode(getVCode(VCODE.VSUB));
+            }
+//            String push = String.format(add, getCode(CODE.VPUSH));
+            bf = String.format("%s %s %s", multi, additive, op);
+        }
+
+        newTexts.put(ctx, bf);
+    }
 
     @Override
     public void exitVmshiftExpression(CParser.VmshiftExpressionContext ctx) {
@@ -267,6 +308,24 @@ public class VM_Listener extends Listener {
             bf = String.format("%s ? %s : %s", logicalOr, exp, condiExp);
         }
 
+        newTexts.put(ctx, bf);
+    }
+
+    @Override
+    public void exitVmassignmentExpression(CParser.VmassignmentExpressionContext ctx) {
+        String bf = "";
+        if (ctx.vmconditionalExpression() != null) { // conditionalExpression
+            bf = newTexts.get(ctx.vmconditionalExpression());
+            obfus_arg(bf);
+        } else if (ctx.vmunaryExpression() != null) { // unaryExpression assignmentOperator assignmentExpression
+            String unary = newTexts.get(ctx.vmunaryExpression());
+            String assignOP = newTexts.get(ctx.assignmentOperator());
+            String assignExp = newTexts.get(ctx.vmassignmentExpression());
+            bf = assignExp;
+            bf += getAddCode(getVCode(VCODE.VASSGN));;
+            bf += unary;
+
+        }
         newTexts.put(ctx, bf);
     }
 
