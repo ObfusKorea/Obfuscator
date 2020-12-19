@@ -219,6 +219,196 @@ public interface CListener extends ParseTreeListener {
 	 */
 	void exitAssignmentExpression(CParser.AssignmentExpressionContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link CParser#vmprimaryExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterVmprimaryExpression(CParser.VmprimaryExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CParser#vmprimaryExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitVmprimaryExpression(CParser.VmprimaryExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CParser#vmpostfixExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterVmpostfixExpression(CParser.VmpostfixExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CParser#vmpostfixExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitVmpostfixExpression(CParser.VmpostfixExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CParser#vmargumentExpressionList}.
+	 * @param ctx the parse tree
+	 */
+	void enterVmargumentExpressionList(CParser.VmargumentExpressionListContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CParser#vmargumentExpressionList}.
+	 * @param ctx the parse tree
+	 */
+	void exitVmargumentExpressionList(CParser.VmargumentExpressionListContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CParser#vmunaryExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterVmunaryExpression(CParser.VmunaryExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CParser#vmunaryExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitVmunaryExpression(CParser.VmunaryExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CParser#vmcastExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterVmcastExpression(CParser.VmcastExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CParser#vmcastExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitVmcastExpression(CParser.VmcastExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CParser#vmmultiplicativeExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterVmmultiplicativeExpression(CParser.VmmultiplicativeExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CParser#vmmultiplicativeExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitVmmultiplicativeExpression(CParser.VmmultiplicativeExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CParser#vmadditiveExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterVmadditiveExpression(CParser.VmadditiveExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CParser#vmadditiveExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitVmadditiveExpression(CParser.VmadditiveExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CParser#vmshiftExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterVmshiftExpression(CParser.VmshiftExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CParser#vmshiftExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitVmshiftExpression(CParser.VmshiftExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CParser#vmrelationalExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterVmrelationalExpression(CParser.VmrelationalExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CParser#vmrelationalExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitVmrelationalExpression(CParser.VmrelationalExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CParser#vmequalityExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterVmequalityExpression(CParser.VmequalityExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CParser#vmequalityExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitVmequalityExpression(CParser.VmequalityExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CParser#vmandExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterVmandExpression(CParser.VmandExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CParser#vmandExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitVmandExpression(CParser.VmandExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CParser#vmexclusiveOrExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterVmexclusiveOrExpression(CParser.VmexclusiveOrExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CParser#vmexclusiveOrExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitVmexclusiveOrExpression(CParser.VmexclusiveOrExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CParser#vminclusiveOrExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterVminclusiveOrExpression(CParser.VminclusiveOrExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CParser#vminclusiveOrExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitVminclusiveOrExpression(CParser.VminclusiveOrExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CParser#vmlogicalAndExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterVmlogicalAndExpression(CParser.VmlogicalAndExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CParser#vmlogicalAndExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitVmlogicalAndExpression(CParser.VmlogicalAndExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CParser#vmlogicalOrExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterVmlogicalOrExpression(CParser.VmlogicalOrExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CParser#vmlogicalOrExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitVmlogicalOrExpression(CParser.VmlogicalOrExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CParser#vmconditionalExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterVmconditionalExpression(CParser.VmconditionalExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CParser#vmconditionalExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitVmconditionalExpression(CParser.VmconditionalExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CParser#vmassignmentExpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterVmassignmentExpression(CParser.VmassignmentExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CParser#vmassignmentExpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitVmassignmentExpression(CParser.VmassignmentExpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CParser#vmexpression}.
+	 * @param ctx the parse tree
+	 */
+	void enterVmexpression(CParser.VmexpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CParser#vmexpression}.
+	 * @param ctx the parse tree
+	 */
+	void exitVmexpression(CParser.VmexpressionContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CParser#vmexpressionStatement}.
+	 * @param ctx the parse tree
+	 */
+	void enterVmexpressionStatement(CParser.VmexpressionStatementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CParser#vmexpressionStatement}.
+	 * @param ctx the parse tree
+	 */
+	void exitVmexpressionStatement(CParser.VmexpressionStatementContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link CParser#assignmentOperator}.
 	 * @param ctx the parse tree
 	 */

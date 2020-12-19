@@ -167,6 +167,113 @@ assignmentExpression
     |   DigitSequence // for
     ;
 
+// VM OBFUSCATOR_BEGIN
+vmprimaryExpression
+    :   Identifier
+    |   Constant
+    |   StringLiteral+
+    |   '(' vmexpression ')'
+    ;
+
+vmpostfixExpression
+    :   vmprimaryExpression
+    ;
+
+vmargumentExpressionList
+    :   vmassignmentExpression
+    |   vmargumentExpressionList ',' vmassignmentExpression
+    ;
+
+vmunaryExpression
+    :   vmpostfixExpression
+    |   '++' vmunaryExpression
+    |   '--' vmunaryExpression
+    |   unaryOperator vmcastExpression
+    ;
+
+
+vmcastExpression
+    :   vmunaryExpression
+    ;
+
+vmmultiplicativeExpression
+    :   vmcastExpression
+    |   vmmultiplicativeExpression '*' vmcastExpression
+    |   vmmultiplicativeExpression '/' vmcastExpression
+    |   vmmultiplicativeExpression '%' vmcastExpression
+    ;
+
+vmadditiveExpression
+    :   vmmultiplicativeExpression
+    |   vmadditiveExpression '+' vmmultiplicativeExpression
+    |   vmadditiveExpression '-' vmmultiplicativeExpression
+    ;
+
+vmshiftExpression
+    :   vmadditiveExpression
+    |   vmshiftExpression '<<' vmadditiveExpression
+    |   vmshiftExpression '>>' vmadditiveExpression
+    ;
+
+vmrelationalExpression
+    :   vmshiftExpression
+    |   vmrelationalExpression '<' vmshiftExpression
+    |   vmrelationalExpression '>' vmshiftExpression
+    |   vmrelationalExpression '<=' vmshiftExpression
+    |   vmrelationalExpression '>=' vmshiftExpression
+    ;
+
+vmequalityExpression
+    :   vmrelationalExpression
+    |   vmequalityExpression '==' vmrelationalExpression
+    |   vmequalityExpression '!=' vmrelationalExpression
+    ;
+
+vmandExpression
+    :   vmequalityExpression
+    |   vmandExpression '&' vmequalityExpression
+    ;
+
+vmexclusiveOrExpression
+    :   vmandExpression
+    |   vmexclusiveOrExpression '^' vmandExpression
+    ;
+
+vminclusiveOrExpression
+    :   vmexclusiveOrExpression
+    |   vminclusiveOrExpression '|' vmexclusiveOrExpression
+    ;
+
+vmlogicalAndExpression
+    :   vminclusiveOrExpression
+    |   vmlogicalAndExpression '&&' vminclusiveOrExpression
+    ;
+
+vmlogicalOrExpression
+    :   vmlogicalAndExpression
+    |   vmlogicalOrExpression '||' vmlogicalAndExpression
+    ;
+
+vmconditionalExpression
+    :   vmlogicalOrExpression ('?' vmexpression ':' vmconditionalExpression)?
+    ;
+
+vmassignmentExpression
+    :   vmconditionalExpression
+    |   vmunaryExpression assignmentOperator vmassignmentExpression
+    ;
+
+vmexpression
+    :   vmassignmentExpression
+    |    vmexpression ',' vmassignmentExpression
+    ;
+
+vmexpressionStatement
+    : vmexpression? ';'
+    ;
+
+//VM OBFUSCATOR_END
+
 assignmentOperator
     :   '=' | '*=' | '/=' | '%=' | '+=' | '-=' | '<<=' | '>>=' | '&=' | '^=' | '|='
     ;
@@ -488,7 +595,7 @@ blockItem
 
 expressionStatement
     :   expression? ';'
-    |   VMOBFUS expressionStatement+ ENDVMOBFUS
+    |   VMOBFUS vmexpressionStatement+ ENDVMOBFUS
     ;
 
 selectionStatement
