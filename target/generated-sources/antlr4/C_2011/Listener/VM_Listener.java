@@ -1,6 +1,9 @@
 package C_2011.Listener;
 
 import listener.main.Obfuscator;
+
+import java.util.*;
+
 public class VM_Listener extends Listener {
     enum VCODE {
         VPUSH, VADD, VSUB, VMULT, VASSGN
@@ -24,6 +27,7 @@ public class VM_Listener extends Listener {
     }
 
     String add = "add(&encoded_bytes, %s);\n";
+    SymbolTable symbolTable = new SymbolTable();
 
     public VM_Listener(int count) {
         super(count);
@@ -37,5 +41,35 @@ public class VM_Listener extends Listener {
 
     String getAddCode(String s) {
         return String.format(add, s);
+    }
+}
+
+class SymbolTable {
+    class Var {
+        int id;
+        String name;
+        int value;
+
+        public Var(int id, String name) {
+            this.id = id;
+            this.name = name;
+        }
+    }
+
+    private Map<String, Var> _lsymtable = new HashMap<>();
+    private int _localVarID = 0;
+
+    void putLocalVar(String varName) {
+        if (_lsymtable.get(varName) == null) {
+            _lsymtable.put(varName, new Var(_localVarID++, varName));
+        }
+    }
+
+    int getLocalVarID(String varName) {
+        Var lVar = _lsymtable.get(varName);
+        if (lVar != null) {
+            return lVar.id;
+        }
+        return -1;
     }
 }
