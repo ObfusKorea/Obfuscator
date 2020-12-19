@@ -66,6 +66,73 @@ public class VM_Listener extends Listener {
     }
 
     @Override
+    public void exitVmprimaryExpression(CParser.VmprimaryExpressionContext ctx) {
+        String program = "";
+        if (ctx.Identifier() != null) {
+            symbolTable.putLocalVar(ctx.Identifier().getText());
+            String push = getAddCode(getVCode(VCODE.VPUSH));
+            program = push + getAddCode(Integer.toString(symbolTable.getLocalVarID(ctx.Identifier().getText())));
+//            program = push + String.format(add, symbolTable.getLocalVarID(ctx.Identifier().getText()) + " " + ctx.Identifier().getText());
+        } else if (ctx.Constant() != null) {
+            program = ctx.Constant().getText();
+        } else if (ctx.vmexpression() != null) {
+            program = String.format("%s", newTexts.get(ctx.vmexpression()));
+        } else if (ctx.StringLiteral() != null) {
+            for (int i = 0; i < ctx.StringLiteral().size(); i++) {
+                program = ctx.StringLiteral(i).getText();
+            }
+        }
+
+        newTexts.put(ctx, program);
+    }
+
+    @Override
+    public void exitVmpostfixExpression(CParser.VmpostfixExpressionContext ctx) {
+        String bf = "";
+        bf = newTexts.get(ctx.vmprimaryExpression());
+
+        newTexts.put(ctx, bf);
+    }
+
+    @Override
+    public void exitVmargumentExpressionList(CParser.VmargumentExpressionListContext ctx) {
+        String bf;
+        String assignExp = newTexts.get(ctx.vmassignmentExpression());
+
+        if (ctx.vmargumentExpressionList() == null) {
+            bf = assignExp;
+        } else {
+            bf = String.format("%s, %s", newTexts.get(ctx.vmargumentExpressionList()), assignExp);
+        }
+
+        newTexts.put(ctx, bf);
+    }
+
+    @Override
+    public void exitVmunaryExpression(CParser.VmunaryExpressionContext ctx) {
+        String bf = "";
+        if (ctx.vmpostfixExpression() != null) { // postfixExp
+            bf = newTexts.get(ctx.vmpostfixExpression());
+        } else if (ctx.vmunaryExpression() != null) { // ++ / -- / sizeof unaryExp
+            bf = String.format("%s%s", ctx.getChild(0).getText(), newTexts.get(ctx.vmunaryExpression()));
+        } else if (ctx.unaryOperator() != null) { // unaryOp castExp
+            bf = String.format("%s%s", newTexts.get(ctx.unaryOperator()), newTexts.get(ctx.vmcastExpression()));
+        }
+        newTexts.put(ctx, bf);
+    }
+
+    @Override
+    public void exitVmcastExpression(CParser.VmcastExpressionContext ctx) {
+        String bf = "";
+        if (ctx.vmunaryExpression() != null) {
+            String unary = newTexts.get(ctx.vmunaryExpression());
+            bf = unary;
+        }
+        newTexts.put(ctx, bf);
+    }
+
+
+    @Override
     public String insertINIT(String input){
         String init = Obfuscator.getVMInit();
         return init+input;
