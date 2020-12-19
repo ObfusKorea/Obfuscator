@@ -1,5 +1,6 @@
 package C_2011.Listener;
 
+import C_2011.generated.CParser;
 import listener.main.Obfuscator;
 
 import java.util.*;
@@ -28,9 +29,40 @@ public class VM_Listener extends Listener {
 
     String add = "add(&encoded_bytes, %s);\n";
     SymbolTable symbolTable = new SymbolTable();
+    boolean isInitVM = false;
 
     public VM_Listener(int count) {
         super(count);
+    }
+
+    @Override
+    public void exitExpressionStatement(CParser.ExpressionStatementContext ctx) {
+        String bf = "";
+        String prolog = "tempvars[%d] = %s; \n";
+        String epilog = "%s = tempvars[%d]; \n";
+        if (ctx.children.size() > 2) {
+            // INITIALIZE VM OBFUSCATOR
+            if (!isInitVM) {
+                bf += "struct code encoded_bytes; // VM  byte code \n" +
+                        "int tempvars[MAX];\t\t\t// mapping : real var => vm only var\n" +
+                        "\n" +
+                        "begin_add(&encoded_bytes);\n";
+                isInitVM = true;
+            }
+
+            for (int i = 0; i < ctx.vmexpressionStatement().size(); i++) {
+                bf += newTexts.get(ctx.vmexpressionStatement(i));
+            }
+            bf += "end_add(&encoded_bytes);\n";
+            bf += symbolTable.getPrologCode(prolog);
+            bf += "run_on_vm(&encoded_bytes, &tempvars); \n";
+            bf += symbolTable.getEpilogCode(epilog);
+
+        } else {
+            String exp = (ctx.expression() != null) ? newTexts.get(ctx.expression()) : "";
+            bf = String.format("%s;\n", exp);
+        }
+        newTexts.put(ctx, bf);
     }
 
     @Override
@@ -71,5 +103,23 @@ class SymbolTable {
             return lVar.id;
         }
         return -1;
+    }
+
+    String getPrologCode(String prolog){
+        StringBuilder sb = new StringBuilder();
+        for (String k :
+                _lsymtable.keySet()) {
+            sb.append(String.format(prolog,getLocalVarID(k),k));
+        }
+        return sb.toString();
+    }
+
+    String getEpilogCode(String epilog){
+        StringBuilder sb = new StringBuilder();
+        for (String k :
+                _lsymtable.keySet()) {
+            sb.append(String.format(epilog,k,getLocalVarID(k)));
+        }
+        return sb.toString();
     }
 }
