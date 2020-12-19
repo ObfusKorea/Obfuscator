@@ -241,7 +241,72 @@ public class Obfuscator {
                 "#define  VADD\t-2 \n" +
                 "#define  VSUB\t-3\n" +
                 "#define  VMULT\t-4\n" +
-                "#define  VASSGN\t-5\n\n\n\n\n\n";
+                "#define  VASSGN\t-5\n" +
+                "\n" +
+                "\n" +
+                "// 4. vm engine (general, so reusable)\n" +
+                "// for y+(x*z)\n" +
+                "//-> push y push x push z mult add assgn w\n" +
+                "// push 1 push 0 push 2 mult add assgn 3\n" +
+                "// 0,1,2 are variables' id\n" +
+                "\n" +
+                "void run_on_vm(struct code * bytes, int (* tvars)[] ) {\n" +
+                "\n" +
+                "\tint i = 0;\n" +
+                "\tchar onebyte; \n" +
+                "\tint arg1, arg2;\n" +
+                "\t// printf(\"run_on_vm\\n\");\n" +
+                "\twhile( (onebyte = readNext(bytes)) != 0) {\n" +
+                "\t\t// printf(\"%d\\n\", onebyte);\n" +
+                "\t\tswitch (onebyte) {\n" +
+                "\t\t\tcase VPUSH :\n" +
+                "\t\t\t\tif( (arg1=readNext(bytes)) == -1) return;\n" +
+                "\t\t\t\t//printf(\"push %d\\n\",(*tvars)[args1]);\n" +
+                "\t\t\t\tpush(&mst, (*tvars)[arg1]);\n" +
+                "\t\t\t\tbreak;\n" +
+                "\t\t\tcase VADD:\n" +
+                "\t\t\t\targ1 = pop(&mst);\n" +
+                "\t\t\t\targ2 = pop(&mst);\n" +
+                "\t\t\t\t// printf(\"add %d %d\\n\",arg1, arg2);\n" +
+                "\t\t\t\tpush(&mst, arg1 + arg2);\n" +
+                "\t\t\t\tbreak;\n" +
+                "\t\t\tcase VSUB:\n" +
+                "\t\t\t\targ1 = pop(&mst);\n" +
+                "\t\t\t\targ2 = pop(&mst);\n" +
+                "\t\t\t\tpush(&mst, arg1-arg2);\n" +
+                "\t\t\t\tbreak;\n" +
+                "\t\t\tcase VMULT:\n" +
+                "\t\t\t\targ1 = pop(&mst);\n" +
+                "\t\t\t\targ2 = pop(&mst);\n" +
+                "\t\t\t\t// printf(\"mult %d %d\\n\",arg1, arg2);\n" +
+                "\t\t\t\tpush(&mst, arg1*arg2);\n" +
+                "\t\t\t\tbreak;\n" +
+                "\t\t\tcase VASSGN:\n" +
+                "\t\t\t\targ1=readNext(bytes);\n" +
+                "\t\t\t\tif( (arg2=readNext(bytes)) == -1) return;\n" +
+                "\t\t\t\t(*tvars)[arg2] = pop(&mst);\n" +
+                "\t\t\t\tbreak;\n" +
+                "\t\t} \n" +
+                "\t}\n" +
+                "\n" +
+                "}\n" +
+                "\n" +
+                "void add(struct code * bytes, int op){\n" +
+                "\tbytes->arr[bytes->pc++] = op;\n" +
+                "}\n" +
+                "\n" +
+                "void begin_add(struct code * bytes){\n" +
+                "\tbytes->pc = 0;\n" +
+                "\tfor(int i = 0; i<MAX ; i++){\n" +
+                "\t\tbytes->arr[i] = 0;\t\t\n" +
+                "\t}\n" +
+                "\t// *mst.top = 0;\n" +
+                "\tmst.top = 0;\n" +
+                "}\n" +
+                "\n" +
+                "void end_add(struct code * bytes){\n" +
+                "\tbytes->pc = 0;\n" +
+                "}\n\n\n\n";
         return init;
     }
 
