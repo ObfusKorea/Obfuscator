@@ -133,6 +133,168 @@ public class VM_Listener extends Listener {
 
 
     @Override
+    public void exitVmshiftExpression(CParser.VmshiftExpressionContext ctx) {
+        String bf;
+        String additive = newTexts.get(ctx.vmadditiveExpression());
+        if (ctx.children.size() == 1) { // additiveExp
+            bf = additive;
+        } else {
+            String shift = newTexts.get(ctx.vmshiftExpression());
+            String op = ctx.getChild(1).getText();
+            bf = String.format("%s %s %s", shift, op, additive);
+        }
+
+        newTexts.put(ctx, bf);
+    }
+
+    @Override
+    public void exitVmrelationalExpression(CParser.VmrelationalExpressionContext ctx) {
+        String bf;
+        String shift = newTexts.get(ctx.vmshiftExpression());
+        if (ctx.children.size() == 1) { // shiftExp
+            bf = shift;
+        } else {
+            String relation = newTexts.get(ctx.vmrelationalExpression());
+            String op = ctx.getChild(1).getText();
+            bf = String.format("%s %s %s", relation, op, shift);
+        }
+
+        newTexts.put(ctx, bf);
+    }
+
+    @Override
+    public void exitVmequalityExpression(CParser.VmequalityExpressionContext ctx) {
+        String bf;
+        String relation = newTexts.get(ctx.vmrelationalExpression());
+        if (ctx.children.size() == 1) { // relationalExpression
+            bf = relation;
+        } else {
+            String equality = newTexts.get(ctx.vmequalityExpression());
+            String op = ctx.getChild(1).getText();
+            bf = String.format("%s %s %s", equality, op, relation);
+        }
+
+        newTexts.put(ctx, bf);
+    }
+
+    @Override
+    public void exitVmandExpression(CParser.VmandExpressionContext ctx) {
+        String bf;
+        String equal = newTexts.get(ctx.vmequalityExpression());
+        if (ctx.children.size() == 1) { // equalExp
+            bf = equal;
+        } else {
+            String and = newTexts.get(ctx.vmandExpression());
+            String op = ctx.getChild(1).getText();
+            bf = obfus_binaryExp(and, op, equal);
+//			bf = String.format("%s %s %s", and, op, equal);
+        }
+
+        newTexts.put(ctx, bf);
+    }
+
+    @Override
+    public void exitVmexclusiveOrExpression(CParser.VmexclusiveOrExpressionContext ctx) {
+        String bf;
+        String and = newTexts.get(ctx.vmandExpression());
+        if (ctx.children.size() == 1) { // andExp
+            bf = and;
+        } else {
+            String exclusive = newTexts.get(ctx.vmexclusiveOrExpression());
+            String op = ctx.getChild(1).getText();
+            bf = obfus_binaryExp(exclusive, op, and);
+//			bf = String.format("%s %s %s", exclusive, op, and);
+        }
+
+        newTexts.put(ctx, bf);
+    }
+
+    @Override
+    public void exitVminclusiveOrExpression(CParser.VminclusiveOrExpressionContext ctx) {
+        String bf;
+        String exclusive = newTexts.get(ctx.vmexclusiveOrExpression());
+        if (ctx.children.size() == 1) { // exclusiveOr
+            bf = exclusive;
+        } else {
+            String inclusive = newTexts.get(ctx.vminclusiveOrExpression());
+            String op = ctx.getChild(1).getText();
+            bf = obfus_binaryExp(inclusive, op, exclusive);
+//			bf = String.format("%s %s %s", inclusive, op, exclusive);
+        }
+
+        newTexts.put(ctx, bf);
+    }
+
+    @Override
+    public void exitVmlogicalAndExpression(CParser.VmlogicalAndExpressionContext ctx) {
+        String bf;
+        String incluesive = newTexts.get(ctx.vminclusiveOrExpression());
+        if (ctx.children.size() == 1) { // inclusiveAnd
+            bf = incluesive;
+        } else {
+            String logical = newTexts.get(ctx.vmlogicalAndExpression());
+            String op = ctx.getChild(1).getText();
+            bf = String.format("%s %s %s", logical, op, incluesive);
+        }
+
+        newTexts.put(ctx, bf);
+    }
+
+    @Override
+    public void exitVmlogicalOrExpression(CParser.VmlogicalOrExpressionContext ctx) {
+        String bf;
+        String logicalAnd = newTexts.get(ctx.vmlogicalAndExpression());
+        if (ctx.children.size() == 1) { // logicalAnd
+            bf = logicalAnd;
+        } else {
+            String logicalOr = newTexts.get(ctx.vmlogicalOrExpression());
+            String op = ctx.getChild(1).getText();
+            bf = String.format("%s %s %s", logicalOr, op, logicalAnd);
+        }
+
+        newTexts.put(ctx, bf);
+    }
+
+    @Override
+    public void exitVmconditionalExpression(CParser.VmconditionalExpressionContext ctx) {
+        String bf;
+        String logicalOr = newTexts.get(ctx.vmlogicalOrExpression());
+        if (ctx.children.size() == 1) {
+            bf = logicalOr;
+        } else {
+            String exp = newTexts.get(ctx.vmexpression());
+            String condiExp = newTexts.get(ctx.vmconditionalExpression());
+            bf = String.format("%s ? %s : %s", logicalOr, exp, condiExp);
+        }
+
+        newTexts.put(ctx, bf);
+    }
+
+    @Override
+    public void exitVmexpression(CParser.VmexpressionContext ctx) {
+        String bf = "";
+        String assignExp = newTexts.get(ctx.vmassignmentExpression());
+        if (ctx.children.size() == 1) {
+            bf = assignExp;
+        } else if (ctx.children.size() == 3 && (ctx.children.get(0)) instanceof CParser.ExpressionContext) {
+            System.out.println("ASf");
+        } else {
+            String exp = newTexts.get(ctx.vmexpression());
+            bf = String.format("%s, %s", exp, assignExp);
+        }
+
+        newTexts.put(ctx, bf);
+    }
+
+    @Override
+    public void exitVmexpressionStatement(CParser.VmexpressionStatementContext ctx) {
+        String bf = "";
+        String exp = (ctx.vmexpression() != null) ? newTexts.get(ctx.vmexpression()) : "";
+        bf = String.format("%s;\n", exp);
+        newTexts.put(ctx, bf);
+    }
+
+    @Override
     public String insertINIT(String input){
         String init = Obfuscator.getVMInit();
         return init+input;
