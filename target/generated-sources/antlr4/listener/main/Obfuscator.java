@@ -195,11 +195,11 @@ public class Obfuscator {
                 "\n" +
                 "// 1. code : array of bytes (general, reusable)\n" +
                 "struct code {\n" +
-                "\tchar arr[MAX];\n" +
+                "\tint arr[MAX];\n" +
                 "\tint pc;\n" +
                 "};\n" +
                 "\n" +
-                "char readNext(struct code * _this) {\n" +
+                "int readNext(struct code * _this) {\n" +
                 "\t//return _this->arr[_this->pc];\n" +
                 "\t//_this->pc++;\n" +
                 "\tif (_this->pc == MAX) \n" +
@@ -253,7 +253,7 @@ public class Obfuscator {
                 "void run_on_vm(struct code * bytes, int (* tvars)[] ) {\n" +
                 "\n" +
                 "\tint i = 0;\n" +
-                "\tchar onebyte; \n" +
+                "\tint onebyte; \n" +
                 "\tint arg1, arg2;\n" +
                 "\t// printf(\"run_on_vm\\n\");\n" +
                 "\twhile( (onebyte = readNext(bytes)) != 0) {\n" +
