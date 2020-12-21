@@ -184,8 +184,10 @@ public class Obfuscator {
         return tabs;
     }
 
-    public static String getVMInit(int rmax,int codemax,int stackmax){
-        String init =
+    public static String getVMInit(int rmax,int codemax,int stackmax,String op[]){
+        String VPUSH = op[0], VADD = op[1], VSUB = op[2], VMULT = op[3], VASSGN = op[4], VLOAD = op[5];
+
+        String code1 =
                 "#include <stdio.h>\n" +
                 "\n" +
                 "// 0. for maximal values : to be updated!\n" +
@@ -213,7 +215,9 @@ public class Obfuscator {
                 "\n" +
                 "\t}\n" +
                 "}\n" +
-                "\n" +
+                "\n";
+
+        String code2 =
                 "// 2. operand stack  (general, reusable)\n" +
                 "struct mstack {\n" +
                 "\tint arr[S_MAX];\n" +
@@ -235,17 +239,20 @@ public class Obfuscator {
                 "\treturn tmp;\n" +
                 "}\n" +
                 "\n" +
+                "\n";
+
+        String code3 = String.format("// 3. op code of VM (general, reusable)\n" +
+                "#define  %s\t-1\n" +
+                "#define  %s\t-2 \n" +
+                "#define  %s\t-3\n" +
+                "#define  %s\t-4\n" +
+                "#define  %s\t-5\n" +
+                "#define  %s\t-6\n" +
                 "\n" +
-                "// 3. op code of VM (general, reusable)\n" +
-                "#define  VPUSH\t-1\n" +
-                "#define  VADD\t-2 \n" +
-                "#define  VSUB\t-3\n" +
-                "#define  VMULT\t-4\n" +
-                "#define  VASSGN\t-5\n" +
-                "#define  VLOAD\t-6\n" +
-                "\n" +
-                "\n" +
-                "// 4. vm engine (general, so reusable)\n" +
+                "\n",
+                VPUSH, VADD, VSUB, VMULT, VASSGN, VLOAD);
+
+        String code4 = "// 4. vm engine (general, so reusable)\n" +
                 "// for y+(x*z)\n" +
                 "//-> push y push x push z mult add assgn w\n" +
                 "// push 1 push 0 push 2 mult add assgn 3\n" +
@@ -260,34 +267,34 @@ public class Obfuscator {
                 "\twhile( (onebyte = readNext(bytes)) != 0) {\n" +
                 "\t\t// printf(\"%d\\n\", onebyte);\n" +
                 "\t\tswitch (onebyte) {\n" +
-                "\t\t\tcase VPUSH : // push Constant\n" +
+                "\t\t\tcase "+VPUSH+" : // push Constant\n" +
                 "\t\t\t\tif( (arg1=readNext(bytes)) == -1) return;\n" +
                 "\t\t\t\t//printf(\"push %d\\n\",(*tvars)[args1]);\n" +
                 "\t\t\t\tpush(&mst, arg1);\n" +
                 "\t\t\t\tbreak;\n" +
-                "\t\t\tcase VLOAD: // load Variable\n" +
+                "\t\t\tcase "+VLOAD+": // load Variable\n" +
                 "\t\t\t\tif( (arg1=readNext(bytes)) == -1) return;\n" +
                 "\t\t\t\t//printf(\"push %d\\n\",(*tvars)[args1]);\n" +
                 "\t\t\t\tpush(&mst, (*tvars)[arg1]);\n" +
                 "\t\t\t\tbreak;\n"+
-                "\t\t\tcase VADD:\n" +
+                "\t\t\tcase "+VADD+":\n" +
                 "\t\t\t\targ1 = pop(&mst);\n" +
                 "\t\t\t\targ2 = pop(&mst);\n" +
                 "\t\t\t\t// printf(\"add %d %d\\n\",arg1, arg2);\n" +
                 "\t\t\t\tpush(&mst, arg2 + arg1);\n" +
                 "\t\t\t\tbreak;\n" +
-                "\t\t\tcase VSUB:\n" +
+                "\t\t\tcase "+VSUB+":\n" +
                 "\t\t\t\targ1 = pop(&mst);\n" +
                 "\t\t\t\targ2 = pop(&mst);\n" +
                 "\t\t\t\tpush(&mst, arg2-arg1);\n" +
                 "\t\t\t\tbreak;\n" +
-                "\t\t\tcase VMULT:\n" +
+                "\t\t\tcase "+VMULT+":\n" +
                 "\t\t\t\targ1 = pop(&mst);\n" +
                 "\t\t\t\targ2 = pop(&mst);\n" +
                 "\t\t\t\t// printf(\"mult %d %d\\n\",arg1, arg2);\n" +
                 "\t\t\t\tpush(&mst, arg2*arg1);\n" +
                 "\t\t\t\tbreak;\n" +
-                "\t\t\tcase VASSGN:\n" +
+                "\t\t\tcase "+VASSGN+":\n" +
                 "\t\t\t\targ1=readNext(bytes);\n" +
                 "\t\t\t\tif( (arg2=readNext(bytes)) == -1) return;\n" +
                 "\t\t\t\t(*tvars)[arg2] = pop(&mst);\n" +
@@ -313,7 +320,9 @@ public class Obfuscator {
                 "void end_add(struct code * bytes){\n" +
                 "\tbytes->pc = 0;\n" +
                 "}\n\n\n\n";
-        return init;
+
+        String result = code1 + code2 + code3 + code4;
+        return result;
     }
 
 }

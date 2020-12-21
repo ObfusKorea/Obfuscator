@@ -39,6 +39,15 @@ public class VM_Listener extends Listener {
         }
     }
 
+    String[] getVCodeArr(){
+        VCODE[] codes = VCODE.values();
+        String arr[] = new String[codes.length];
+        for (int i = 0; i < codes.length; i++) {
+            arr[i] = getVCode(codes[i]);
+        }
+        return arr;
+    }
+
     String add = "add(&encoded_bytes, %s);\n";
     SymbolTable symbolTable = new SymbolTable();
     boolean isInitVM = false;
@@ -381,7 +390,7 @@ public class VM_Listener extends Listener {
 
     @Override
     public String insertINIT(String input){
-        String init = Obfuscator.getVMInit(symbolTable.getLocalSize(), _maxVEncodedCodeCnt, _maxStackCnt);
+        String init = Obfuscator.getVMInit(symbolTable.getLocalSize(), _maxVEncodedCodeCnt, _maxStackCnt,getVCodeArr());
         return init+input;
     }
 
