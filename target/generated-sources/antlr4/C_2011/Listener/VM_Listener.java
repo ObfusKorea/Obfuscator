@@ -48,11 +48,10 @@ public class VM_Listener extends Listener {
             if (!isInitVM) {
                 bf += "struct code encoded_bytes; // VM  byte code \n" +
                         "int tempvars[R_MAX];\t\t\t// mapping : real var => vm only var\n" +
-                        "\n" +
-                        "begin_add(&encoded_bytes);\n";
+                        "\n";
                 isInitVM = true;
             }
-
+            bf += "begin_add(&encoded_bytes);\n";
             for (int i = 0; i < ctx.vmexpressionStatement().size(); i++) {
                 bf += newTexts.get(ctx.vmexpressionStatement(i));
             }
