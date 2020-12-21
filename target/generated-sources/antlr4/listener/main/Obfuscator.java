@@ -241,6 +241,7 @@ public class Obfuscator {
                 "#define  VSUB\t-3\n" +
                 "#define  VMULT\t-4\n" +
                 "#define  VASSGN\t-5\n" +
+                "#define  VLOAD\t-6\n" +
                 "\n" +
                 "\n" +
                 "// 4. vm engine (general, so reusable)\n" +
@@ -258,11 +259,16 @@ public class Obfuscator {
                 "\twhile( (onebyte = readNext(bytes)) != 0) {\n" +
                 "\t\t// printf(\"%d\\n\", onebyte);\n" +
                 "\t\tswitch (onebyte) {\n" +
-                "\t\t\tcase VPUSH :\n" +
+                "\t\t\tcase VPUSH : // push Constant\n" +
+                "\t\t\t\tif( (arg1=readNext(bytes)) == -1) return;\n" +
+                "\t\t\t\t//printf(\"push %d\\n\",(*tvars)[args1]);\n" +
+                "\t\t\t\tpush(&mst, arg1);\n" +
+                "\t\t\t\tbreak;\n" +
+                "\t\t\tcase VLOAD: // load Variable\n" +
                 "\t\t\t\tif( (arg1=readNext(bytes)) == -1) return;\n" +
                 "\t\t\t\t//printf(\"push %d\\n\",(*tvars)[args1]);\n" +
                 "\t\t\t\tpush(&mst, (*tvars)[arg1]);\n" +
-                "\t\t\t\tbreak;\n" +
+                "\t\t\t\tbreak;"+
                 "\t\t\tcase VADD:\n" +
                 "\t\t\t\targ1 = pop(&mst);\n" +
                 "\t\t\t\targ2 = pop(&mst);\n" +

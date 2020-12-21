@@ -7,7 +7,7 @@ import java.util.*;
 
 public class VM_Listener extends Listener {
     enum VCODE {
-        VPUSH, VADD, VSUB, VMULT, VASSGN
+        VPUSH, VADD, VSUB, VMULT, VASSGN, VLOAD
     }
 
     String getVCode(VCODE c) {
@@ -22,6 +22,8 @@ public class VM_Listener extends Listener {
                 return "VMULT";
             case VASSGN:
                 return "VASSGN";
+            case VLOAD:
+                return "VLOAD";
             default:
                 return "NULL";
         }
@@ -71,11 +73,12 @@ public class VM_Listener extends Listener {
         String program = "";
         if (ctx.Identifier() != null) {
             symbolTable.putLocalVar(ctx.Identifier().getText());
-            String push = getAddCode(getVCode(VCODE.VPUSH));
+            String push = getAddCode(getVCode(VCODE.VLOAD));
             program = push + getAddCode(Integer.toString(symbolTable.getLocalVarID(ctx.Identifier().getText())));
 //            program = push + String.format(add, symbolTable.getLocalVarID(ctx.Identifier().getText()) + " " + ctx.Identifier().getText());
         } else if (ctx.Constant() != null) {
-            program = ctx.Constant().getText();
+            String load = getAddCode(getVCode(VCODE.VPUSH));
+            program = load + getAddCode(ctx.Constant().getText());
         } else if (ctx.vmexpression() != null) {
             program = String.format("%s", newTexts.get(ctx.vmexpression()));
         } else if (ctx.StringLiteral() != null) {
