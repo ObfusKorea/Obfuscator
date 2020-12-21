@@ -273,18 +273,18 @@ public class Obfuscator {
                 "\t\t\t\targ1 = pop(&mst);\n" +
                 "\t\t\t\targ2 = pop(&mst);\n" +
                 "\t\t\t\t// printf(\"add %d %d\\n\",arg1, arg2);\n" +
-                "\t\t\t\tpush(&mst, arg1 + arg2);\n" +
+                "\t\t\t\tpush(&mst, arg2 + arg1);\n" +
                 "\t\t\t\tbreak;\n" +
                 "\t\t\tcase VSUB:\n" +
                 "\t\t\t\targ1 = pop(&mst);\n" +
                 "\t\t\t\targ2 = pop(&mst);\n" +
-                "\t\t\t\tpush(&mst, arg1-arg2);\n" +
+                "\t\t\t\tpush(&mst, arg2-arg1);\n" +
                 "\t\t\t\tbreak;\n" +
                 "\t\t\tcase VMULT:\n" +
                 "\t\t\t\targ1 = pop(&mst);\n" +
                 "\t\t\t\targ2 = pop(&mst);\n" +
                 "\t\t\t\t// printf(\"mult %d %d\\n\",arg1, arg2);\n" +
-                "\t\t\t\tpush(&mst, arg1*arg2);\n" +
+                "\t\t\t\tpush(&mst, arg2*arg1);\n" +
                 "\t\t\t\tbreak;\n" +
                 "\t\t\tcase VASSGN:\n" +
                 "\t\t\t\targ1=readNext(bytes);\n" +

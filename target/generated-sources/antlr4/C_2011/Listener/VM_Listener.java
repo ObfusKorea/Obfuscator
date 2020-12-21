@@ -150,7 +150,7 @@ public class VM_Listener extends Listener {
             }
             String cast = newTexts.get(ctx.vmcastExpression());
 //            String push = String.format(add, getCode(CODE.VPUSH));
-            bf = String.format("%s %s %s", cast, multi, op);
+            bf = String.format("%s %s %s", multi, cast, op);
         }
 
         newTexts.put(ctx, bf);
@@ -171,7 +171,7 @@ public class VM_Listener extends Listener {
                 op = getAddCode(getVCode(VCODE.VSUB));
             }
 //            String push = String.format(add, getCode(CODE.VPUSH));
-            bf = String.format("%s %s %s", multi, additive, op);
+            bf = String.format("%s %s %s", additive, multi, op);
         }
 
         newTexts.put(ctx, bf);
