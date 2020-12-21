@@ -32,10 +32,17 @@ public class VM_Listener extends Listener {
     String add = "add(&encoded_bytes, %s);\n";
     SymbolTable symbolTable = new SymbolTable();
     boolean isInitVM = false;
-    int _vCodeRegisterCnt = 0;
+    int _vEncodedCodeCnt = 0;
+    int _maxVEncodedCodeCnt = 0;
 
     public VM_Listener(int count) {
         super(count);
+    }
+
+    @Override
+    public void enterExpressionStatement(CParser.ExpressionStatementContext ctx) {
+        _maxVEncodedCodeCnt = _vEncodedCodeCnt > _maxVEncodedCodeCnt ? _vEncodedCodeCnt : _maxVEncodedCodeCnt;
+        _vEncodedCodeCnt = 0;
     }
 
     @Override
@@ -65,6 +72,7 @@ public class VM_Listener extends Listener {
             bf = String.format("%s;\n", exp);
         }
         newTexts.put(ctx, bf);
+        _maxVEncodedCodeCnt = _vEncodedCodeCnt > _maxVEncodedCodeCnt ? _vEncodedCodeCnt : _maxVEncodedCodeCnt;
     }
 
     @Override
@@ -358,12 +366,12 @@ public class VM_Listener extends Listener {
 
     @Override
     public String insertINIT(String input){
-        String init = Obfuscator.getVMInit(symbolTable.getLocalSize(), _vCodeRegisterCnt);
+        String init = Obfuscator.getVMInit(symbolTable.getLocalSize(), _maxVEncodedCodeCnt);
         return init+input;
     }
 
     String getAddCode(String s) {
-        _vCodeRegisterCnt++;
+        _vEncodedCodeCnt++;
         return String.format(add, s);
     }
 }
