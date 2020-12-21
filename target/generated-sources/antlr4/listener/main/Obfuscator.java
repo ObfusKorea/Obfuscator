@@ -184,12 +184,13 @@ public class Obfuscator {
         return tabs;
     }
 
-    public static String getVMInit(int rmax,int codemax){
+    public static String getVMInit(int rmax,int codemax,int stackmax){
         String init =
                 "#include <stdio.h>\n" +
                 "\n" +
                 "// 0. for maximal values : to be updated!\n" +
                 "#define MAX\t"+codemax+"\n" +
+                "#define S_MAX\t"+stackmax+"\n" +
                 "#define R_MAX\t"+(rmax)+
                 "\n" +
                 "\n" +
@@ -215,7 +216,7 @@ public class Obfuscator {
                 "\n" +
                 "// 2. operand stack  (general, reusable)\n" +
                 "struct mstack {\n" +
-                "\tint arr[MAX];\n" +
+                "\tint arr[S_MAX];\n" +
                 "\tint top;\n" +
                 "} mst;\n" +
                 "\n" +

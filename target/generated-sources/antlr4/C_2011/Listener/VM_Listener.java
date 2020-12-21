@@ -13,16 +13,26 @@ public class VM_Listener extends Listener {
     String getVCode(VCODE c) {
         switch (c) {
             case VPUSH:
+                _stackCnt++;
                 return "VPUSH";
             case VADD:
+                _maxStackCnt = _stackCnt > _maxStackCnt ? _stackCnt : _maxStackCnt;
+                _stackCnt -=2;
                 return "VADD";
             case VSUB:
+                _maxStackCnt = _stackCnt > _maxStackCnt ? _stackCnt : _maxStackCnt;
+                _stackCnt -=2;
                 return "VSUB";
             case VMULT:
+                _maxStackCnt = _stackCnt > _maxStackCnt ? _stackCnt : _maxStackCnt;
+                _stackCnt -=2;
                 return "VMULT";
             case VASSGN:
+                _maxStackCnt = _stackCnt > _maxStackCnt ? _stackCnt : _maxStackCnt;
+                _stackCnt--;
                 return "VASSGN";
             case VLOAD:
+                _stackCnt++;
                 return "VLOAD";
             default:
                 return "NULL";
@@ -34,6 +44,8 @@ public class VM_Listener extends Listener {
     boolean isInitVM = false;
     int _vEncodedCodeCnt = 0;
     int _maxVEncodedCodeCnt = 0;
+    int _stackCnt = 0;
+    int _maxStackCnt = 0;
 
     public VM_Listener(int count) {
         super(count);
@@ -42,7 +54,9 @@ public class VM_Listener extends Listener {
     @Override
     public void enterExpressionStatement(CParser.ExpressionStatementContext ctx) {
         _maxVEncodedCodeCnt = _vEncodedCodeCnt > _maxVEncodedCodeCnt ? _vEncodedCodeCnt : _maxVEncodedCodeCnt;
+        _maxStackCnt = _stackCnt > _maxStackCnt ? _stackCnt : _maxStackCnt;
         _vEncodedCodeCnt = 0;
+        _stackCnt = 0;
     }
 
     @Override
@@ -73,6 +87,7 @@ public class VM_Listener extends Listener {
         }
         newTexts.put(ctx, bf);
         _maxVEncodedCodeCnt = _vEncodedCodeCnt > _maxVEncodedCodeCnt ? _vEncodedCodeCnt : _maxVEncodedCodeCnt;
+        _maxStackCnt = _stackCnt > _maxStackCnt ? _stackCnt : _maxStackCnt;
     }
 
     @Override
@@ -366,7 +381,7 @@ public class VM_Listener extends Listener {
 
     @Override
     public String insertINIT(String input){
-        String init = Obfuscator.getVMInit(symbolTable.getLocalSize(), _maxVEncodedCodeCnt);
+        String init = Obfuscator.getVMInit(symbolTable.getLocalSize(), _maxVEncodedCodeCnt, _maxStackCnt);
         return init+input;
     }
 
