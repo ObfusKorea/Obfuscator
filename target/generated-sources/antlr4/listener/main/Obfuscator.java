@@ -269,7 +269,7 @@ public class Obfuscator {
                 "\t\t\t\tif( (arg1=readNext(bytes)) == -1) return;\n" +
                 "\t\t\t\t//printf(\"push %d\\n\",(*tvars)[args1]);\n" +
                 "\t\t\t\tpush(&mst, (*tvars)[arg1]);\n" +
-                "\t\t\t\tbreak;"+
+                "\t\t\t\tbreak;\n"+
                 "\t\t\tcase VADD:\n" +
                 "\t\t\t\targ1 = pop(&mst);\n" +
                 "\t\t\t\targ2 = pop(&mst);\n" +
