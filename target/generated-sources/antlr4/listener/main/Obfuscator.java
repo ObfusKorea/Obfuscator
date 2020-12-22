@@ -190,25 +190,20 @@ public class Obfuscator {
         String code1 =
                 "#include <stdio.h>\n" +
                 "\n" +
-                "// 0. for maximal values : to be updated!\n" +
                 "#define MAX\t"+codemax+"\n" +
                 "#define S_MAX\t"+stackmax+"\n" +
                 "#define R_MAX\t"+(rmax)+
                 "\n" +
                 "\n" +
-                "// 1. code : array of bytes (general, reusable)\n" +
                 "struct code {\n" +
                 "\tint arr[MAX];\n" +
                 "\tint pc;\n" +
                 "};\n" +
                 "\n" +
                 "int readNext(struct code * _this) {\n" +
-                "\t//return _this->arr[_this->pc];\n" +
-                "\t//_this->pc++;\n" +
                 "\tif (_this->pc == MAX) \n" +
                 "\t\treturn -1;\n" +
                 "\telse{\n" +
-                "\t//\tprintf(\"%d, %d\\n\",_this->pc, _this->arr[_this->pc]);\n" +
                 "\t\tint tmp = _this->pc;\n" +
                 "\t\t_this->pc++;\t\t\n" +
                 "\t\treturn _this->arr[tmp];\n" +
