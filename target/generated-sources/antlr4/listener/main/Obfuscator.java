@@ -221,28 +221,24 @@ public class Obfuscator {
                 "\n" +
                 "\n" +
                 "void push(struct mstack * _this, int data ) {\n" +
-                "\t_this->arr[_this->top] = data;\n" +
-                "\t// printf(\"push %d, at %d\\n\",_this->arr[_this->top],_this->top);\n" +
-                "\t_this->top++;\n" +
-                "}\n" +
-                "\n" +
-                "int pop(struct mstack * _this) {\n" +
-                "\t//_this->top--;\n" +
-                "\tint tmp = _this->arr[--_this->top];\n" +
-                "\t_this->arr[_this->top]=0;\n" +
-                "\t// printf(\"pop %d\\n\",_this->top-1);\n" +
-                "\treturn tmp;\n" +
-                "}\n" +
-                "\n" +
-                "\n";
+                        "\tif(_this->top+1 >= S_MAX) return;\n" +
+                        "\t_this->arr[++_this->top] = data;\n" +
+                        "}\n" +
+                        "\n" +
+                        "int pop(struct mstack * _this) {\n" +
+                        "\tif(_this->top<0) return -1;\n" +
+                        "\tint tmp = _this->arr[_this->top];\n" +
+                        "\t_this->arr[_this->top--]=0;\n" +
+                        "\treturn tmp;\n" +
+                        "}\n\n\n";
 
         String code3 = String.format("// 3. op code of VM (general, reusable)\n" +
-                "#define  %s\t-1\n" +
-                "#define  %s\t-2 \n" +
-                "#define  %s\t-3\n" +
-                "#define  %s\t-4\n" +
-                "#define  %s\t-5\n" +
-                "#define  %s\t-6\n" +
+                "#define  %s\t0\n" +
+                "#define  %s\t1\n" +
+                "#define  %s\t2\n" +
+                "#define  %s\t3\n" +
+                "#define  %s\t4\n" +
+                "#define  %s\t5\n" +
                 "\n" +
                 "\n",
                 VPUSH, VADD, VSUB, VMULT, VASSGN, VLOAD);
