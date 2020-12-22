@@ -254,43 +254,11 @@ public class Obfuscator {
                 "\tint i = 0;\n" +
                 "\tint onebyte; \n" +
                 "\tint arg1, arg2;\n" +
-                "\t// printf(\"run_on_vm\\n\");\n" +
-                "\twhile( (onebyte = readNext(bytes)) != 0) {\n" +
-                "\t\t// printf(\"%d\\n\", onebyte);\n" +
-                "\t\tswitch (onebyte) {\n" +
-                "\t\t\tcase "+VPUSH+" : // push Constant\n" +
-                "\t\t\t\tif( (arg1=readNext(bytes)) == -1) return;\n" +
-                "\t\t\t\t//printf(\"push %d\\n\",(*tvars)[args1]);\n" +
-                "\t\t\t\tpush(&mst, arg1);\n" +
-                "\t\t\t\tbreak;\n" +
-                "\t\t\tcase "+VLOAD+": // load Variable\n" +
-                "\t\t\t\tif( (arg1=readNext(bytes)) == -1) return;\n" +
-                "\t\t\t\t//printf(\"push %d\\n\",(*tvars)[args1]);\n" +
-                "\t\t\t\tpush(&mst, (*tvars)[arg1]);\n" +
-                "\t\t\t\tbreak;\n"+
-                "\t\t\tcase "+VADD+":\n" +
-                "\t\t\t\targ1 = pop(&mst);\n" +
-                "\t\t\t\targ2 = pop(&mst);\n" +
-                "\t\t\t\t// printf(\"add %d %d\\n\",arg1, arg2);\n" +
-                "\t\t\t\tpush(&mst, arg2 + arg1);\n" +
-                "\t\t\t\tbreak;\n" +
-                "\t\t\tcase "+VSUB+":\n" +
-                "\t\t\t\targ1 = pop(&mst);\n" +
-                "\t\t\t\targ2 = pop(&mst);\n" +
-                "\t\t\t\tpush(&mst, arg2-arg1);\n" +
-                "\t\t\t\tbreak;\n" +
-                "\t\t\tcase "+VMULT+":\n" +
-                "\t\t\t\targ1 = pop(&mst);\n" +
-                "\t\t\t\targ2 = pop(&mst);\n" +
-                "\t\t\t\t// printf(\"mult %d %d\\n\",arg1, arg2);\n" +
-                "\t\t\t\tpush(&mst, arg2*arg1);\n" +
-                "\t\t\t\tbreak;\n" +
-                "\t\t\tcase "+VASSGN+":\n" +
-                "\t\t\t\targ1=readNext(bytes);\n" +
-                "\t\t\t\tif( (arg2=readNext(bytes)) == -1) return;\n" +
-                "\t\t\t\t(*tvars)[arg2] = pop(&mst);\n" +
-                "\t\t\t\tbreak;\n" +
-                "\t\t} \n" +
+                "\tint isCnst = 0, isRead = 0;\n"+
+                "\tgoto "+Label.F.getValue()+";\n"+
+
+                getTotalMachineLabels()+
+
                 "\t}\n" +
                 "\n" +
                 "}\n" +
@@ -314,6 +282,138 @@ public class Obfuscator {
 
         String result = code1 + code2 + code3 + code4;
         return result;
+    }
+
+    private static String getTotalMachineLabels() {
+        StringBuilder sb = new StringBuilder();
+        Label[] labels = Label.values();
+        for (int i = 0; i < labels.length; i++) {
+            sb.append(getLabelBlock(labels[i]));
+        }
+        return sb.toString();
+    }
+
+    static String getLabelBlock(Label label){
+        String result;
+        switch (label){
+            case F:
+                result = "\t"+label.getValue()+":\n" +
+                        "        if(isRead == 1){\n" +
+                        "\n" +
+                        "        }else if ((onebyte = readNext(bytes)) == -1) return;\n" +
+                        "\n" +
+                        "        if(onebyte == VPUSH){\n" +
+                        "            isCnst = VPUSH;\n" +
+                        "            goto CHECK;\n" +
+                        "        }else if(onebyte == VLOAD){\n" +
+                        "            isCnst = VLOAD;\n" +
+                        "            goto CHECK;\n" +
+                        "        }else if(onebyte == VADD){\n" +
+                        "            isCnst = VADD;\n" +
+                        "            goto ARG;\n" +
+                        "        }else if(onebyte == VSUB){\n" +
+                        "            isCnst = VSUB;\n" +
+                        "            goto ARG;\n" +
+                        "        }else if(onebyte == VMULT){\n" +
+                        "            isCnst = VMULT;\n" +
+                        "            goto ARG;\n" +
+                        "        }else if(onebyte == VASSGN){\n" +
+                        "            isCnst = VASSGN;\n" +
+                        "            goto ASSGN;\n" +
+                        "        }\n";
+                break;
+            case CHECK:
+                result = "\tCHECK:\n" +
+                        "\t    if( (arg1=readNext(bytes)) == -1) return;\n" +
+                        "        if(isCnst == VLOAD){\n" +
+                        "            goto LOAD;\n" +
+                        "        }else{\n" +
+                        "            goto PUSH;";
+                break;
+            case ARG:
+                result = "    ARG:\n" +
+                        "\t    arg1 = pop(&mst);\n" +
+                        "    \targ2 = pop(&mst);\n" +
+                        "        if(isCnst == VADD){\n" +
+                        "            goto ADD;\n" +
+                        "        }else if(isCnst == VSUB){\n" +
+                        "            goto SUB;\n" +
+                        "        }else if(isCnst == VMULT){\n" +
+                        "            goto MULT;\n" +
+                        "        }";
+                break;
+            case PUSH:
+                result = "\tPUSH:\n" +
+                        "\t    push(&mst, arg1);\n" +
+                        "        goto F;\n";
+                break;
+            case LOAD:
+                result = "\tLOAD:\n" +
+                        "\t    push(&mst, (*tvars)[arg1]);\n" +
+                        "        goto F;\n";
+                break;
+            case ADD:
+                result = "\tADD:\n" +
+                        "        push(&mst, arg2 + arg1);\n" +
+                        "        if ((onebyte = readNext(bytes)) == -1) return;\n" +
+                        "        if(onebyte == VPUSH){\n" +
+                        "            isCnst = VPUSH;\n" +
+                        "            goto CHECK;\n" +
+                        "        }else if(onebyte == VLOAD){\n" +
+                        "            isCnst = VLOAD;\n" +
+                        "            goto CHECK;\n" +
+                        "        }else if(onebyte == VADD){\n" +
+                        "            isCnst = VADD;\n" +
+                        "            goto ARG;\n" +
+                        "        }else if(onebyte == VSUB){\n" +
+                        "            isCnst = VSUB;\n" +
+                        "            goto ARG;\n" +
+                        "        }else if(onebyte == VMULT){\n" +
+                        "            isCnst = VMULT;\n" +
+                        "            goto ARG;\n" +
+                        "        }else if(onebyte == VASSGN){\n" +
+                        "            isCnst = VASSGN;\n" +
+                        "            goto ASSGN;\n" +
+                        "        }\n" +
+                        "        goto F;\n";
+                break;
+            case SUB:
+                result = "\tSUB:\n" +
+                        "        push(&mst, arg2 - arg1);\n" +
+                        "        goto F;\n";
+                break;
+            case MULT:
+                result = "\tMULT:\n" +
+                        "        push(&mst, arg2 * arg1);\n" +
+                        "        goto F;\n";
+                break;
+            case ASSGN:
+                result = "\tASSGN:\n" +
+                        "\t    arg1=readNext(bytes);\n" +
+                        "\t\tif( (arg2=readNext(bytes)) == -1) return;\n" +
+                        "\t\t(*tvars)[arg2] = pop(&mst);\n" +
+                        "        goto F;\n";
+                break;
+            default:
+                result = "NULL";
+        }
+
+        return result;
+    }
+
+    enum Label{
+
+        F("F"), CHECK("CHECK"), ARG("ARG"), PUSH("PUSH"), LOAD("LOAD"), ADD("ADD"), SUB("SUB"), MULT("MULT"), ASSGN("ASSGN");
+        String value;
+
+        Label(String value){
+            this.value= value;
+        }
+
+        public String getValue(){
+            return value;
+        }
+
     }
 
 }
